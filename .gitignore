@@ -1,0 +1,8 @@
+# Maven build directory
+target
+
+# Eclipse files
+.project
+.classpath
+.settings
+.factorypath
