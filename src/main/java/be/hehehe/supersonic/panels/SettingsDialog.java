@@ -3,13 +3,15 @@ package be.hehehe.supersonic.panels;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.prefs.Preferences;
+import java.net.Proxy.Type;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,8 +19,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
+import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.PreferencesService;
-import be.hehehe.supersonic.service.Prefs;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -26,6 +28,9 @@ public class SettingsDialog extends JDialog {
 
 	@Inject
 	private PreferencesService preferencesService;
+
+	@Inject
+	IconService iconService;
 
 	private JTextField addressTxt;
 	private JTextField loginTxt;
@@ -37,15 +42,24 @@ public class SettingsDialog extends JDialog {
 	private JTextField proxyLoginTxt;
 	private JPasswordField proxyPasswordTxt;
 
+	private JCheckBox proxyEnabledCheckBox;
+
+	private JCheckBox proxyAuthRequiredCheckbox;
+	private JLabel lblProxyType;
+	private JComboBox proxyTypeComboBox;
+
 	@PostConstruct
 	public void init() {
+		setTitle("Supersonic Settings");
 		setModal(true);
 		buildFrame();
 		attachBehavior();
 		loadPrefs();
+		setControlStates();
 		pack();
 		setSize(400, getHeight());
 		SwingUtils.centerContainer(this);
+		setIconImage(iconService.getIcon("cog").getImage());
 	}
 
 	private void buildFrame() {
@@ -78,11 +92,11 @@ public class SettingsDialog extends JDialog {
 		subsonicInfosPanel.add(passwordTxt, "cell 1 2,growx");
 
 		JPanel proxyPanel = new JPanel();
-		proxyPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][]"));
+		proxyPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
 		proxyPanel.setBorder(BorderFactory.createTitledBorder("Proxy"));
 		getContentPane().add(proxyPanel, "cell 0 1,grow");
 
-		JCheckBox proxyEnabledCheckBox = new JCheckBox("Enable proxy");
+		proxyEnabledCheckBox = new JCheckBox("Enable proxy");
 		proxyPanel.add(proxyEnabledCheckBox, "cell 0 0");
 
 		JLabel lblNewLabel = new JLabel("Proxy Host");
@@ -99,21 +113,27 @@ public class SettingsDialog extends JDialog {
 		proxyPanel.add(proxyPortTxt, "cell 1 2,growx");
 		proxyPortTxt.setColumns(10);
 
-		JCheckBox chckbxNewCheckBox = new JCheckBox("Proxy uses authentication");
-		proxyPanel.add(chckbxNewCheckBox, "cell 0 3");
+		lblProxyType = new JLabel("Proxy Type");
+		proxyPanel.add(lblProxyType, "cell 0 3,alignx left");
+
+		proxyTypeComboBox = new JComboBox();
+		proxyPanel.add(proxyTypeComboBox, "cell 1 3,growx");
+
+		proxyAuthRequiredCheckbox = new JCheckBox("Proxy uses authentication");
+		proxyPanel.add(proxyAuthRequiredCheckbox, "cell 0 4");
 
 		JLabel lblLogin = new JLabel("Login");
-		proxyPanel.add(lblLogin, "cell 0 4,alignx left");
+		proxyPanel.add(lblLogin, "cell 0 5,alignx left");
 
 		proxyLoginTxt = new JTextField();
-		proxyPanel.add(proxyLoginTxt, "cell 1 4,growx");
+		proxyPanel.add(proxyLoginTxt, "cell 1 5,growx");
 		proxyLoginTxt.setColumns(10);
 
 		JLabel lblPassword = new JLabel("Password");
-		proxyPanel.add(lblPassword, "cell 0 5,alignx left");
+		proxyPanel.add(lblPassword, "cell 0 6,alignx left");
 
 		proxyPasswordTxt = new JPasswordField();
-		proxyPanel.add(proxyPasswordTxt, "cell 1 5,growx");
+		proxyPanel.add(proxyPasswordTxt, "cell 1 6,growx");
 
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, "cell 0 2,growx");
@@ -142,26 +162,70 @@ public class SettingsDialog extends JDialog {
 				close();
 			}
 		});
+
+		proxyTypeComboBox.setModel(new DefaultComboBoxModel(new Type[] {
+				Type.HTTP, Type.SOCKS }));
+
+		DisableControlsListener controlListener = new DisableControlsListener();
+		proxyEnabledCheckBox.addActionListener(controlListener);
+		proxyAuthRequiredCheckbox.addActionListener(controlListener);
 	}
 
 	private void save() {
-		Preferences prefs = preferencesService.getPreferences();
-		prefs.put(Prefs.SUBSONIC_ADDRESS, addressTxt.getText());
-		prefs.put(Prefs.SUBSONIC_LOGIN, loginTxt.getText());
-		prefs.put(Prefs.SUBSONIC_PASSWORD,
-				new String(passwordTxt.getPassword()));
+		preferencesService.setSubsonicHostname(addressTxt.getText());
+		preferencesService.setSubsonicLogin(loginTxt.getText());
+		preferencesService.setSubsonicPassword(new String(passwordTxt
+				.getPassword()));
+		preferencesService.setProxyEnabled(proxyEnabledCheckBox.isSelected());
+		preferencesService.setProxyHostname(proxyHostTxt.getText());
+		preferencesService.setProxyPort(proxyPortTxt.getText());
+		preferencesService.setProxyType((Type) proxyTypeComboBox
+				.getSelectedItem());
+		preferencesService.setProxyAuthRequired(proxyAuthRequiredCheckbox
+				.isSelected());
+		preferencesService.setProxyLogin(proxyLoginTxt.getText());
+		preferencesService.setProxyPassword(new String(proxyPasswordTxt
+				.getPassword()));
 	}
 
 	private void loadPrefs() {
-		Preferences prefs = preferencesService.getPreferences();
-		addressTxt.setText(prefs.get(Prefs.SUBSONIC_ADDRESS,
-				"http://localhost/path/to/subsonic"));
-		loginTxt.setText(prefs.get(Prefs.SUBSONIC_LOGIN, null));
-		passwordTxt.setText(prefs.get(Prefs.SUBSONIC_PASSWORD, null));
+		addressTxt.setText(preferencesService.getProxyHostname());
+		loginTxt.setText(preferencesService.getProxyLogin());
+		passwordTxt.setText(preferencesService.getProxyPassword());
+		proxyEnabledCheckBox.setSelected(preferencesService.isProxyEnabled());
+		proxyHostTxt.setText(preferencesService.getProxyHostname());
+		proxyPortTxt.setText(preferencesService.getProxyPort());
+		proxyTypeComboBox.setSelectedItem(preferencesService.getProxyType());
+
+		proxyAuthRequiredCheckbox.setSelected(preferencesService
+				.isProxyAuthRequired());
+		proxyLoginTxt.setText(preferencesService.getProxyLogin());
+		proxyPasswordTxt.setText(preferencesService.getProxyPassword());
 	}
 
 	private void close() {
 		dispose();
+	}
+
+	private class DisableControlsListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			setControlStates();
+		}
+	}
+
+	public void setControlStates() {
+
+		boolean proxyEnabled = proxyEnabledCheckBox.isSelected();
+		proxyHostTxt.setEnabled(proxyEnabled);
+		proxyPortTxt.setEnabled(proxyEnabled);
+		proxyTypeComboBox.setEnabled(proxyEnabled);
+
+		boolean authRequired = proxyEnabled
+				&& proxyAuthRequiredCheckbox.isSelected();
+		proxyLoginTxt.setEnabled(authRequired);
+		proxyPasswordTxt.setEnabled(authRequired);
+
 	}
 
 }

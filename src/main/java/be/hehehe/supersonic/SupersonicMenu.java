@@ -12,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 import be.hehehe.supersonic.panels.SettingsDialog;
+import be.hehehe.supersonic.service.IconService;
 
 @SuppressWarnings("serial")
 @Named
@@ -20,6 +21,9 @@ public class SupersonicMenu extends JMenuBar {
 	@Inject
 	SettingsDialog settingsDialog;
 
+	@Inject
+	IconService iconService;
+
 	@PostConstruct
 	public void init() {
 
@@ -27,6 +31,7 @@ public class SupersonicMenu extends JMenuBar {
 		add(fileMenu);
 
 		JMenuItem settingsMenu = new JMenuItem("Settings...");
+		settingsMenu.setIcon(iconService.getIcon("cog"));
 		fileMenu.add(settingsMenu);
 		settingsMenu.addActionListener(new ActionListener() {
 			@Override
