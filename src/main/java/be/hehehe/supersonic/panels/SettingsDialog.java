@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.service.Prefs;
+import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
@@ -35,6 +36,7 @@ public class SettingsDialog extends JDialog {
 	@PostConstruct
 	public void init() {
 		setPreferredSize(new Dimension(400, 250));
+		SwingUtils.centerContainer(this);
 		pack();
 		buildFrame();
 		attachBehavior();
