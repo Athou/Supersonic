@@ -1,12 +1,12 @@
 package be.hehehe.supersonic.panels;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.Preferences;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,20 +32,22 @@ public class SettingsDialog extends JDialog {
 	private JButton okButton;
 	private JButton cancelButton;
 
-	public SettingsDialog(Component parent) {
+	@PostConstruct
+	public void init() {
 		setPreferredSize(new Dimension(400, 250));
 		pack();
-		setLocationRelativeTo(parent);
 		buildFrame();
 		attachBehavior();
 		loadPrefs();
+		setModal(true);
 	}
 
 	private void buildFrame() {
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][][]"));
 
 		JPanel subsonicInfosPanel = new JPanel();
-		subsonicInfosPanel.setBorder(BorderFactory.createTitledBorder("Subsonic"));
+		subsonicInfosPanel.setBorder(BorderFactory
+				.createTitledBorder("Subsonic"));
 		getContentPane().add(subsonicInfosPanel, "cell 0 0,grow");
 		subsonicInfosPanel.setLayout(new MigLayout("", "[][grow]", "[][][]"));
 
@@ -111,7 +113,8 @@ public class SettingsDialog extends JDialog {
 
 	private void loadPrefs() {
 		Preferences prefs = preferencesService.getPreferences();
-		addressTxt.setText(prefs.get(Prefs.SUBSONIC_ADDRESS, "http://localhost/path/to/subsonic"));
+		addressTxt.setText(prefs.get(Prefs.SUBSONIC_ADDRESS,
+				"http://localhost/path/to/subsonic"));
 		loginTxt.setText(prefs.get(Prefs.SUBSONIC_LOGIN, null));
 		passwordTxt.setText(prefs.get(Prefs.SUBSONIC_PASSWORD, null));
 	}
@@ -119,4 +122,5 @@ public class SettingsDialog extends JDialog {
 	private void close() {
 		dispose();
 	}
+
 }
