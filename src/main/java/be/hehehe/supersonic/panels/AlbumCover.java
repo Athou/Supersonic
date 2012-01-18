@@ -14,12 +14,12 @@ public class AlbumCover extends JPanel {
 
 		setLayout(new MigLayout("", "[]", "[][]"));
 
-		JLabel imageLabel = new JLabel("New label");
+		JLabel imageLabel = new JLabel();
 		imageLabel.setIcon(new ImageIcon(image));
-		add(imageLabel, "cell 0 0");
+		add(imageLabel, "cell 0 0,alignx center");
 
 		JLabel nameLabel = new JLabel(name);
-		add(nameLabel, "cell 0 1");
+		add(nameLabel, "cell 0 1,alignx center");
 
 	}
 
