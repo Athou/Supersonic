@@ -47,7 +47,7 @@ public class SupersonicMenu extends JMenuBar {
 		quitMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO QUIT
+				System.exit(0);
 			}
 		});
 

@@ -35,7 +35,8 @@ public class Supersonic extends JFrame {
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		SwingUtils.centerContainer(this);
 		pack();
-
+		setVisible(true);
+		
 		setJMenuBar(supersonicMenu);
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][grow]"));
 
