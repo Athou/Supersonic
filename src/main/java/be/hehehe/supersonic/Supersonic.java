@@ -10,6 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.log4j.Logger;
+
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -21,6 +24,9 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	SupersonicMenu supersonicMenu;
+
+	@Inject
+	Logger log;
 
 	@PostConstruct
 	public void init() {

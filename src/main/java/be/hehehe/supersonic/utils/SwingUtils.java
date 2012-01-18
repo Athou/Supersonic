@@ -7,11 +7,12 @@ import java.awt.Window;
 public class SwingUtils {
 	public static void centerContainer(Window window) {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension preferredSize = window.getPreferredSize();
-		if (preferredSize != null) {
-			int newWidth = (screen.width - preferredSize.width) / 2;
-			int newHeight = (screen.height - preferredSize.height) / 2;
-			window.setLocation(newWidth, newHeight);
+		Dimension size = window.getPreferredSize();
+		if (size == null) {
+			size = window.getSize();
 		}
+		int newWidth = (screen.width - size.width) / 2;
+		int newHeight = (screen.height - size.height) / 2;
+		window.setLocation(newWidth, newHeight);
 	}
 }

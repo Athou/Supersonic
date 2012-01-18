@@ -1,6 +1,5 @@
 package be.hehehe.supersonic.panels;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,20 +32,24 @@ public class SettingsDialog extends JDialog {
 	private JPasswordField passwordTxt;
 	private JButton okButton;
 	private JButton cancelButton;
+	private JTextField proxyHostTxt;
+	private JTextField proxyPortTxt;
+	private JTextField proxyLoginTxt;
+	private JPasswordField proxyPasswordTxt;
 
 	@PostConstruct
 	public void init() {
-		setPreferredSize(new Dimension(400, 250));
-		SwingUtils.centerContainer(this);
-		pack();
+		setModal(true);
 		buildFrame();
 		attachBehavior();
 		loadPrefs();
-		setModal(true);
+		pack();
+		setSize(400, getHeight());
+		SwingUtils.centerContainer(this);
 	}
 
 	private void buildFrame() {
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][][]"));
+		getContentPane().setLayout(new MigLayout("", "[grow]", "[][][]"));
 
 		JPanel subsonicInfosPanel = new JPanel();
 		subsonicInfosPanel.setBorder(BorderFactory
@@ -73,8 +77,43 @@ public class SettingsDialog extends JDialog {
 		passwordTxt = new JPasswordField();
 		subsonicInfosPanel.add(passwordTxt, "cell 1 2,growx");
 
-		JPanel panel_1 = new JPanel();
-		getContentPane().add(panel_1, "cell 0 1,grow");
+		JPanel proxyPanel = new JPanel();
+		proxyPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][]"));
+		proxyPanel.setBorder(BorderFactory.createTitledBorder("Proxy"));
+		getContentPane().add(proxyPanel, "cell 0 1,grow");
+
+		JCheckBox proxyEnabledCheckBox = new JCheckBox("Enable proxy");
+		proxyPanel.add(proxyEnabledCheckBox, "cell 0 0");
+
+		JLabel lblNewLabel = new JLabel("Proxy Host");
+		proxyPanel.add(lblNewLabel, "cell 0 1,alignx left");
+
+		proxyHostTxt = new JTextField();
+		proxyPanel.add(proxyHostTxt, "cell 1 1,growx");
+		proxyHostTxt.setColumns(10);
+
+		JLabel lblProxyPort = new JLabel("Proxy Port");
+		proxyPanel.add(lblProxyPort, "cell 0 2,alignx left");
+
+		proxyPortTxt = new JTextField();
+		proxyPanel.add(proxyPortTxt, "cell 1 2,growx");
+		proxyPortTxt.setColumns(10);
+
+		JCheckBox chckbxNewCheckBox = new JCheckBox("Proxy uses authentication");
+		proxyPanel.add(chckbxNewCheckBox, "cell 0 3");
+
+		JLabel lblLogin = new JLabel("Login");
+		proxyPanel.add(lblLogin, "cell 0 4,alignx left");
+
+		proxyLoginTxt = new JTextField();
+		proxyPanel.add(proxyLoginTxt, "cell 1 4,growx");
+		proxyLoginTxt.setColumns(10);
+
+		JLabel lblPassword = new JLabel("Password");
+		proxyPanel.add(lblPassword, "cell 0 5,alignx left");
+
+		proxyPasswordTxt = new JPasswordField();
+		proxyPanel.add(proxyPasswordTxt, "cell 1 5,growx");
 
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, "cell 0 2,growx");
