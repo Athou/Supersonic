@@ -13,6 +13,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import be.hehehe.supersonic.panels.AlbumsPanel;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -26,6 +27,9 @@ public class Supersonic extends JFrame {
 	SupersonicMenu supersonicMenu;
 
 	@Inject
+	AlbumsPanel albumsPanel;
+
+	@Inject
 	Logger log;
 
 	@PostConstruct
@@ -36,15 +40,14 @@ public class Supersonic extends JFrame {
 		SwingUtils.centerContainer(this);
 		pack();
 		setVisible(true);
-		
+
 		setJMenuBar(supersonicMenu);
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][grow]"));
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, "cell 0 0,grow");
 
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_1, null);
+		tabbedPane.addTab("Albums", albumsPanel);
 
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("New tab", null, panel_2, null);

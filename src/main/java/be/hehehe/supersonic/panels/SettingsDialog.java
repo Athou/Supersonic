@@ -154,9 +154,9 @@ public class SettingsDialog extends JDialog {
 				close();
 			}
 		});
+		getRootPane().setDefaultButton(okButton);
 
 		cancelButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				close();
@@ -186,12 +186,13 @@ public class SettingsDialog extends JDialog {
 		preferencesService.setProxyLogin(proxyLoginTxt.getText());
 		preferencesService.setProxyPassword(new String(proxyPasswordTxt
 				.getPassword()));
+		preferencesService.flush();
 	}
 
 	private void loadPrefs() {
-		addressTxt.setText(preferencesService.getProxyHostname());
-		loginTxt.setText(preferencesService.getProxyLogin());
-		passwordTxt.setText(preferencesService.getProxyPassword());
+		addressTxt.setText(preferencesService.getSubsonicHostname());
+		loginTxt.setText(preferencesService.getSubsonicLogin());
+		passwordTxt.setText(preferencesService.getSubsonicPassword());
 		proxyEnabledCheckBox.setSelected(preferencesService.isProxyEnabled());
 		proxyHostTxt.setText(preferencesService.getProxyHostname());
 		proxyPortTxt.setText(preferencesService.getProxyPort());
@@ -220,6 +221,7 @@ public class SettingsDialog extends JDialog {
 		proxyHostTxt.setEnabled(proxyEnabled);
 		proxyPortTxt.setEnabled(proxyEnabled);
 		proxyTypeComboBox.setEnabled(proxyEnabled);
+		proxyAuthRequiredCheckbox.setEnabled(proxyEnabled);
 
 		boolean authRequired = proxyEnabled
 				&& proxyAuthRequiredCheckbox.isSelected();

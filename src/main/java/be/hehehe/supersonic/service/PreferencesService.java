@@ -5,9 +5,12 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Named;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-@Named
+import org.apache.log4j.Logger;
+
+@Singleton
 public class PreferencesService {
 
 	private static final String SUBSONIC_ADDRESS = "subsonic-address";
@@ -27,6 +30,9 @@ public class PreferencesService {
 	public void init() {
 		prefs = Preferences.userNodeForPackage(PreferencesService.class);
 	}
+
+	@Inject
+	Logger log;
 
 	public String getSubsonicHostname() {
 		return prefs.get(SUBSONIC_ADDRESS, "");
@@ -113,7 +119,7 @@ public class PreferencesService {
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
-			// do nothing
+			log.error("Could not flush preferences", e);
 		}
 	}
 
