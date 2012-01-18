@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.Preferences;
 
+import javax.inject.Inject;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -22,7 +23,8 @@ import be.hehehe.supersonic.service.Prefs;
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
 
-	private Preferences prefs;
+	@Inject
+	private PreferencesService preferencesService;
 
 	private JTextField addressTxt;
 	private JTextField loginTxt;
@@ -31,7 +33,6 @@ public class SettingsDialog extends JDialog {
 	private JButton cancelButton;
 
 	public SettingsDialog(Component parent) {
-		prefs = new PreferencesService().getPreferences();
 		setPreferredSize(new Dimension(400, 250));
 		pack();
 		setLocationRelativeTo(parent);
@@ -101,6 +102,7 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void save() {
+		Preferences prefs = preferencesService.getPreferences();
 		prefs.put(Prefs.SUBSONIC_ADDRESS, addressTxt.getText());
 		prefs.put(Prefs.SUBSONIC_LOGIN, loginTxt.getText());
 		prefs.put(Prefs.SUBSONIC_PASSWORD,
@@ -108,6 +110,7 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void loadPrefs() {
+		Preferences prefs = preferencesService.getPreferences();
 		addressTxt.setText(prefs.get(Prefs.SUBSONIC_ADDRESS, "http://localhost/path/to/subsonic"));
 		loginTxt.setText(prefs.get(Prefs.SUBSONIC_LOGIN, null));
 		passwordTxt.setText(prefs.get(Prefs.SUBSONIC_PASSWORD, null));

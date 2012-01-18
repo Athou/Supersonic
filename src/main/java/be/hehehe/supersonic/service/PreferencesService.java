@@ -2,6 +2,9 @@ package be.hehehe.supersonic.service;
 
 import java.util.prefs.Preferences;
 
+import javax.inject.Named;
+
+@Named
 public class PreferencesService {
 
 	private Preferences prefs = Preferences

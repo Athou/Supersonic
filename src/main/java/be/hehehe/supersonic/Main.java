@@ -7,12 +7,15 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.jboss.weld.environment.se.Weld;
+
 public class Main {
 
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 600;
 
 	public static void main(String[] args) {
+		new Weld().initialize();
 
 		SwingUtilities.invokeLater(new Runnable() {
 
