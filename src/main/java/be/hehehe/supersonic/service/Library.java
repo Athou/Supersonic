@@ -37,7 +37,7 @@ public class Library {
 			List<Child> list = response.getAlbumList().getAlbum();
 			Collections.sort(list, new ChildComparator());
 
-			ExecutorService service = Executors.newCachedThreadPool();
+			ExecutorService service = Executors.newFixedThreadPool(5);
 			List<Future<AlbumModel>> threads = Lists.newArrayList();
 			for (final Child album : list) {
 				Callable<AlbumModel> callable = new Callable<AlbumModel>() {
