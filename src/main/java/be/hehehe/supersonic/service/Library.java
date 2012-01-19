@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -15,6 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.subsonic.restapi.Child;
 import org.subsonic.restapi.Response;
 
+import be.hehehe.supersonic.events.LibraryChangedEvent;
 import be.hehehe.supersonic.model.AlbumModel;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService.Param;
@@ -29,6 +31,9 @@ public class Library {
 
 	@Inject
 	SubsonicService subsonicService;
+
+	@Inject
+	Event<LibraryChangedEvent> libraryEvent;
 
 	public void refresh() throws SupersonicException {
 		try {
@@ -54,8 +59,10 @@ public class Library {
 							songModel.setId(song.getId());
 							songModel.setArtist(song.getArtist());
 							songModel.setTitle(song.getTitle());
+							songModel.setAlbum(song.getAlbum());
 							songModel.setTrack(song.getTrack());
 							songModel.setSize(song.getSize());
+							songModel.setDuration(song.getDuration());
 
 							albumModel.getSongs().add(songModel);
 							albumModel.setName(song.getAlbum());
@@ -78,10 +85,23 @@ public class Library {
 		} catch (Exception e) {
 			throw new SupersonicException("Could not refresh library.", e);
 		}
+
+		libraryEvent.fire(new LibraryChangedEvent());
 	}
 
 	public List<AlbumModel> getAlbums() {
 		return albums;
+	}
+
+	public List<SongModel> getSongs() {
+		if (albums == null) {
+			return null;
+		}
+		List<SongModel> songs = Lists.newArrayList();
+		for (AlbumModel album : albums) {
+			songs.addAll(album.getSongs());
+		}
+		return songs;
 	}
 
 	private class ChildComparator implements Comparator<Child> {
