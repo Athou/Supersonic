@@ -66,7 +66,6 @@ public class SubsonicService {
 			}
 
 			URL url = new URL(builder.build());
-			System.out.println(url.toString());
 			URLConnection connection = url.openConnection();
 
 			clearProxy();

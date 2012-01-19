@@ -18,13 +18,12 @@ public class Main {
 				try {
 					UIManager
 							.setLookAndFeel(new SubstanceGraphiteLookAndFeel());
-					// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 				} catch (Exception e) {
 					Logger.getLogger(Main.class).info(
 							"Could not set the look and feel.");
 				}
-				
+
 				WeldContainer weld = new Weld().initialize();
 				weld.instance().select(Supersonic.class).get();
 			}

@@ -2,42 +2,60 @@ package be.hehehe.supersonic.panels;
 
 import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 import net.miginfocom.swing.MigLayout;
+import be.hehehe.supersonic.service.SubsonicService;
+import be.hehehe.supersonic.service.SubsonicService.Param;
 
 @SuppressWarnings("serial")
 public class AlbumCover extends JPanel {
-	public AlbumCover(Model model) {
+	private JLabel imageLabel;
+
+	public AlbumCover(SubsonicService service, Model model) {
 
 		setLayout(new MigLayout("", "[]", "[][]"));
 
-		JLabel imageLabel = new JLabel();
-		imageLabel.setIcon(new ImageIcon(model.getImage()));
+		imageLabel = new JLabel();
+		imageLabel.setToolTipText(model.getName());
 		add(imageLabel, "cell 0 0,alignx center");
+		loadIcon(service, model);
 
-		JLabel nameLabel = new JLabel(model.getName());
-		add(nameLabel, "cell 0 1,alignx center");
+	}
+
+	public void loadIcon(final SubsonicService service, final Model model) {
+		new SwingWorker<Object, Void>() {
+			@Override
+			protected Object doInBackground() throws Exception {
+				BufferedImage image = ImageIO.read(service.invokeBinary(
+						"getCoverArt", new Param(model.getCoverId()),
+						new Param("size", "100")));
+				imageLabel.setIcon(new ImageIcon(image));
+				return null;
+			}
+		}.execute();
 
 	}
 
 	public static class Model {
 		private String name;
-		private BufferedImage image;
+		private String coverId;
 
-		public Model(String name, BufferedImage image) {
+		public Model(String name, String coverId) {
 			this.name = name;
-			this.image = image;
+			this.coverId = coverId;
 		}
 
 		public String getName() {
 			return name;
 		}
 
-		public BufferedImage getImage() {
-			return image;
+		public String getCoverId() {
+			return coverId;
 		}
 
 	}
