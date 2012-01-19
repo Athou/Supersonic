@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import net.miginfocom.swing.MigLayout;
@@ -47,7 +48,9 @@ public class Supersonic extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, "cell 0 0,grow");
 
-		tabbedPane.addTab("Albums", albumsPanel);
+		JScrollPane scrollPane = new JScrollPane();
+		tabbedPane.addTab("Albums", scrollPane);
+		scrollPane.setViewportView(albumsPanel);
 
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("New tab", null, panel_2, null);

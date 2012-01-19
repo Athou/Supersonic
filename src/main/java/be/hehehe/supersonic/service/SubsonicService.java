@@ -16,8 +16,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.subsonic.restapi.Response;
 
+import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.URLBuilder;
 
 @Named
@@ -25,49 +27,62 @@ public class SubsonicService {
 
 	@Inject
 	PreferencesService preferencesService;
+	
+	@Inject Logger log;
 
 	@SuppressWarnings("unchecked")
-	public Response invoke(String method, Param... params) throws Exception {
-		String responseString = IOUtils.toString(invokeBinary(method, params));
-		System.out.println(responseString);
-
-		JAXBContext context = JAXBContext.newInstance(Response.class
-				.getPackage().getName());
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		JAXBElement<Response> jaxbResponse = (JAXBElement<Response>) unmarshaller
-				.unmarshal(new StringReader(responseString));
-
-		return jaxbResponse.getValue();
+	public Response invoke(String method, Param... params)
+			throws SupersonicException {
+		Response response = null;
+		try {
+			String responseString = IOUtils.toString(invokeBinary(method,
+					params));
+			JAXBContext context = JAXBContext.newInstance(Response.class
+					.getPackage().getName());
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			JAXBElement<Response> jaxbResponse = (JAXBElement<Response>) unmarshaller
+					.unmarshal(new StringReader(responseString));
+			response = jaxbResponse.getValue();
+		} catch (Exception e) {
+			throw new SupersonicException(e);
+		}
+		return response;
 	}
 
 	public InputStream invokeBinary(String method, Param... params)
-			throws Exception {
+			throws SupersonicException {
+		InputStream is = null;
+		log.debug("Invoking: " + method);
+		try {
+			URLBuilder builder = new URLBuilder(
+					preferencesService.getSubsonicHostname() + "/rest/"
+							+ method + ".view");
+			builder.addParam("u", preferencesService.getSubsonicLogin());
+			builder.addParam("p", preferencesService.getSubsonicPassword());
+			builder.addParam("v", "1.7.0");
+			builder.addParam("c", "supersonic");
+			for (Param param : params) {
+				builder.addParam(param.getName(), param.getValue());
+			}
 
-		URLBuilder builder = new URLBuilder(
-				preferencesService.getSubsonicHostname() + "/rest/" + method
-						+ ".view");
-		builder.addParam("u", preferencesService.getSubsonicLogin());
-		builder.addParam("p", preferencesService.getSubsonicPassword());
-		builder.addParam("v", "1.7.0");
-		builder.addParam("c", "supersonic");
-		for (Param param : params) {
-			builder.addParam(param.getName(), param.getValue());
+			URL url = new URL(builder.build());
+			System.out.println(url.toString());
+			URLConnection connection = url.openConnection();
+
+			clearProxy();
+			if (preferencesService.isProxyEnabled()) {
+				setProxy(connection);
+
+			}
+
+			connection.setConnectTimeout(10000);
+			connection.setReadTimeout(10000);
+
+			is = url.openStream();
+		} catch (Exception e) {
+			throw new SupersonicException(e);
 		}
-
-		URL url = new URL(builder.build());
-		System.out.println(url.toString());
-		URLConnection connection = url.openConnection();
-
-		clearProxy();
-		if (preferencesService.isProxyEnabled()) {
-			setProxy(connection);
-
-		}
-
-		connection.setConnectTimeout(10000);
-		connection.setReadTimeout(10000);
-
-		return url.openStream();
+		return is;
 
 	}
 
