@@ -22,14 +22,5 @@ public class AlbumsPanel extends JPanel {
 	public void init() {
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 
-		try {
-			library.refresh();
-			for (AlbumModel album : library.getAlbums()) {
-				System.out.println(album);
-			}
-			System.out.println(library.getAlbums().size());
-		} catch (SupersonicException e) {
-			JXErrorPane.showDialog(e);
-		}
 	}
 }

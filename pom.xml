@@ -153,7 +153,9 @@
 		<dependency>
 			<groupId>org.mobicents.external.fmj</groupId>
 			<artifactId>mp3spi</artifactId>
-			<version>1.9.4</version>
+			<version>1.9.5</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/mp3spi1.9.5.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>de.huxhorn.sulky</groupId>

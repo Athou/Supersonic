@@ -6,9 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.JSplitPane;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -43,20 +41,20 @@ public class Supersonic extends JFrame {
 		setVisible(true);
 
 		setJMenuBar(supersonicMenu);
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][grow]"));
+		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		getContentPane().add(tabbedPane, "cell 0 0,grow");
+		JSplitPane mainSplitPane = new JSplitPane();
+		getContentPane().add(mainSplitPane, "cell 0 0,grow");
 
-		JScrollPane scrollPane = new JScrollPane();
-		tabbedPane.addTab("Albums", scrollPane);
-		scrollPane.setViewportView(albumsPanel);
+		JSplitPane leftSplitPane = new JSplitPane();
+		leftSplitPane.setResizeWeight(0.5);
+		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		mainSplitPane.setLeftComponent(leftSplitPane);
 
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_2, null);
-
-		JPanel panel = new JPanel();
-		getContentPane().add(panel, "cell 0 1,grow");
+		JSplitPane rightSplitPane = new JSplitPane();
+		rightSplitPane.setResizeWeight(0.2);
+		rightSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		mainSplitPane.setRightComponent(rightSplitPane);
 
 	}
 
