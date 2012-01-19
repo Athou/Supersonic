@@ -2,8 +2,9 @@ package be.hehehe.supersonic.service;
 
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.Proxy.Type;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -55,31 +56,71 @@ public class SubsonicService {
 
 		URL url = new URL(builder.build());
 		System.out.println(url.toString());
+		URLConnection connection = url.openConnection();
 
-		URLConnection connection = null;
+		clearProxy();
 		if (preferencesService.isProxyEnabled()) {
-			Proxy proxy = new Proxy(
-					preferencesService.getProxyType(),
-					new InetSocketAddress(
-							preferencesService.getProxyHostname(),
-							Integer.parseInt(preferencesService.getProxyPort())));
-			connection = url.openConnection(proxy);
+			setProxy(connection);
+
+		}
+
+		connection.setConnectTimeout(10000);
+		connection.setReadTimeout(10000);
+
+		return url.openStream();
+
+	}
+
+	private void clearProxy() {
+		System.setProperty("http.proxyHost", "");
+		System.setProperty("http.proxyPort", "");
+		System.setProperty("https.proxyHost", "");
+		System.setProperty("https.proxyPort", "");
+
+		System.setProperty("socksProxyHost", "");
+		System.setProperty("socksProxyPort", "");
+
+	}
+
+	private void setProxy(URLConnection connection) {
+		if (preferencesService.getProxyType() == Type.HTTP) {
+			System.setProperty("http.proxyHost",
+					preferencesService.getProxyHostname());
+			System.setProperty("http.proxyPort",
+					preferencesService.getProxyPort());
+			System.setProperty("https.proxyHost",
+					preferencesService.getProxyHostname());
+			System.setProperty("https.proxyPort",
+					preferencesService.getProxyPort());
 			if (preferencesService.isProxyAuthRequired()) {
 				String password = preferencesService.getProxyLogin() + ":"
 						+ preferencesService.getProxyPassword();
 				String encodedPassword = Base64.encodeBase64String(password
 						.getBytes());
-				connection.setRequestProperty("Proxy-Authorization",
-						encodedPassword);
+				connection.setRequestProperty("Proxy-Authorization", "Basic "
+						+ encodedPassword);
+				Authenticator
+						.setDefault(new ProxyAuth(preferencesService
+								.getProxyLogin(), preferencesService
+								.getProxyPassword()));
+
 			}
 		} else {
-			connection = url.openConnection();
+			System.setProperty("socksProxyHost",
+					preferencesService.getProxyHostname());
+			System.setProperty("socksProxyPort",
+					preferencesService.getProxyPort());
+			if (preferencesService.isProxyAuthRequired()) {
+				System.setProperty("java.net.socks.username",
+						preferencesService.getProxyLogin());
+				System.setProperty("java.net.socks.password",
+						preferencesService.getProxyPassword());
+				Authenticator
+						.setDefault(new ProxyAuth(preferencesService
+								.getProxyLogin(), preferencesService
+								.getProxyPassword()));
+			}
 		}
-		connection.setConnectTimeout(30000);
-		connection.setReadTimeout(30000);
-
-		return url.openStream();
-
 	}
 
 	public static class Param {
@@ -112,4 +153,18 @@ public class SubsonicService {
 		}
 
 	}
+
+	public class ProxyAuth extends Authenticator {
+		private PasswordAuthentication auth;
+
+		private ProxyAuth(String user, String password) {
+			auth = new PasswordAuthentication(user,
+					password == null ? new char[] {} : password.toCharArray());
+		}
+
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return auth;
+		}
+	}
+
 }
