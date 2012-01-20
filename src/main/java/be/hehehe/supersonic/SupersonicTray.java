@@ -6,6 +6,8 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,8 +25,8 @@ public class SupersonicTray {
 			return false;
 		}
 		final PopupMenu popup = new PopupMenu();
-		final TrayIcon trayIcon = new TrayIcon(iconService.getIcon("cog")
-				.getImage());
+		final TrayIcon trayIcon = new TrayIcon(iconService
+				.getIcon("supersonic").getImage());
 		final SystemTray tray = SystemTray.getSystemTray();
 
 		MenuItem restoreItem = new MenuItem("Restore");
@@ -46,6 +48,14 @@ public class SupersonicTray {
 		popup.add(exitItem);
 
 		trayIcon.setPopupMenu(popup);
+		trayIcon.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					supersonic.showSupersonic();
+				}
+			}
+		});
 
 		boolean trayAdded = false;
 		try {

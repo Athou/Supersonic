@@ -20,6 +20,7 @@ import be.hehehe.supersonic.events.PlayingSongChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SongsPanel;
+import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -30,6 +31,9 @@ public class Supersonic extends JFrame {
 	private static final int HEIGHT = 600;
 
 	private static final String TITLE = "Supersonic";
+
+	@Inject
+	IconService iconService;
 
 	@Inject
 	SupersonicMenu supersonicMenu;
@@ -45,12 +49,13 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	Logger log;
-	
+
 	private int windowState = Frame.NORMAL;
 
 	@PostConstruct
 	public void init() {
 		setTitle(TITLE);
+		setIconImage(iconService.getIcon("supersonic-big").getImage());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		SwingUtils.centerContainer(this);
@@ -102,12 +107,12 @@ public class Supersonic extends JFrame {
 		}
 		setTitle(sb.toString());
 	}
-	
+
 	public void hideSupersonic(int oldState) {
 		windowState = oldState;
 		setVisible(false);
 	}
-	
+
 	public void showSupersonic() {
 		setState(windowState);
 		setVisible(true);
