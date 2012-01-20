@@ -13,15 +13,14 @@ import javax.swing.SwingWorker;
 
 import be.hehehe.supersonic.events.SelectedSongChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
-import be.hehehe.supersonic.service.SubsonicService;
-import be.hehehe.supersonic.service.SubsonicService.Param;
+import be.hehehe.supersonic.service.CoverArtService;
 
 @SuppressWarnings("serial")
 @Singleton
 public class CoverPanel extends JPanel {
 
 	@Inject
-	SubsonicService subsonicService;
+	CoverArtService coverArtService;
 
 	private BufferedImage image;
 
@@ -30,8 +29,8 @@ public class CoverPanel extends JPanel {
 			@Override
 			protected Object doInBackground() throws Exception {
 				SongModel song = e.getSong();
-				image = ImageIO.read(subsonicService.invokeBinary(
-						"getCoverArt", new Param(song.getCoverId())));
+				image = ImageIO
+						.read(coverArtService.getCover(song.getCoverId()));
 				repaint();
 				return null;
 			}

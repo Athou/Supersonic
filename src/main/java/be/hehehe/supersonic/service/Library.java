@@ -36,7 +36,7 @@ import flexjson.JSONSerializer;
 
 @Singleton
 public class Library {
-	private static final String LIBRARY_FILEPATH = "target/library.json";
+	private static final String LIBRARY_FILEPATH = "cache/library.json";
 
 	private List<AlbumModel> albums = Collections
 			.synchronizedList(new ArrayList<AlbumModel>());
@@ -56,7 +56,7 @@ public class Library {
 				albums = new JSONDeserializer<List<AlbumModel>>()
 						.deserialize(content);
 			} catch (IOException e) {
-				e.printStackTrace();
+				// do nothing
 			}
 		}
 	}
