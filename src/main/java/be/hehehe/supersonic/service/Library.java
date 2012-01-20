@@ -1,18 +1,14 @@
 package be.hehehe.supersonic.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.SwingWorker;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.subsonic.restapi.Child;
 import org.subsonic.restapi.Response;
 
@@ -37,18 +33,16 @@ public class Library {
 
 	public void refresh() throws SupersonicException {
 		try {
-			Response response = subsonicService.invoke("getAlbumList",
-					new Param("type", "newest"), new Param("size", "500"));
-			List<Child> list = response.getAlbumList().getAlbum();
-			Collections.sort(list, new ChildComparator());
+			List<Child> list = subsonicService
+					.invoke("getAlbumList", new Param("type", "newest"),
+							new Param("size", "500")).getAlbumList().getAlbum();
 
-			ExecutorService service = Executors.newFixedThreadPool(5);
-			List<Future<AlbumModel>> threads = Lists.newArrayList();
+			final List<AlbumModel> albums = Collections
+					.synchronizedList(new ArrayList<AlbumModel>());
 			for (final Child album : list) {
-				Callable<AlbumModel> callable = new Callable<AlbumModel>() {
+				new SwingWorker<Object, AlbumModel>() {
 					@Override
-					public AlbumModel call() throws Exception {
-
+					protected Object doInBackground() throws Exception {
 						AlbumModel albumModel = new AlbumModel();
 						albumModel.setId(album.getId());
 						albumModel.setCoverId(album.getCoverArt());
@@ -68,25 +62,27 @@ public class Library {
 							albumModel.setName(song.getAlbum());
 							albumModel.setArtist(song.getArtist());
 						}
-						return albumModel;
+						publish(albumModel);
+						return null;
 					}
 
-				};
-				threads.add(service.submit(callable));
-
-				List<AlbumModel> albums = Lists.newArrayList();
-				for (Future<AlbumModel> future : threads) {
-					AlbumModel albumModel = future.get();
-					albums.add(albumModel);
-				}
-				this.albums = albums;
-
+					@Override
+					protected void process(List<AlbumModel> chunks) {
+						for (AlbumModel model : chunks) {
+							albums.add(model);
+							libraryEvent.fire(new LibraryChangedEvent(albums
+									.size(), albums.size(), false));
+						}
+					}
+				}.execute();
 			}
+			this.albums = albums;
+
+			libraryEvent.fire(new LibraryChangedEvent(albums.size(), albums
+					.size(), true));
 		} catch (Exception e) {
 			throw new SupersonicException("Could not refresh library.", e);
 		}
-
-		libraryEvent.fire(new LibraryChangedEvent());
 	}
 
 	public List<AlbumModel> getAlbums() {
@@ -103,12 +99,4 @@ public class Library {
 		}
 		return songs;
 	}
-
-	private class ChildComparator implements Comparator<Child> {
-		@Override
-		public int compare(Child o1, Child o2) {
-			return ObjectUtils.compare(o1.getTitle(), o2.getTitle());
-		}
-	}
-
 }

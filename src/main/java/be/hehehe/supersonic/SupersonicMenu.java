@@ -11,10 +11,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import be.hehehe.supersonic.panels.LibraryRefreshAction;
 import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.Library;
-import be.hehehe.supersonic.utils.SupersonicException;
 
 @SuppressWarnings("serial")
 @Named
@@ -25,9 +25,12 @@ public class SupersonicMenu extends JMenuBar {
 
 	@Inject
 	IconService iconService;
-	
+
 	@Inject
 	Library library;
+
+	@Inject
+	LibraryRefreshAction refreshAction;
 
 	@PostConstruct
 	public void init() {
@@ -45,22 +48,11 @@ public class SupersonicMenu extends JMenuBar {
 			}
 		});
 
-		
 		JMenuItem refreshMenu = new JMenuItem("Refresh Library");
 		refreshMenu.setIcon(iconService.getIcon("arrow_rotate_clockwise"));
 		fileMenu.add(refreshMenu);
-		refreshMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					library.refresh();
-				} catch (SupersonicException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		
+		refreshMenu.addActionListener(refreshAction);
+
 		fileMenu.add(new JSeparator());
 
 		JMenuItem quitMenu = new JMenuItem("Quit");

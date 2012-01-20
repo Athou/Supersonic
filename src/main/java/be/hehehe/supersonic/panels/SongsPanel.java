@@ -37,7 +37,9 @@ public class SongsPanel extends JPanel {
 	}
 
 	public void onLibraryRefresh(@Observes LibraryChangedEvent e) {
-		tableModel.clear();
-		tableModel.addAll(library.getSongs());
+		if (e.isDone()) {
+			tableModel.clear();
+			tableModel.addAll(library.getSongs());
+		}
 	}
 }
