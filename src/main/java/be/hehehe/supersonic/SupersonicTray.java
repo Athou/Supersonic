@@ -1,6 +1,5 @@
 package be.hehehe.supersonic;
 
-import java.awt.Frame;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;

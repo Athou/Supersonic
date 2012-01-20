@@ -87,4 +87,7 @@ public class SongsTableModel extends AbstractTableModel {
 		return songs.get(i);
 	}
 
+	public int indexOf(SongModel model) {
+		return songs.indexOf(model);
+	}
 }

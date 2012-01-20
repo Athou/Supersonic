@@ -1,5 +1,6 @@
 package be.hehehe.supersonic;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 
 import javax.enterprise.event.Observes;
@@ -9,19 +10,19 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ObjectUtils;
-import org.jdesktop.swingx.JXErrorPane;
 
 import be.hehehe.supersonic.events.PlayingSongChangedEvent;
+import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.service.SubsonicService.Param;
-import be.hehehe.supersonic.utils.SupersonicException;
 
 @Singleton
 public class Player {
@@ -39,6 +40,8 @@ public class Player {
 	private SourceDataLine line;
 	private AudioInputStream din;
 
+	private float volume = 0.5f;
+
 	public void stateChanged(@Observes PlayingSongChangedEvent e) {
 
 		State state = e.getState();
@@ -53,6 +56,30 @@ public class Player {
 			} else {
 				play(e.getSong().getId());
 			}
+		}
+	}
+
+	public void volumeChanged(@Observes VolumeChangedEvent e) {
+		volume = e.getVolume();
+		setGain();
+
+	}
+
+	private void setGain() {
+		if (line != null) {
+			FloatControl gainControl = (FloatControl) line
+					.getControl(FloatControl.Type.MASTER_GAIN);
+			double minGainDB = gainControl.getMinimum();
+			double maxGainDB = gainControl.getMaximum();
+			double ampGainDB = 0.5f * maxGainDB - minGainDB;
+			double cste = Math.log(10.0) / 20;
+			double valueDB = minGainDB + (1 / cste)
+					* Math.log(1 + (Math.exp(cste * ampGainDB) - 1) * volume);
+
+			valueDB = Math.min(valueDB, maxGainDB);
+			valueDB = Math.max(valueDB, minGainDB);
+
+			gainControl.setValue((float) valueDB);
 		}
 	}
 
@@ -73,8 +100,8 @@ public class Player {
 		state = State.STOP;
 
 		if (line != null) {
-			line.drain();
 			line.stop();
+			line.drain();
 			line.close();
 		}
 		IOUtils.closeQuietly(din);
@@ -83,10 +110,17 @@ public class Player {
 	}
 
 	public void pause() {
+		if (line != null) {
+			line.stop();
+			line.flush();
+		}
 		state = State.PAUSE;
 	}
 
 	public void unpause() {
+		if (line != null) {
+			line.start();
+		}
 		state = State.PLAY;
 	}
 
@@ -94,7 +128,8 @@ public class Player {
 		AudioInputStream in = null;
 		state = State.PLAY;
 		try {
-			in = AudioSystem.getAudioInputStream(inputStream);
+			in = AudioSystem.getAudioInputStream(new BufferedInputStream(
+					inputStream));
 			AudioFormat baseFormat = in.getFormat();
 			AudioFormat decodedFormat = new AudioFormat(
 					AudioFormat.Encoding.PCM_SIGNED,
@@ -115,6 +150,7 @@ public class Player {
 			throws Exception {
 		byte[] data = new byte[4096];
 		line = getLine(targetFormat);
+		setGain();
 		if (line != null) {
 			// Start
 			line.start();

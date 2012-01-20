@@ -22,6 +22,7 @@ import be.hehehe.supersonic.Player.State;
 import be.hehehe.supersonic.events.LibraryChangedEvent;
 import be.hehehe.supersonic.events.PlayingSongChangedEvent;
 import be.hehehe.supersonic.events.SelectedSongChangedEvent;
+import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.model.SongsTableModel;
 import be.hehehe.supersonic.service.Library;
 
@@ -66,11 +67,9 @@ public class SongsPanel extends JPanel {
 						if (!e.getValueIsAdjusting()) {
 							int selectedRow = table.getSelectedRow();
 							if (selectedRow >= 0) {
-								int row = table.convertRowIndexToModel(table
-										.getSelectedRow());
 								selectedSongEvent
 										.fire(new SelectedSongChangedEvent(
-												tableModel.get(row)));
+												getSelectedSong()));
 							}
 						}
 					}
@@ -79,10 +78,8 @@ public class SongsPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					int row = table.convertRowIndexToModel(table
-							.getSelectedRow());
 					playingSongEvent.fire(new PlayingSongChangedEvent(
-							tableModel.get(row), State.PLAY));
+							getSelectedSong(), State.PLAY));
 				}
 			}
 
@@ -101,5 +98,27 @@ public class SongsPanel extends JPanel {
 			tableModel.addAll(library.getSongs());
 			table.packAll();
 		}
+	}
+
+	public void onSongChanged(@Observes PlayingSongChangedEvent e) {
+		if (e.getSong() != null && !e.getSong().equals(getSelectedSong())) {
+			int row = tableModel.indexOf(e.getSong());
+			row = table.convertRowIndexToView(row);
+			table.changeSelection(row, 0, false, false);
+		}
+	}
+
+	public SongModel getSelectedSong() {
+		int row = table.convertRowIndexToModel(table.getSelectedRow());
+		return tableModel.get(row);
+	}
+
+	public SongModel getNextSong() {
+		int row = table.convertRowIndexToModel(table.getSelectedRow());
+		row++;
+		if (tableModel.getRowCount() == row) {
+			row = 0;
+		}
+		return tableModel.get(row);
 	}
 }

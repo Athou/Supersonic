@@ -10,6 +10,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import net.miginfocom.swing.MigLayout;
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import be.hehehe.supersonic.events.PlayingSongChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
+import be.hehehe.supersonic.panels.ControlsPanel;
 import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.service.IconService;
@@ -48,6 +50,9 @@ public class Supersonic extends JFrame {
 	SongsPanel songsPanel;
 
 	@Inject
+	ControlsPanel controlsPanel;
+
+	@Inject
 	Logger log;
 
 	@PostConstruct
@@ -74,12 +79,12 @@ public class Supersonic extends JFrame {
 
 		leftSplitPane.setBottomComponent(coverPanel);
 
-		JSplitPane rightSplitPane = new JSplitPane();
-		rightSplitPane.setResizeWeight(0.2);
-		rightSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		mainSplitPane.setRightComponent(rightSplitPane);
+		JPanel rightPanel = new JPanel();
+		rightPanel.setLayout(new MigLayout("", "[grow]", "[][grow]"));
+		mainSplitPane.setRightComponent(rightPanel);
 
-		rightSplitPane.setBottomComponent(songsPanel);
+		rightPanel.add(controlsPanel, "cell 0 0");
+		rightPanel.add(songsPanel, "cell 0 1,grow");
 
 		boolean trayAdded = supersonicTray.addTray(this);
 		if (trayAdded) {
