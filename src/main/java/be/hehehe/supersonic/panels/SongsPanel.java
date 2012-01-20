@@ -1,5 +1,8 @@
 package be.hehehe.supersonic.panels;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -16,6 +19,7 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.JXTable;
 
 import be.hehehe.supersonic.events.LibraryChangedEvent;
+import be.hehehe.supersonic.events.PlayingSongChangedEvent;
 import be.hehehe.supersonic.events.SelectedSongChangedEvent;
 import be.hehehe.supersonic.model.SongsTableModel;
 import be.hehehe.supersonic.service.Library;
@@ -28,7 +32,10 @@ public class SongsPanel extends JPanel {
 	Library library;
 
 	@Inject
-	Event<SelectedSongChangedEvent> songEvent;
+	Event<SelectedSongChangedEvent> selectedSongEvent;
+
+	@Inject
+	Event<PlayingSongChangedEvent> playingSongEvent;
 
 	private JXTable table;
 	private SongsTableModel tableModel;
@@ -56,23 +63,42 @@ public class SongsPanel extends JPanel {
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
 						if (!e.getValueIsAdjusting()) {
-							int row = table.convertRowIndexToModel(table
-									.getSelectedRow());
-							songEvent.fire(new SelectedSongChangedEvent(
-									tableModel.get(row)));
+							int selectedRow = table.getSelectedRow();
+							if (selectedRow >= 0) {
+								int row = table.convertRowIndexToModel(table
+										.getSelectedRow());
+								selectedSongEvent
+										.fire(new SelectedSongChangedEvent(
+												tableModel.get(row)));
+							}
 						}
 					}
 				});
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int row = table.convertRowIndexToModel(table
+							.getSelectedRow());
+					playingSongEvent.fire(new PlayingSongChangedEvent(
+							tableModel.get(row)));
+				}
+			}
+
+		});
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(scrollPane, "cell 0 0,grow");
+		table.packAll();
 	}
 
 	public void onLibraryRefresh(@Observes LibraryChangedEvent e) {
 		if (e.isDone()) {
+			table.clearSelection();
 			tableModel.clear();
 			tableModel.addAll(library.getSongs());
+			table.packAll();
 		}
 	}
 }

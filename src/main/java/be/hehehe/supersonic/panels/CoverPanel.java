@@ -39,6 +39,7 @@ public class CoverPanel extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		//TODO maintain aspect ratio
 		Dimension size = getSize();
 		if (image != null && size.width > 0) {
 			g.drawImage(image, 0, 0, size.width, size.height, 0, 0,

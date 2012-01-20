@@ -1,8 +1,12 @@
 package be.hehehe.supersonic;
 
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JFrame;
@@ -12,6 +16,8 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import be.hehehe.supersonic.events.PlayingSongChangedEvent;
+import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.utils.SwingUtils;
@@ -23,8 +29,13 @@ public class Supersonic extends JFrame {
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 600;
 
+	private static final String TITLE = "Supersonic";
+
 	@Inject
 	SupersonicMenu supersonicMenu;
+
+	@Inject
+	SupersonicTray supersonicTray;
 
 	@Inject
 	CoverPanel coverPanel;
@@ -34,10 +45,12 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	Logger log;
+	
+	private int windowState = Frame.NORMAL;
 
 	@PostConstruct
 	public void init() {
-
+		setTitle(TITLE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		SwingUtils.centerContainer(this);
@@ -48,10 +61,11 @@ public class Supersonic extends JFrame {
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
+		mainSplitPane.setResizeWeight(0.2);
 		getContentPane().add(mainSplitPane, "cell 0 0,grow");
 
 		JSplitPane leftSplitPane = new JSplitPane();
-		leftSplitPane.setResizeWeight(0.5);
+		leftSplitPane.setResizeWeight(0.7);
 		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setLeftComponent(leftSplitPane);
 
@@ -64,6 +78,39 @@ public class Supersonic extends JFrame {
 
 		rightSplitPane.setBottomComponent(songsPanel);
 
+		boolean trayAdded = supersonicTray.addTray(this);
+		if (trayAdded) {
+			addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowIconified(WindowEvent e) {
+					hideSupersonic(e.getOldState());
+				}
+			});
+		}
+	}
+
+	public void playingSongChanged(@Observes PlayingSongChangedEvent e) {
+		StringBuilder sb = new StringBuilder(TITLE);
+		SongModel song = e.getSong();
+		if (song != null) {
+			sb.append(" | ");
+			sb.append(song.getArtist());
+			sb.append(" - ");
+			sb.append(song.getAlbum());
+			sb.append(" - ");
+			sb.append(song.getTitle());
+		}
+		setTitle(sb.toString());
+	}
+	
+	public void hideSupersonic(int oldState) {
+		windowState = oldState;
+		setVisible(false);
+	}
+	
+	public void showSupersonic() {
+		setState(windowState);
+		setVisible(true);
 	}
 
 }

@@ -105,7 +105,7 @@ public class Library {
 									songModel.setId(song.getId());
 									songModel.setArtist(song.getArtist());
 									songModel.setTitle(song.getTitle());
-									songModel.setAlbum(albumModel.getName());
+									songModel.setAlbum(song.getAlbum());
 									songModel.setCoverId(albumModel
 											.getCoverId());
 									songModel.setTrack(song.getTrack());
