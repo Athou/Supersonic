@@ -12,7 +12,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
-import be.hehehe.supersonic.panels.AlbumsPanel;
+import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.utils.SwingUtils;
 
@@ -27,8 +27,8 @@ public class Supersonic extends JFrame {
 	SupersonicMenu supersonicMenu;
 
 	@Inject
-	AlbumsPanel albumsPanel;
-	
+	CoverPanel coverPanel;
+
 	@Inject
 	SongsPanel songsPanel;
 
@@ -55,11 +55,13 @@ public class Supersonic extends JFrame {
 		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setLeftComponent(leftSplitPane);
 
+		leftSplitPane.setBottomComponent(coverPanel);
+
 		JSplitPane rightSplitPane = new JSplitPane();
 		rightSplitPane.setResizeWeight(0.2);
 		rightSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setRightComponent(rightSplitPane);
-		
+
 		rightSplitPane.setBottomComponent(songsPanel);
 
 	}

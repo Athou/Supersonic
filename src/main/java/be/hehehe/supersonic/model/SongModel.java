@@ -4,15 +4,7 @@ public class SongModel {
 	private String id;
 	private String title;
 	private String artist;
-	private String album;
-
-	public String getAlbum() {
-		return album;
-	}
-
-	public void setAlbum(String album) {
-		this.album = album;
-	}
+	private AlbumModel album;
 
 	private int track;
 	private long size;
@@ -21,7 +13,7 @@ public class SongModel {
 	@Override
 	public String toString() {
 		return "SongModel [id=" + id + ", title=" + title + ", artist="
-				+ artist + ", album=" + album + ", track=" + track + ", size="
+				+ artist + ", album=" + album.getName() + ", track=" + track + ", size="
 				+ size + ", duration=" + duration + "]";
 	}
 
@@ -71,6 +63,14 @@ public class SongModel {
 
 	public void setDuration(int duration) {
 		this.duration = duration;
+	}
+
+	public AlbumModel getAlbum() {
+		return album;
+	}
+
+	public void setAlbum(AlbumModel album) {
+		this.album = album;
 	}
 
 }

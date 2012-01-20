@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("serial")
@@ -38,13 +40,13 @@ public class SongsTableModel extends AbstractTableModel {
 		case 0:
 			return song.getArtist();
 		case 1:
-			return song.getAlbum();
+			return song.getAlbum().getName();
 		case 2:
 			return song.getTitle();
 		case 3:
 			long minutes = TimeUnit.SECONDS.toMinutes(song.getDuration());
 			long seconds = song.getDuration() % 60;
-			return String.format("%d:%d", minutes, seconds);
+			return minutes + ":" + StringUtils.leftPad("" + seconds, 2, "0");
 		}
 		return null;
 	}
@@ -79,6 +81,10 @@ public class SongsTableModel extends AbstractTableModel {
 			songs.addAll(list);
 		}
 		fireTableDataChanged();
+	}
+
+	public SongModel get(int i) {
+		return songs.get(i);
 	}
 
 }

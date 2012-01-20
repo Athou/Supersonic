@@ -36,7 +36,7 @@ import flexjson.JSONSerializer;
 
 @Singleton
 public class Library {
-	private static final String LIBRARY_FILEPATH = "library.json";
+	private static final String LIBRARY_FILEPATH = "target/library.json";
 
 	private List<AlbumModel> albums = Collections
 			.synchronizedList(new ArrayList<AlbumModel>());
@@ -105,7 +105,7 @@ public class Library {
 									songModel.setId(song.getId());
 									songModel.setArtist(song.getArtist());
 									songModel.setTitle(song.getTitle());
-									songModel.setAlbum(song.getAlbum());
+									songModel.setAlbum(albumModel);
 									songModel.setTrack(song.getTrack());
 									songModel.setSize(song.getSize());
 									songModel.setDuration(song.getDuration());
