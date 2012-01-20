@@ -56,7 +56,7 @@ public class Library {
 				albums = new JSONDeserializer<List<AlbumModel>>()
 						.deserialize(content);
 			} catch (IOException e) {
-				// do nothing
+				e.printStackTrace();
 			}
 		}
 	}
@@ -105,7 +105,9 @@ public class Library {
 									songModel.setId(song.getId());
 									songModel.setArtist(song.getArtist());
 									songModel.setTitle(song.getTitle());
-									songModel.setAlbum(albumModel);
+									songModel.setAlbum(albumModel.getName());
+									songModel.setCoverId(albumModel
+											.getCoverId());
 									songModel.setTrack(song.getTrack());
 									songModel.setSize(song.getSize());
 									songModel.setDuration(song.getDuration());

@@ -1,18 +1,16 @@
 package be.hehehe.supersonic.panels;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
-import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.events.SelectedSongChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
@@ -25,26 +23,27 @@ public class CoverPanel extends JPanel {
 	@Inject
 	SubsonicService subsonicService;
 
-	private JLabel label;
-
-	@PostConstruct
-	public void init() {
-		setLayout(new MigLayout("", "[]", "[]"));
-		label = new JLabel();
-		add(label, "cell 0 0,grow");
-	}
+	private BufferedImage image;
 
 	public void loadCover(@Observes final SelectedSongChangedEvent e) {
 		new SwingWorker<Object, Void>() {
 			@Override
 			protected Object doInBackground() throws Exception {
 				SongModel song = e.getSong();
-				BufferedImage image = ImageIO.read(subsonicService
-						.invokeBinary("getCoverArt", new Param(song.getAlbum()
-								.getCoverId())));
-				label.setIcon(new ImageIcon(image));
+				image = ImageIO.read(subsonicService.invokeBinary(
+						"getCoverArt", new Param(song.getCoverId())));
+				repaint();
 				return null;
 			}
 		}.execute();
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		Dimension size = getSize();
+		if (image != null && size.width > 0) {
+			g.drawImage(image, 0, 0, size.width, size.height, 0, 0,
+					image.getWidth(null), image.getHeight(null), null);
+		}
 	}
 }

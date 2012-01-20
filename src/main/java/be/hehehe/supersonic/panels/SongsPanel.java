@@ -55,10 +55,12 @@ public class SongsPanel extends JPanel {
 				new ListSelectionListener() {
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
-						int row = table.convertRowIndexToModel(table
-								.getSelectedRow());
-						songEvent.fire(new SelectedSongChangedEvent(tableModel
-								.get(row)));
+						if (!e.getValueIsAdjusting()) {
+							int row = table.convertRowIndexToModel(table
+									.getSelectedRow());
+							songEvent.fire(new SelectedSongChangedEvent(
+									tableModel.get(row)));
+						}
 					}
 				});
 

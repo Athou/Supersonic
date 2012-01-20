@@ -40,7 +40,7 @@ public class SongsTableModel extends AbstractTableModel {
 		case 0:
 			return song.getArtist();
 		case 1:
-			return song.getAlbum().getName();
+			return song.getAlbum();
 		case 2:
 			return song.getTitle();
 		case 3:
