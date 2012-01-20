@@ -2,6 +2,7 @@ package be.hehehe.supersonic;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -36,9 +37,11 @@ public class SupersonicMenu extends JMenuBar {
 	public void init() {
 
 		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic(KeyEvent.VK_F);
 		add(fileMenu);
 
 		JMenuItem settingsMenu = new JMenuItem("Settings...");
+		settingsMenu.setMnemonic(KeyEvent.VK_S);
 		settingsMenu.setIcon(iconService.getIcon("cog"));
 		fileMenu.add(settingsMenu);
 		settingsMenu.addActionListener(new ActionListener() {
@@ -49,6 +52,7 @@ public class SupersonicMenu extends JMenuBar {
 		});
 
 		JMenuItem refreshMenu = new JMenuItem("Refresh Library");
+		refreshMenu.setMnemonic(KeyEvent.VK_R);
 		refreshMenu.setIcon(iconService.getIcon("arrow_rotate_clockwise"));
 		fileMenu.add(refreshMenu);
 		refreshMenu.addActionListener(refreshAction);
@@ -56,6 +60,7 @@ public class SupersonicMenu extends JMenuBar {
 		fileMenu.add(new JSeparator());
 
 		JMenuItem quitMenu = new JMenuItem("Quit");
+		quitMenu.setMnemonic(KeyEvent.VK_Q);
 		fileMenu.add(quitMenu);
 		quitMenu.addActionListener(new ActionListener() {
 			@Override

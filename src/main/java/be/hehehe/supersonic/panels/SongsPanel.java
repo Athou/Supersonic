@@ -18,6 +18,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTable;
 
+import be.hehehe.supersonic.Player.State;
 import be.hehehe.supersonic.events.LibraryChangedEvent;
 import be.hehehe.supersonic.events.PlayingSongChangedEvent;
 import be.hehehe.supersonic.events.SelectedSongChangedEvent;
@@ -81,7 +82,7 @@ public class SongsPanel extends JPanel {
 					int row = table.convertRowIndexToModel(table
 							.getSelectedRow());
 					playingSongEvent.fire(new PlayingSongChangedEvent(
-							tableModel.get(row)));
+							tableModel.get(row), State.PLAY));
 				}
 			}
 

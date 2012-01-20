@@ -1,5 +1,6 @@
 package be.hehehe.supersonic;
 
+import java.awt.Frame;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -52,7 +53,13 @@ public class SupersonicTray {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					supersonic.showSupersonic();
+					System.out.println(supersonic.getState());
+					if (supersonic.isVisible()) {
+						supersonic.hideSupersonic();
+					} else {
+						supersonic.showSupersonic();
+					}
+
 				}
 			}
 		});

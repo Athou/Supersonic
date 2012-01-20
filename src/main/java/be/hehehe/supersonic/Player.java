@@ -1,9 +1,9 @@
 package be.hehehe.supersonic;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Executors;
 
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -11,33 +11,88 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import javax.swing.SwingWorker;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ObjectUtils;
+import org.jdesktop.swingx.JXErrorPane;
+
+import be.hehehe.supersonic.events.PlayingSongChangedEvent;
+import be.hehehe.supersonic.model.SongModel;
+import be.hehehe.supersonic.service.SubsonicService;
+import be.hehehe.supersonic.service.SubsonicService.Param;
+import be.hehehe.supersonic.utils.SupersonicException;
 
 @Singleton
 public class Player {
 
-	private boolean interrupted;
+	@Inject
+	SubsonicService subsonicService;
 
-	public void start(final InputStream inputStream) {
-		interrupted = false;
+	public enum State {
+		PLAY, PAUSE, STOP;
+	}
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				play(inputStream);
+	private State state = State.STOP;
+	private SongModel currentSong;
+
+	private SourceDataLine line;
+	private AudioInputStream din;
+
+	public void stateChanged(@Observes PlayingSongChangedEvent e) {
+
+		State state = e.getState();
+		if (state == State.STOP) {
+			stop();
+		} else if (state == State.PAUSE) {
+			pause();
+		} else if (state == State.PLAY) {
+			boolean sameSong = ObjectUtils.equals(e.getSong(), currentSong);
+			if (sameSong) {
+				unpause();
+			} else {
+				play(e.getSong().getId());
 			}
-		};
-		Executors.newCachedThreadPool().execute(runnable);
+		}
+	}
+
+	public void play(final String songId) {
+		stop();
+		new SwingWorker<Object, Void>() {
+			@Override
+			protected Object doInBackground() throws Exception {
+				InputStream stream = subsonicService.invokeBinary("stream",
+						new Param(songId));
+				start(stream);
+				return null;
+			}
+		}.execute();
 	}
 
 	public void stop() {
-		interrupted = true;
+		state = State.STOP;
+
+		if (line != null) {
+			line.drain();
+			line.stop();
+			line.close();
+		}
+		IOUtils.closeQuietly(din);
+		line = null;
+		din = null;
 	}
 
-	private void play(InputStream inputStream) {
+	public void pause() {
+		state = State.PAUSE;
+	}
+
+	public void unpause() {
+		state = State.PLAY;
+	}
+
+	private void start(InputStream inputStream) {
 		AudioInputStream in = null;
-		AudioInputStream din = null;
+		state = State.PLAY;
 		try {
 			in = AudioSystem.getAudioInputStream(inputStream);
 			AudioFormat baseFormat = in.getFormat();
@@ -51,32 +106,29 @@ public class Player {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			IOUtils.closeQuietly(inputStream);
-			IOUtils.closeQuietly(in);
-			IOUtils.closeQuietly(din);
+			stop();
 		}
 
 	}
 
 	private void rawplay(AudioFormat targetFormat, AudioInputStream din)
-			throws IOException, LineUnavailableException {
+			throws Exception {
 		byte[] data = new byte[4096];
-		SourceDataLine line = getLine(targetFormat);
+		line = getLine(targetFormat);
 		if (line != null) {
 			// Start
 			line.start();
 			int nBytesRead = 0;
 			int nBytesWritten = 0;
-			while (nBytesRead != -1 && !interrupted) {
+			while (nBytesRead != -1 && state != State.STOP) {
+
+				if (state == State.PAUSE) {
+					Thread.sleep(300);
+				}
 				nBytesRead = din.read(data, 0, data.length);
 				if (nBytesRead != -1)
 					nBytesWritten = line.write(data, 0, nBytesRead);
 			}
-			// Stop
-			line.drain();
-			line.stop();
-			line.close();
-			IOUtils.closeQuietly(din);
 		}
 	}
 

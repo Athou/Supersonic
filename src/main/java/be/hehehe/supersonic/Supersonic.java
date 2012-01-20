@@ -50,8 +50,6 @@ public class Supersonic extends JFrame {
 	@Inject
 	Logger log;
 
-	private int windowState = Frame.NORMAL;
-
 	@PostConstruct
 	public void init() {
 		setTitle(TITLE);
@@ -88,7 +86,7 @@ public class Supersonic extends JFrame {
 			addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowIconified(WindowEvent e) {
-					hideSupersonic(e.getOldState());
+					hideSupersonic();
 				}
 			});
 		}
@@ -108,14 +106,15 @@ public class Supersonic extends JFrame {
 		setTitle(sb.toString());
 	}
 
-	public void hideSupersonic(int oldState) {
-		windowState = oldState;
+	public void hideSupersonic() {
 		setVisible(false);
 	}
 
 	public void showSupersonic() {
-		setState(windowState);
+		setState(Frame.NORMAL);
 		setVisible(true);
+		toFront();
+		repaint();
 	}
 
 }
