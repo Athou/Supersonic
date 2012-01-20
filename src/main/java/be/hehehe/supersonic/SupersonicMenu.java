@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -17,7 +17,7 @@ import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.Library;
 
 @SuppressWarnings("serial")
-@Named
+@Singleton
 public class SupersonicMenu extends JMenuBar {
 
 	@Inject

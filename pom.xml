@@ -182,5 +182,10 @@
 			<artifactId>substance</artifactId>
 			<version>7.0</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.flexjson</groupId>
+			<artifactId>flexjson</artifactId>
+			<version>2.1</version>
+		</dependency>
 	</dependencies>
 </project>

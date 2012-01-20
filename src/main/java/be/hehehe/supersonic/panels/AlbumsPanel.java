@@ -4,11 +4,13 @@ import java.awt.FlowLayout;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.JPanel;
 
 import be.hehehe.supersonic.service.Library;
 
 @SuppressWarnings("serial")
+@Singleton
 public class AlbumsPanel extends JPanel {
 
 	@Inject

@@ -2,10 +2,10 @@ package be.hehehe.supersonic.service;
 
 import java.net.URL;
 
-import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.swing.ImageIcon;
 
-@Named
+@Singleton
 public class IconService {
 
 	public ImageIcon getIcon(String iconName) {

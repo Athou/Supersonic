@@ -3,7 +3,11 @@ package be.hehehe.supersonic.panels;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -14,7 +18,8 @@ import be.hehehe.supersonic.model.SongsTableModel;
 import be.hehehe.supersonic.service.Library;
 
 @SuppressWarnings("serial")
-public class SongsPanel extends JPanel {
+@Singleton
+public class SongsPanel extends JScrollPane {
 
 	@Inject
 	Library library;
@@ -28,10 +33,16 @@ public class SongsPanel extends JPanel {
 	}
 
 	private void buildFrame() {
-		setLayout(new MigLayout("", "[grow]", "[grow]"));
+		JPanel panel = new JPanel();
+		panel.setLayout(new MigLayout("", "[grow]", "[grow]"));
+		setViewportView(panel);
 
 		table = new JXTable();
-		add(table, "cell 0 0,grow");
+		table.setCellSelectionEnabled(false);
+		table.setRowSelectionAllowed(true);
+		table.setColumnSelectionAllowed(false);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		panel.add(table, "cell 0 0,grow");
 		tableModel = new SongsTableModel(library.getSongs());
 		table.setModel(tableModel);
 	}

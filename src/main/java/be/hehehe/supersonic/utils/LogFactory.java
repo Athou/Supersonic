@@ -2,9 +2,11 @@ package be.hehehe.supersonic.utils;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Singleton;
 
 import org.apache.log4j.Logger;
 
+@Singleton
 public class LogFactory {
 
 	@Produces

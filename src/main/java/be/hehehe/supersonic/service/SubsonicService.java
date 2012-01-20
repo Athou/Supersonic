@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
@@ -22,7 +22,7 @@ import org.subsonic.restapi.Response;
 import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.URLBuilder;
 
-@Named
+@Singleton
 public class SubsonicService {
 
 	@Inject

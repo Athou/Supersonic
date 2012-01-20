@@ -6,7 +6,6 @@ public class LibraryChangedEvent {
 	private boolean done;
 
 	public LibraryChangedEvent(int progress, int total, boolean done) {
-		super();
 		this.total = total;
 		this.progress = progress;
 		this.done = done;

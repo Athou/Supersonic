@@ -7,6 +7,7 @@ import java.net.Proxy.Type;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
+@Singleton
 public class SettingsDialog extends JDialog {
 
 	@Inject

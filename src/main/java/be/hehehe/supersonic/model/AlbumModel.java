@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class AlbumModel {
+public class AlbumModel implements Comparable<AlbumModel> {
 	private String id;
 	private String name;
 	private String artist;
@@ -15,6 +15,13 @@ public class AlbumModel {
 	public String toString() {
 		return "AlbumModel [id=" + id + ", name=" + name + ", artist=" + artist
 				+ ", coverId=" + coverId + ", songs=" + songs + "]";
+	}
+
+	@Override
+	public int compareTo(AlbumModel o) {
+		String thisName = artist + name;
+		String otherName = o.getArtist() + o.getName();
+		return thisName.compareTo(otherName);
 	}
 
 	public String getId() {
