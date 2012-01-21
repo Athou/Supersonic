@@ -14,12 +14,16 @@ import javax.swing.JSplitPane;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import be.hehehe.supersonic.panels.ControlsPanel;
 import be.hehehe.supersonic.panels.CoverPanel;
+import be.hehehe.supersonic.panels.SearchPanel;
+import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.service.IconService;
+import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -32,6 +36,9 @@ public class Supersonic extends JFrame {
 	private static final String TITLE = "Supersonic";
 
 	@Inject
+	PreferencesService preferencesService;
+
+	@Inject
 	IconService iconService;
 
 	@Inject
@@ -41,6 +48,9 @@ public class Supersonic extends JFrame {
 	SupersonicTray supersonicTray;
 
 	@Inject
+	SearchPanel searchPanel;
+
+	@Inject
 	CoverPanel coverPanel;
 
 	@Inject
@@ -48,6 +58,9 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	ControlsPanel controlsPanel;
+
+	@Inject
+	SettingsDialog settingsDialog;
 
 	@Inject
 	Logger log;
@@ -64,7 +77,7 @@ public class Supersonic extends JFrame {
 
 		setJMenuBar(supersonicMenu);
 		getContentPane().setLayout(
-				new MigLayout("insets 0", "[grow]", "[grow]"));
+				new MigLayout("", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
 		mainSplitPane.setResizeWeight(0.25);
@@ -76,6 +89,7 @@ public class Supersonic extends JFrame {
 		mainSplitPane.setLeftComponent(leftSplitPane);
 
 		leftSplitPane.setBottomComponent(coverPanel);
+		leftSplitPane.setTopComponent(searchPanel);
 
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
@@ -92,6 +106,10 @@ public class Supersonic extends JFrame {
 					hideSupersonic();
 				}
 			});
+		}
+
+		if (StringUtils.isBlank(preferencesService.getSubsonicHostname())) {
+			settingsDialog.setVisible(true);
 		}
 	}
 

@@ -82,6 +82,13 @@ public class SongsTableModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 
+	public void add(SongModel song) {
+		if (song != null) {
+			songs.add(song);
+		}
+		fireTableDataChanged();
+	}
+
 	public SongModel get(int i) {
 		return songs.get(i);
 	}

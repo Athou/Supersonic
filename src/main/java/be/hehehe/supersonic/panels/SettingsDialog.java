@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.PreferencesService;
@@ -174,7 +176,12 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void save() {
-		preferencesService.setSubsonicHostname(addressTxt.getText());
+		String hostname = addressTxt.getText();
+		if (StringUtils.isNotBlank(hostname) && hostname.endsWith(".view")) {
+			hostname = hostname.substring(hostname.lastIndexOf("/"));
+		}
+
+		preferencesService.setSubsonicHostname(hostname);
 		preferencesService.setSubsonicLogin(loginTxt.getText());
 		preferencesService.setSubsonicPassword(new String(passwordTxt
 				.getPassword()));

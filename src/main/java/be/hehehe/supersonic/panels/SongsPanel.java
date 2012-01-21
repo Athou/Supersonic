@@ -88,6 +88,13 @@ public class SongsPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(scrollPane, "cell 0 0,grow");
+		
+		if(tableModel.getRowCount() == 0) {
+			SongModel song = new SongModel();
+			song.setArtist("Library empty");
+			song.setTitle("Refresh through the File menu");
+			tableModel.add(song);
+		}
 		table.packAll();
 	}
 
@@ -101,7 +108,8 @@ public class SongsPanel extends JPanel {
 					tableModel.addAll(library.getSongs());
 					table.packAll();
 				}
-			}});
+			}
+		});
 	}
 
 	public void onSongChanged(@Observes final SongEvent e) {
