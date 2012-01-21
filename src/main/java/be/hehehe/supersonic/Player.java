@@ -55,7 +55,11 @@ public class Player {
 		if (type == Type.STOP) {
 			stop();
 		} else if (type == Type.PAUSE) {
-			pause();
+			if (state == State.PAUSE) {
+				unpause();
+			} else {
+				pause();
+			}
 		} else if (type == Type.PLAY) {
 			if (state == State.PAUSE) {
 				unpause();

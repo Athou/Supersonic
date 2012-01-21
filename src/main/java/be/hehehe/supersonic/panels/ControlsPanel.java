@@ -41,7 +41,6 @@ public class ControlsPanel extends JPanel {
 	@Inject
 	Event<VolumeChangedEvent> volumeEvent;
 
-	private boolean play = false;
 	private int seekbarProgress = 0;
 	private SongModel currentSong;
 
@@ -52,29 +51,30 @@ public class ControlsPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
-		setLayout(new MigLayout("insets 0", "[][][][][grow]", "[][]"));
+		setLayout(new MigLayout("insets 0", "[][][][][grow][][]", "[][]"));
 
-		JButton btnPrev = new JButton();
-		add(btnPrev, "cell 0 0");
-		btnPrev.setIcon(iconService.getIcon("back"));
-		// TODO back button
-		btnPrev.setToolTipText("Does not work atm");
-		btnPrev.setFocusable(false);
-
-		final JButton btnPlaypause = new JButton();
-		btnPlaypause.setIcon(iconService.getIcon("play"));
-		add(btnPlaypause, "cell 1 0");
-		btnPlaypause.setFocusable(false);
-		btnPlaypause.addActionListener(new ActionListener() {
+		final JButton btnPlay = new JButton();
+		btnPlay.setIcon(iconService.getIcon("play"));
+		add(btnPlay, "cell 0 0");
+		btnPlay.setFocusable(false);
+		btnPlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				play = !play;
-				Type type = play ? Type.PLAY : Type.PAUSE;
-				String iconName = play ? "pause" : "play";
-				btnPlaypause.setIcon(iconService.getIcon(iconName));
-				SongEvent songEvent = new SongEvent(type);
+				btnPlay.setIcon(iconService.getIcon("play"));
+				SongEvent songEvent = new SongEvent(Type.PLAY);
 				songEvent.setSong(songsPanel.getSelectedSong());
 				event.fire(songEvent);
+			}
+		});
+
+		JButton btnPause = new JButton();
+		btnPause.setIcon(iconService.getIcon("pause"));
+		btnPause.setFocusable(false);
+		add(btnPause, "cell 1 0");
+		btnPause.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				event.fire(new SongEvent(Type.PAUSE));
 			}
 		});
 
@@ -118,7 +118,7 @@ public class ControlsPanel extends JPanel {
 		});
 
 		chckbxShuffle = new JCheckBox("Shuffle");
-		add(chckbxShuffle, "flowx,cell 5 0");
+		add(chckbxShuffle, "cell 5 0");
 
 		chckbxRepeat = new JCheckBox("Repeat");
 		add(chckbxRepeat, "cell 6 0");
