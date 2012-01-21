@@ -102,6 +102,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<finalName>supersonic</finalName>
 	</build>
 
 	<dependencies>

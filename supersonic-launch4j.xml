@@ -1,8 +1,8 @@
 <launch4jConfig>
-  <dontWrapJar>false</dontWrapJar>
+  <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>target\Supersonic-1.0.0.jar</jar>
-  <outfile>target\supersonic-1.0.0.exe</outfile>
+  <jar>supersonic.jar</jar>
+  <outfile>supersonic.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
@@ -12,7 +12,7 @@
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>src\main\resources\icons\supersonic-big.png</icon>
+  <icon>src\main\resources\icons\supersonic.ico</icon>
   <classPath>
     <mainClass>be.hehehe.supersonic.Main</mainClass>
     <cp>weld-se-core-1.1.5.Final.jar</cp>

@@ -9,3 +9,5 @@ target
 
 # Internal cache
 cache
+# Log file
+supersonic.log
