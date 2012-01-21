@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -90,25 +91,35 @@ public class SongsPanel extends JPanel {
 		table.packAll();
 	}
 
-	public void onLibraryRefresh(@Observes LibraryChangedEvent e) {
-		if (e.isDone()) {
-			table.clearSelection();
-			tableModel.clear();
-			tableModel.addAll(library.getSongs());
-			table.packAll();
-		}
+	public void onLibraryRefresh(@Observes final LibraryChangedEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (e.isDone()) {
+					table.clearSelection();
+					tableModel.clear();
+					tableModel.addAll(library.getSongs());
+					table.packAll();
+				}
+			}});
 	}
 
-	public void onSongChanged(@Observes SongEvent e) {
-		if (e.getType() == Type.PLAY) {
-			if (e.getSong() != null
-					&& (table.getSelectedRow() == -1 || !e.getSong().equals(
-							getSelectedSong()))) {
-				int row = tableModel.indexOf(e.getSong());
-				row = table.convertRowIndexToView(row);
-				table.changeSelection(row, 0, false, false);
+	public void onSongChanged(@Observes final SongEvent e) {
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (e.getType() == Type.PLAY) {
+					if (e.getSong() != null
+							&& (table.getSelectedRow() == -1 || !e.getSong()
+									.equals(getSelectedSong()))) {
+						int row = tableModel.indexOf(e.getSong());
+						row = table.convertRowIndexToView(row);
+						table.changeSelection(row, 0, false, false);
+					}
+				}
 			}
-		}
+		});
 	}
 
 	public SongModel getSelectedSong() {

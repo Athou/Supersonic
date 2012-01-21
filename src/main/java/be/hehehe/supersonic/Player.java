@@ -17,7 +17,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ObjectUtils;
 
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
@@ -71,7 +70,6 @@ public class Player {
 	public void volumeChanged(@Observes VolumeChangedEvent e) {
 		volume = e.getVolume();
 		setGain();
-
 	}
 
 	private void setGain() {

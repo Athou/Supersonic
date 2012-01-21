@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -161,19 +162,26 @@ public class ControlsPanel extends JPanel {
 		event.fire(songEvent);
 	}
 
-	public void onProgress(@Observes SongEvent e) {
-		if (e.getType() == Type.PROGRESS) {
-			currentSong = e.getSong();
+	public void onProgress(@Observes final SongEvent e) {
 
-			int percentage = e.getPercentage();
-			seekbarProgress = percentage;
-			seekBar.setValue(percentage);
-			progressText.setText(SwingUtils.formatDuration(e
-					.getCurrentPosition())
-					+ "/"
-					+ SwingUtils.formatDuration(e.getTotal()));
-		} else if (e.getType() == Type.FINISHED) {
-			nextSong();
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (e.getType() == Type.PROGRESS) {
+					currentSong = e.getSong();
+
+					int percentage = e.getPercentage();
+					seekbarProgress = percentage;
+					seekBar.setValue(percentage);
+					progressText.setText(SwingUtils.formatDuration(e
+							.getCurrentPosition())
+							+ "/"
+							+ SwingUtils.formatDuration(e.getTotal()));
+				} else if (e.getType() == Type.FINISHED) {
+					nextSong();
+				}
+			}
+		});
+
 	}
 }
