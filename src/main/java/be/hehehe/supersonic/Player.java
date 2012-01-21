@@ -3,6 +3,7 @@ package be.hehehe.supersonic;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ObjectUtils;
 
 import be.hehehe.supersonic.events.PlayingSongChangedEvent;
+import be.hehehe.supersonic.events.PlayingSongProgressEvent;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
@@ -30,12 +32,16 @@ public class Player {
 	@Inject
 	SubsonicService subsonicService;
 
+	@Inject
+	Event<PlayingSongProgressEvent> progressEvent;
+
 	public enum State {
-		PLAY, PAUSE, STOP;
+		PLAY, PAUSE, STOP, SKIP;
 	}
 
 	private State state = State.STOP;
 	private SongModel currentSong;
+	private int skipToPercentage = -1;
 
 	private SourceDataLine line;
 	private AudioInputStream din;
@@ -54,8 +60,10 @@ public class Player {
 			if (sameSong) {
 				unpause();
 			} else {
-				play(e.getSong().getId());
+				play(e.getSong());
 			}
+		} else if (state == State.SKIP) {
+			skipTo(e.getSkipTo());
 		}
 	}
 
@@ -83,13 +91,14 @@ public class Player {
 		}
 	}
 
-	public void play(final String songId) {
+	public void play(final SongModel song) {
 		stop();
+		currentSong = song;
 		new SwingWorker<Object, Void>() {
 			@Override
 			protected Object doInBackground() throws Exception {
 				InputStream stream = subsonicService.invokeBinary("stream",
-						new Param(songId));
+						new Param(song.getId()));
 				start(stream);
 				return null;
 			}
@@ -124,6 +133,11 @@ public class Player {
 		state = State.PLAY;
 	}
 
+	public void skipTo(int skipToPercentage) {
+		state = State.SKIP;
+		this.skipToPercentage = skipToPercentage;
+	}
+
 	private void start(InputStream inputStream) {
 		AudioInputStream in = null;
 		state = State.PLAY;
@@ -152,18 +166,29 @@ public class Player {
 		line = getLine(targetFormat);
 		setGain();
 		if (line != null) {
-			// Start
 			line.start();
-			int nBytesRead = 0;
-			int nBytesWritten = 0;
-			while (nBytesRead != -1 && state != State.STOP) {
+			int read = 0;
+
+			din.mark(Integer.MAX_VALUE);
+			while (read != -1 && state != State.STOP) {
 
 				if (state == State.PAUSE) {
 					Thread.sleep(300);
+				} else if (state == State.SKIP) {
+					din.reset();
+					din.skip((currentSong.getSize() / 100) * skipToPercentage);
+					state = State.PLAY;
 				}
-				nBytesRead = din.read(data, 0, data.length);
-				if (nBytesRead != -1)
-					nBytesWritten += line.write(data, 0, nBytesRead);
+
+				read = din.read(data, 0, data.length);
+				if (read != -1) {
+					line.write(data, 0, read);
+
+					PlayingSongProgressEvent event = new PlayingSongProgressEvent(
+							line.getMicrosecondPosition() / 1000000,
+							currentSong.getDuration());
+					progressEvent.fire(event);
+				}
 			}
 		}
 	}

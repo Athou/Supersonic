@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JButton;
@@ -16,6 +17,7 @@ import javax.swing.event.ChangeListener;
 import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.Player.State;
 import be.hehehe.supersonic.events.PlayingSongChangedEvent;
+import be.hehehe.supersonic.events.PlayingSongProgressEvent;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.service.IconService;
 
@@ -36,6 +38,10 @@ public class ControlsPanel extends JPanel {
 	Event<VolumeChangedEvent> volumeEvent;
 
 	private boolean pause = false;
+
+	private JSlider seekBar;
+
+	private int seekbarProgress = 0;
 
 	@PostConstruct
 	public void init() {
@@ -100,9 +106,29 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
-		JSlider seekBar = new JSlider();
+		seekBar = new JSlider();
 		seekBar.setFocusable(false);
+		seekBar.setMinimum(0);
+		seekBar.setMaximum(100);
+		seekBar.setValue(0);
 		add(seekBar, "cell 0 1 5 1,growx");
+		seekBar.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				int percentage = source.getValue();
+				if (!source.getValueIsAdjusting()
+						&& percentage != seekbarProgress) {
+					songChangedEvent.fire(new PlayingSongChangedEvent(null,
+							State.SKIP, percentage));
+				}
+			}
+		});
 	}
 
+	public void onProgress(@Observes PlayingSongProgressEvent e) {
+		int percentage = e.getPercentage();
+		seekbarProgress = percentage;
+		seekBar.setValue(percentage);
+	}
 }
