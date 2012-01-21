@@ -44,7 +44,8 @@ public class ControlsPanel extends JPanel {
 		JButton btnPrev = new JButton("Prev");
 		add(btnPrev, "cell 0 0");
 
-		JButton btnPlaypause = new JButton("Play/Pause");
+		JButton btnPlaypause = new JButton();
+		btnPlaypause.setIcon(iconService.getIcon("play"));
 		add(btnPlaypause, "cell 1 0");
 		btnPlaypause.addActionListener(new ActionListener() {
 			@Override
@@ -55,7 +56,9 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
-		JButton btnStop = new JButton("Stop");
+		JButton btnStop = new JButton();
+		btnStop.setIcon(iconService.getIcon("stop"));
+		btnStop.setFocusable(false);
 		add(btnStop, "cell 2 0");
 		btnStop.addActionListener(new ActionListener() {
 			@Override
