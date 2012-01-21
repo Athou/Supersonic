@@ -12,6 +12,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import be.hehehe.supersonic.panels.AboutDialog;
 import be.hehehe.supersonic.panels.LibraryRefreshAction;
 import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.service.IconService;
@@ -23,6 +24,9 @@ public class SupersonicMenu extends JMenuBar {
 
 	@Inject
 	SettingsDialog settingsDialog;
+
+	@Inject
+	AboutDialog aboutDialog;
 
 	@Inject
 	IconService iconService;
@@ -39,6 +43,10 @@ public class SupersonicMenu extends JMenuBar {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		add(fileMenu);
+
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic(KeyEvent.VK_H);
+		add(helpMenu);
 
 		JMenuItem settingsMenu = new JMenuItem("Settings...");
 		settingsMenu.setMnemonic(KeyEvent.VK_S);
@@ -66,6 +74,17 @@ public class SupersonicMenu extends JMenuBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
+			}
+		});
+
+		JMenuItem aboutMenu = new JMenuItem("About...");
+		aboutMenu.setMnemonic(KeyEvent.VK_A);
+		aboutMenu.setIcon(iconService.getIcon("help"));
+		helpMenu.add(aboutMenu);
+		aboutMenu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				aboutDialog.setVisible(true);
 			}
 		});
 

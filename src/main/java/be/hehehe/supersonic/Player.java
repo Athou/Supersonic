@@ -163,7 +163,7 @@ public class Player {
 				}
 				nBytesRead = din.read(data, 0, data.length);
 				if (nBytesRead != -1)
-					nBytesWritten = line.write(data, 0, nBytesRead);
+					nBytesWritten += line.write(data, 0, nBytesRead);
 			}
 		}
 	}

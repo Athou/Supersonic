@@ -66,7 +66,7 @@ public class Supersonic extends JFrame {
 		setVisible(true);
 
 		setJMenuBar(supersonicMenu);
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
+		getContentPane().setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
 		mainSplitPane.setResizeWeight(0.2);
@@ -80,10 +80,10 @@ public class Supersonic extends JFrame {
 		leftSplitPane.setBottomComponent(coverPanel);
 
 		JPanel rightPanel = new JPanel();
-		rightPanel.setLayout(new MigLayout("", "[grow]", "[][grow]"));
+		rightPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 		mainSplitPane.setRightComponent(rightPanel);
 
-		rightPanel.add(controlsPanel, "cell 0 0");
+		rightPanel.add(controlsPanel, "cell 0 0,grow");
 		rightPanel.add(songsPanel, "cell 0 1,grow");
 
 		boolean trayAdded = supersonicTray.addTray(this);

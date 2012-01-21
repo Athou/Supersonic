@@ -26,6 +26,7 @@ public class Main {
 
 				WeldContainer weld = new Weld().initialize();
 				weld.instance().select(Supersonic.class).get();
+
 			}
 		});
 	}

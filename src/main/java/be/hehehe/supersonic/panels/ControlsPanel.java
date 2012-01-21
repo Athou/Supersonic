@@ -39,14 +39,17 @@ public class ControlsPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
-		setLayout(new MigLayout("", "[][][][][]", "[grow][grow]"));
+		setLayout(new MigLayout("insets 0", "[][][][][grow]", "[][]"));
 
-		JButton btnPrev = new JButton("Prev");
+		JButton btnPrev = new JButton();
 		add(btnPrev, "cell 0 0");
+		btnPrev.setIcon(iconService.getIcon("back"));
+		btnPrev.setFocusable(false);
 
 		JButton btnPlaypause = new JButton();
 		btnPlaypause.setIcon(iconService.getIcon("play"));
 		add(btnPlaypause, "cell 1 0");
+		btnPlaypause.setFocusable(false);
 		btnPlaypause.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -68,8 +71,10 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
-		JButton btnNext = new JButton("Next");
+		JButton btnNext = new JButton();
 		add(btnNext, "cell 3 0");
+		btnNext.setIcon(iconService.getIcon("next"));
+		btnNext.setFocusable(false);
 		btnNext.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -79,10 +84,11 @@ public class ControlsPanel extends JPanel {
 		});
 
 		JSlider volumeSlider = new JSlider();
+		volumeSlider.setFocusable(false);
 		volumeSlider.setMinimum(0);
 		volumeSlider.setMaximum(100);
 		volumeSlider.setValue(50);
-		add(volumeSlider, "cell 4 0");
+		add(volumeSlider, "cell 4 0,growx");
 		volumeSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -95,6 +101,7 @@ public class ControlsPanel extends JPanel {
 		});
 
 		JSlider seekBar = new JSlider();
+		seekBar.setFocusable(false);
 		add(seekBar, "cell 0 1 5 1,growx");
 	}
 

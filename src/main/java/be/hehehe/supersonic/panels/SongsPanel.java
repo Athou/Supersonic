@@ -49,7 +49,7 @@ public class SongsPanel extends JPanel {
 
 	private void buildFrame() {
 
-		setLayout(new MigLayout("", "[grow]", "[grow]"));
+		setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
 		table = new JXTable();
 		table.setCellSelectionEnabled(false);
@@ -58,6 +58,7 @@ public class SongsPanel extends JPanel {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setColumnControlVisible(true);
 		table.setFillsViewportHeight(true);
+		table.setFocusable(false);
 		tableModel = new SongsTableModel(library.getSongs());
 		table.setModel(tableModel);
 		table.getSelectionModel().addListSelectionListener(
