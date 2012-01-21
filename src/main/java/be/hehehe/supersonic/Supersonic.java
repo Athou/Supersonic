@@ -6,7 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JFrame;
@@ -17,8 +16,6 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
-import be.hehehe.supersonic.events.PlayingSongChangedEvent;
-import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.panels.ControlsPanel;
 import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SongsPanel;
@@ -66,7 +63,8 @@ public class Supersonic extends JFrame {
 		setVisible(true);
 
 		setJMenuBar(supersonicMenu);
-		getContentPane().setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
+		getContentPane().setLayout(
+				new MigLayout("insets 0", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
 		mainSplitPane.setResizeWeight(0.2);
@@ -95,20 +93,6 @@ public class Supersonic extends JFrame {
 				}
 			});
 		}
-	}
-
-	public void playingSongChanged(@Observes PlayingSongChangedEvent e) {
-		StringBuilder sb = new StringBuilder(TITLE);
-		SongModel song = e.getSong();
-		if (song != null) {
-			sb.append(" | ");
-			sb.append(song.getArtist());
-			sb.append(" - ");
-			sb.append(song.getAlbum());
-			sb.append(" - ");
-			sb.append(song.getTitle());
-		}
-		setTitle(sb.toString());
 	}
 
 	public void hideSupersonic() {

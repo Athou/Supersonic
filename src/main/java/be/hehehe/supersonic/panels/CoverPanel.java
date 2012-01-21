@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
-import be.hehehe.supersonic.events.SelectedSongChangedEvent;
+import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.CoverArtService;
 
@@ -24,7 +24,7 @@ public class CoverPanel extends JPanel {
 
 	private BufferedImage image;
 
-	public void loadCover(@Observes final SelectedSongChangedEvent e) {
+	public void loadCover(@Observes final SongEvent e) {
 		new SwingWorker<Object, Void>() {
 			@Override
 			protected Object doInBackground() throws Exception {
@@ -39,7 +39,7 @@ public class CoverPanel extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		//TODO maintain aspect ratio
+		// TODO maintain aspect ratio
 		Dimension size = getSize();
 		if (image != null && size.width > 0) {
 			g.drawImage(image, 0, 0, size.width, size.height, 0, 0,

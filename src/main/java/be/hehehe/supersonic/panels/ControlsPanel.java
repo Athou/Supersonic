@@ -15,9 +15,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
-import be.hehehe.supersonic.Player.State;
-import be.hehehe.supersonic.events.PlayingSongChangedEvent;
-import be.hehehe.supersonic.events.PlayingSongProgressEvent;
+import be.hehehe.supersonic.events.SongEvent;
+import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.service.IconService;
 
@@ -32,12 +31,12 @@ public class ControlsPanel extends JPanel {
 	IconService iconService;
 
 	@Inject
-	Event<PlayingSongChangedEvent> songChangedEvent;
+	Event<SongEvent> event;
 
 	@Inject
 	Event<VolumeChangedEvent> volumeEvent;
 
-	private boolean pause = false;
+	private boolean play = false;
 
 	private JSlider seekBar;
 
@@ -50,18 +49,24 @@ public class ControlsPanel extends JPanel {
 		JButton btnPrev = new JButton();
 		add(btnPrev, "cell 0 0");
 		btnPrev.setIcon(iconService.getIcon("back"));
+		//TODO back button
+		btnPrev.setToolTipText("Does not work atm");
 		btnPrev.setFocusable(false);
 
-		JButton btnPlaypause = new JButton();
+		final JButton btnPlaypause = new JButton();
 		btnPlaypause.setIcon(iconService.getIcon("play"));
 		add(btnPlaypause, "cell 1 0");
 		btnPlaypause.setFocusable(false);
 		btnPlaypause.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				pause = !pause;
-				State state = pause ? State.PAUSE : State.PLAY;
-				songChangedEvent.fire(new PlayingSongChangedEvent(null, state));
+				play = !play;
+				Type type = play ? Type.PLAY : Type.PAUSE;
+				String iconName = play ? "pause" : "play";
+				btnPlaypause.setIcon(iconService.getIcon(iconName));
+				SongEvent songEvent = new SongEvent(type);
+				songEvent.setSong(songsPanel.getSelectedSong());
+				event.fire(songEvent);
 			}
 		});
 
@@ -72,8 +77,7 @@ public class ControlsPanel extends JPanel {
 		btnStop.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				songChangedEvent.fire(new PlayingSongChangedEvent(null,
-						State.STOP));
+				event.fire(new SongEvent(Type.STOP));
 			}
 		});
 
@@ -84,8 +88,9 @@ public class ControlsPanel extends JPanel {
 		btnNext.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				songChangedEvent.fire(new PlayingSongChangedEvent(songsPanel
-						.getNextSong(), State.PLAY));
+				SongEvent songEvent = new SongEvent(Type.PLAY);
+				songEvent.setSong(songsPanel.getNextSong());
+				event.fire(songEvent);
 			}
 		});
 
@@ -119,16 +124,19 @@ public class ControlsPanel extends JPanel {
 				int percentage = source.getValue();
 				if (!source.getValueIsAdjusting()
 						&& percentage != seekbarProgress) {
-					songChangedEvent.fire(new PlayingSongChangedEvent(null,
-							State.SKIP, percentage));
+					SongEvent songEvent = new SongEvent(Type.SKIP_TO);
+					songEvent.setSkipToPercentage(percentage);
+					event.fire(songEvent);
 				}
 			}
 		});
 	}
 
-	public void onProgress(@Observes PlayingSongProgressEvent e) {
-		int percentage = e.getPercentage();
-		seekbarProgress = percentage;
-		seekBar.setValue(percentage);
+	public void onProgress(@Observes SongEvent e) {
+		if (e.getType() == Type.PROGRESS) {
+			int percentage = e.getPercentage();
+			seekbarProgress = percentage;
+			seekBar.setValue(percentage);
+		}
 	}
 }

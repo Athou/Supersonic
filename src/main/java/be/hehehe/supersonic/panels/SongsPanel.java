@@ -18,10 +18,9 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTable;
 
-import be.hehehe.supersonic.Player.State;
 import be.hehehe.supersonic.events.LibraryChangedEvent;
-import be.hehehe.supersonic.events.PlayingSongChangedEvent;
-import be.hehehe.supersonic.events.SelectedSongChangedEvent;
+import be.hehehe.supersonic.events.SongEvent;
+import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.model.SongsTableModel;
 import be.hehehe.supersonic.service.Library;
@@ -34,10 +33,7 @@ public class SongsPanel extends JPanel {
 	Library library;
 
 	@Inject
-	Event<SelectedSongChangedEvent> selectedSongEvent;
-
-	@Inject
-	Event<PlayingSongChangedEvent> playingSongEvent;
+	Event<SongEvent> event;
 
 	private JXTable table;
 	private SongsTableModel tableModel;
@@ -68,9 +64,10 @@ public class SongsPanel extends JPanel {
 						if (!e.getValueIsAdjusting()) {
 							int selectedRow = table.getSelectedRow();
 							if (selectedRow >= 0) {
-								selectedSongEvent
-										.fire(new SelectedSongChangedEvent(
-												getSelectedSong()));
+								SongEvent songEvent = new SongEvent(
+										Type.SELECTION_CHANGED);
+								songEvent.setSong(getSelectedSong());
+								event.fire(songEvent);
 							}
 						}
 					}
@@ -79,11 +76,11 @@ public class SongsPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					playingSongEvent.fire(new PlayingSongChangedEvent(
-							getSelectedSong(), State.PLAY));
+					SongEvent songEvent = new SongEvent(Type.PLAY);
+					songEvent.setSong(getSelectedSong());
+					event.fire(songEvent);
 				}
 			}
-
 		});
 
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -101,25 +98,34 @@ public class SongsPanel extends JPanel {
 		}
 	}
 
-	public void onSongChanged(@Observes PlayingSongChangedEvent e) {
-		if (e.getSong() != null && !e.getSong().equals(getSelectedSong())) {
-			int row = tableModel.indexOf(e.getSong());
-			row = table.convertRowIndexToView(row);
-			table.changeSelection(row, 0, false, false);
+	public void onSongChanged(@Observes SongEvent e) {
+		if (e.getType() == Type.PLAY) {
+			if (e.getSong() != null
+					&& (table.getSelectedRow() == -1 || !e.getSong().equals(
+							getSelectedSong()))) {
+				int row = tableModel.indexOf(e.getSong());
+				row = table.convertRowIndexToView(row);
+				table.changeSelection(row, 0, false, false);
+			}
 		}
 	}
 
 	public SongModel getSelectedSong() {
-		int row = table.convertRowIndexToModel(table.getSelectedRow());
+		int selectedRow = table.getSelectedRow();
+		if (selectedRow == -1) {
+			selectedRow = 0;
+		}
+		int row = table.convertRowIndexToModel(selectedRow);
 		return tableModel.get(row);
 	}
 
 	public SongModel getNextSong() {
-		int row = table.convertRowIndexToModel(table.getSelectedRow());
+		int row = table.getSelectedRow();
 		row++;
 		if (tableModel.getRowCount() == row) {
 			row = 0;
 		}
+		row = table.convertRowIndexToModel(row);
 		return tableModel.get(row);
 	}
 }

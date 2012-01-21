@@ -19,8 +19,8 @@ import javax.swing.SwingWorker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ObjectUtils;
 
-import be.hehehe.supersonic.events.PlayingSongChangedEvent;
-import be.hehehe.supersonic.events.PlayingSongProgressEvent;
+import be.hehehe.supersonic.events.SongEvent;
+import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
@@ -33,9 +33,9 @@ public class Player {
 	SubsonicService subsonicService;
 
 	@Inject
-	Event<PlayingSongProgressEvent> progressEvent;
+	Event<SongEvent> event;
 
-	public enum State {
+	private enum State {
 		PLAY, PAUSE, STOP, SKIP;
 	}
 
@@ -48,22 +48,22 @@ public class Player {
 
 	private float volume = 0.5f;
 
-	public void stateChanged(@Observes PlayingSongChangedEvent e) {
+	public void stateChanged(@Observes SongEvent e) {
 
-		State state = e.getState();
-		if (state == State.STOP) {
+		Type type = e.getType();
+		if (type == Type.STOP) {
 			stop();
-		} else if (state == State.PAUSE) {
+		} else if (type == Type.PAUSE) {
 			pause();
-		} else if (state == State.PLAY) {
+		} else if (type == Type.PLAY) {
 			boolean sameSong = ObjectUtils.equals(e.getSong(), currentSong);
 			if (sameSong) {
 				unpause();
 			} else {
 				play(e.getSong());
 			}
-		} else if (state == State.SKIP) {
-			skipTo(e.getSkipTo());
+		} else if (type == Type.SKIP_TO) {
+			skipTo(e.getSkipToPercentage());
 		}
 	}
 
@@ -133,6 +133,10 @@ public class Player {
 		state = State.PLAY;
 	}
 
+	private void nextSong() {
+
+	}
+
 	public void skipTo(int skipToPercentage) {
 		state = State.SKIP;
 		this.skipToPercentage = skipToPercentage;
@@ -156,6 +160,7 @@ public class Player {
 			e.printStackTrace();
 		} finally {
 			stop();
+			nextSong();
 		}
 
 	}
@@ -181,13 +186,14 @@ public class Player {
 				}
 
 				read = din.read(data, 0, data.length);
-				if (read != -1) {
+				if (read != -1 && line != null) {
 					line.write(data, 0, read);
 
-					PlayingSongProgressEvent event = new PlayingSongProgressEvent(
-							line.getMicrosecondPosition() / 1000000,
-							currentSong.getDuration());
-					progressEvent.fire(event);
+					SongEvent songEvent = new SongEvent(Type.PROGRESS);
+					songEvent
+							.setCurrentPosition(line.getMicrosecondPosition() / 1000000);
+					songEvent.setTotal(currentSong.getDuration());
+					event.fire(songEvent);
 				}
 			}
 		}
