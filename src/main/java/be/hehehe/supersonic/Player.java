@@ -46,6 +46,8 @@ public class Player {
 	private SourceDataLine line;
 	private AudioInputStream din;
 
+	private Object mutex = new Object();
+
 	private float volume = 0.5f;
 
 	public void stateChanged(@Observes SongEvent e) {
@@ -56,8 +58,7 @@ public class Player {
 		} else if (type == Type.PAUSE) {
 			pause();
 		} else if (type == Type.PLAY) {
-			boolean sameSong = ObjectUtils.equals(e.getSong(), currentSong);
-			if (sameSong) {
+			if (state == State.PAUSE) {
 				unpause();
 			} else {
 				play(e.getSong());
@@ -108,14 +109,16 @@ public class Player {
 	public void stop() {
 		state = State.STOP;
 
-		if (line != null) {
-			line.stop();
-			line.drain();
-			line.close();
+		synchronized (mutex) {
+			if (line != null) {
+				line.stop();
+				line.drain();
+				line.close();
+			}
+			IOUtils.closeQuietly(din);
+			line = null;
+			din = null;
 		}
-		IOUtils.closeQuietly(din);
-		line = null;
-		din = null;
 	}
 
 	public void pause() {
@@ -133,8 +136,8 @@ public class Player {
 		state = State.PLAY;
 	}
 
-	private void nextSong() {
-
+	private void requestNextSong() {
+		event.fire(new SongEvent(Type.FINISHED));
 	}
 
 	public void skipTo(int skipToPercentage) {
@@ -159,8 +162,11 @@ public class Player {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			stop();
-			nextSong();
+			if (state == State.STOP) {
+				stop();
+			} else {
+				requestNextSong();
+			}
 		}
 
 	}
@@ -185,15 +191,26 @@ public class Player {
 					state = State.PLAY;
 				}
 
+				long lastEvent = 0;
 				read = din.read(data, 0, data.length);
-				if (read != -1 && line != null) {
-					line.write(data, 0, read);
-
-					SongEvent songEvent = new SongEvent(Type.PROGRESS);
-					songEvent
-							.setCurrentPosition(line.getMicrosecondPosition() / 1000000);
-					songEvent.setTotal(currentSong.getDuration());
-					event.fire(songEvent);
+				if (read != -1) {
+					synchronized (mutex) {
+						if (line != null) {
+							line.write(data, 0, read);
+							long currentPosition = line
+									.getMicrosecondPosition();
+							if (currentPosition - lastEvent > 500000) {
+								SongEvent songEvent = new SongEvent(
+										Type.PROGRESS);
+								songEvent
+										.setCurrentPosition(currentPosition / 1000000);
+								songEvent.setTotal(currentSong.getDuration());
+								songEvent.setSong(currentSong);
+								event.fire(songEvent);
+								lastEvent = currentPosition;
+							}
+						}
+					}
 				}
 			}
 		}

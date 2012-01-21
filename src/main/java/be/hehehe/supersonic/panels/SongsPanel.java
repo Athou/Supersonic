@@ -2,6 +2,7 @@ package be.hehehe.supersonic.panels;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -126,6 +127,11 @@ public class SongsPanel extends JPanel {
 			row = 0;
 		}
 		row = table.convertRowIndexToModel(row);
+		return tableModel.get(row);
+	}
+
+	public SongModel getNextRandomSong() {
+		int row = new Random().nextInt(tableModel.getRowCount());
 		return tableModel.get(row);
 	}
 }

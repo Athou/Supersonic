@@ -4,7 +4,7 @@ import be.hehehe.supersonic.model.SongModel;
 
 public class SongEvent {
 	public static enum Type {
-		PAUSE, PLAY, STOP, PROGRESS, SKIP_TO, SELECTION_CHANGED;
+		PAUSE, PLAY, STOP, PROGRESS, FINISHED, SKIP_TO, SELECTION_CHANGED;
 	}
 
 	private Type type;

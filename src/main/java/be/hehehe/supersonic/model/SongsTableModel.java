@@ -1,21 +1,20 @@
 package be.hehehe.supersonic.model;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.commons.lang.StringUtils;
+import be.hehehe.supersonic.utils.SwingUtils;
 
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("serial")
 public class SongsTableModel extends AbstractTableModel {
 
-	private static final String[] NAMES = new String[] { "Artist", "Album",
-			"Title", "Duration" };
-	private static final Class<?>[] CLASSES = new Class<?>[] { String.class,
-			String.class, String.class, String.class };
+	private static final String[] NAMES = new String[] { "#", "Artist",
+			"Album", "Title", "Duration" };
+	private static final Class<?>[] CLASSES = new Class<?>[] { Integer.class,
+			String.class, String.class, String.class, String.class };
 
 	private List<SongModel> songs = Lists.newArrayList();
 
@@ -38,15 +37,15 @@ public class SongsTableModel extends AbstractTableModel {
 		SongModel song = songs.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return song.getArtist();
+			return rowIndex + 1;
 		case 1:
-			return song.getAlbum();
+			return song.getArtist();
 		case 2:
-			return song.getTitle();
+			return song.getAlbum();
 		case 3:
-			long minutes = TimeUnit.SECONDS.toMinutes(song.getDuration());
-			long seconds = song.getDuration() % 60;
-			return minutes + ":" + StringUtils.leftPad("" + seconds, 2, "0");
+			return song.getTitle();
+		case 4:
+			return SwingUtils.formatDuration(song.getDuration());
 		}
 		return null;
 	}

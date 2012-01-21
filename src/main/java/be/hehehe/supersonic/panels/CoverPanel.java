@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import be.hehehe.supersonic.events.SongEvent;
+import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.CoverArtService;
 
@@ -25,25 +26,45 @@ public class CoverPanel extends JPanel {
 	private BufferedImage image;
 
 	public void loadCover(@Observes final SongEvent e) {
-		new SwingWorker<Object, Void>() {
-			@Override
-			protected Object doInBackground() throws Exception {
-				SongModel song = e.getSong();
-				image = ImageIO
-						.read(coverArtService.getCover(song.getCoverId()));
-				repaint();
-				return null;
-			}
-		}.execute();
+		if (e.getType() == Type.SELECTION_CHANGED) {
+			new SwingWorker<Object, Void>() {
+				@Override
+				protected Object doInBackground() throws Exception {
+					SongModel song = e.getSong();
+					image = ImageIO.read(coverArtService.getCover(song
+							.getCoverId()));
+					// repaint();
+					setVisible(false);
+					setVisible(true);
+					return null;
+				}
+			}.execute();
+		}
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		// TODO maintain aspect ratio
 		Dimension size = getSize();
 		if (image != null && size.width > 0) {
-			g.drawImage(image, 0, 0, size.width, size.height, 0, 0,
-					image.getWidth(null), image.getHeight(null), null);
+			double ratio = (double) image.getHeight(null)
+					/ image.getWidth(null);
+
+			int effectiveWidth = 1;
+			int effectiveHeight = (int) ratio;
+
+			while (effectiveHeight < size.height && effectiveWidth < size.width) {
+				effectiveWidth++;
+				effectiveHeight = (int) (ratio * effectiveWidth);
+			}
+
+			g.setColor(getBackground());
+			g.fillRect(0, 0, size.width, size.height);
+
+			int cornerx = Math.abs((size.width - effectiveWidth) / 2);
+			int cornery = Math.abs((size.height - effectiveHeight) / 2);
+			g.drawImage(image, cornerx, cornery, effectiveWidth + cornerx,
+					effectiveHeight + cornery, 0, 0, image.getWidth(null),
+					image.getHeight(null), null);
 		}
 	}
 }

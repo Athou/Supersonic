@@ -67,11 +67,11 @@ public class Supersonic extends JFrame {
 				new MigLayout("insets 0", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
-		mainSplitPane.setResizeWeight(0.2);
+		mainSplitPane.setResizeWeight(0.25);
 		getContentPane().add(mainSplitPane, "cell 0 0,grow");
 
 		JSplitPane leftSplitPane = new JSplitPane();
-		leftSplitPane.setResizeWeight(0.7);
+		leftSplitPane.setResizeWeight(0.6);
 		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setLeftComponent(leftSplitPane);
 
