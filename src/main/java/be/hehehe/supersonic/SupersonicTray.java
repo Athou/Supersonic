@@ -1,7 +1,5 @@
 package be.hehehe.supersonic;
 
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
@@ -11,6 +9,8 @@ import java.awt.event.MouseEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import be.hehehe.supersonic.service.IconService;
 
@@ -24,19 +24,19 @@ public class SupersonicTray {
 		if (!SystemTray.isSupported()) {
 			return false;
 		}
-		final PopupMenu popup = new PopupMenu();
+		final JPopupMenu popup = new JPopupMenu();
 		final TrayIcon trayIcon = new TrayIcon(iconService
 				.getIcon("supersonic").getImage());
 		final SystemTray tray = SystemTray.getSystemTray();
 
-		MenuItem restoreItem = new MenuItem("Restore");
+		JMenuItem restoreItem = new JMenuItem("Restore");
 		restoreItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				supersonic.showSupersonic();
 			}
 		});
-		MenuItem exitItem = new MenuItem("Exit");
+		JMenuItem exitItem = new JMenuItem("Exit");
 		exitItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -47,18 +47,30 @@ public class SupersonicTray {
 		popup.addSeparator();
 		popup.add(exitItem);
 
-		trayIcon.setPopupMenu(popup);
+		trayIcon.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					popup.setLocation(e.getX(), e.getY());
+					popup.setInvoker(popup);
+					popup.setVisible(true);
+				}
+			}
+		});
 		trayIcon.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					System.out.println(supersonic.getState());
 					if (supersonic.isVisible()) {
 						supersonic.hideSupersonic();
 					} else {
 						supersonic.showSupersonic();
 					}
-
+				} else if (e.getClickCount() == 1) {
+					if (e.isPopupTrigger() || true) {
+						popup.setLocation(e.getX(), e.getY());
+						popup.setInvoker(popup);
+						popup.setVisible(true);
+					}
 				}
 			}
 		});
