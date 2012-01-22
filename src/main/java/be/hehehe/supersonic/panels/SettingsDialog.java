@@ -145,12 +145,11 @@ public class SettingsDialog extends JDialog {
 		proxyPanel.add(proxyPasswordTxt, "cell 1 6,growx");
 
 		JPanel lafPanel = new JPanel();
+		lafPanel.setBorder(BorderFactory.createTitledBorder("Look And Feel"));
 		getContentPane().add(lafPanel, "cell 0 2,growx");
-		lafPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
-
-		lafPanel.add(new JLabel("Look And Feel "), "cell 0 0");
+		lafPanel.setLayout(new MigLayout("", "[grow]", "[]"));
 		lafCombo = new JComboBox();
-		lafPanel.add(lafCombo, "cell 1 0, grow");
+		lafPanel.add(lafCombo, "cell 0 0, grow");
 
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, "cell 0 3,growx");
