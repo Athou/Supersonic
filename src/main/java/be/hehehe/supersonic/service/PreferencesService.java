@@ -9,10 +9,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.log4j.Logger;
+import org.pushingpixels.substance.api.skin.GraphiteSkin;
+import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 @Singleton
 public class PreferencesService {
 
+	private static final String LOOKANDFEEL = "lookandfeel";
 	private static final String SUBSONIC_ADDRESS = "subsonic-address";
 	private static final String SUBSONIC_LOGIN = "subsonic-login";
 	private static final String SUBSONIC_PASSWORD = "subsonic-password";
@@ -113,6 +116,14 @@ public class PreferencesService {
 
 	public void setProxyPassword(String passwd) {
 		prefs.put(PROXY_PASSWORD, passwd);
+	}
+
+	public String getLookAndFeel() {
+		return prefs.get(LOOKANDFEEL, GraphiteSkin.class.getName());
+	}
+
+	public void setLookAndFeel(String className) {
+		prefs.put(LOOKANDFEEL, className);
 	}
 
 	public void flush() {

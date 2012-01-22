@@ -67,6 +67,7 @@ public class Supersonic extends JFrame {
 
 	@PostConstruct
 	public void init() {
+
 		setTitle(TITLE);
 		setIconImage(iconService.getIcon("supersonic-big").getImage());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,8 +77,7 @@ public class Supersonic extends JFrame {
 		setVisible(true);
 
 		setJMenuBar(supersonicMenu);
-		getContentPane().setLayout(
-				new MigLayout("", "[grow]", "[grow]"));
+		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
 		mainSplitPane.setResizeWeight(0.25);

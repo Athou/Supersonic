@@ -19,9 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.commons.lang.StringUtils;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.SkinInfo;
+
 import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.utils.SwingUtils;
@@ -52,6 +55,8 @@ public class SettingsDialog extends JDialog {
 	private JLabel lblProxyType;
 	private JComboBox proxyTypeComboBox;
 
+	private JComboBox lafCombo;
+
 	@PostConstruct
 	public void init() {
 		setTitle("Supersonic Settings");
@@ -67,7 +72,7 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void buildFrame() {
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[][][]"));
+		getContentPane().setLayout(new MigLayout("", "[grow]", "[][][][]"));
 
 		JPanel subsonicInfosPanel = new JPanel();
 		subsonicInfosPanel.setBorder(BorderFactory
@@ -139,8 +144,16 @@ public class SettingsDialog extends JDialog {
 		proxyPasswordTxt = new JPasswordField();
 		proxyPanel.add(proxyPasswordTxt, "cell 1 6,growx");
 
+		JPanel lafPanel = new JPanel();
+		getContentPane().add(lafPanel, "cell 0 2,growx");
+		lafPanel.setLayout(new MigLayout("", "[][grow]", "[]"));
+
+		lafPanel.add(new JLabel("Look And Feel "), "cell 0 0");
+		lafCombo = new JComboBox();
+		lafPanel.add(lafCombo, "cell 1 0, grow");
+
 		JPanel panel = new JPanel();
-		getContentPane().add(panel, "cell 0 2,growx");
+		getContentPane().add(panel, "cell 0 3,growx");
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		okButton = new JButton("OK");
@@ -173,6 +186,18 @@ public class SettingsDialog extends JDialog {
 		DisableControlsListener controlListener = new DisableControlsListener();
 		proxyEnabledCheckBox.addActionListener(controlListener);
 		proxyAuthRequiredCheckbox.addActionListener(controlListener);
+
+		for (SkinInfo info : SubstanceLookAndFeel.getAllSkins().values()) {
+			lafCombo.addItem(new SkinWrapper(info));
+		}
+
+		lafCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SkinWrapper wrap = (SkinWrapper) lafCombo.getSelectedItem();
+				SubstanceLookAndFeel.setSkin(wrap.getInfo().getClassName());
+			}
+		});
 	}
 
 	private void save() {
@@ -195,6 +220,9 @@ public class SettingsDialog extends JDialog {
 		preferencesService.setProxyLogin(proxyLoginTxt.getText());
 		preferencesService.setProxyPassword(new String(proxyPasswordTxt
 				.getPassword()));
+		preferencesService.setLookAndFeel(((SkinWrapper) lafCombo
+				.getSelectedItem()).getInfo().getClassName());
+
 		preferencesService.flush();
 	}
 
@@ -211,6 +239,9 @@ public class SettingsDialog extends JDialog {
 				.isProxyAuthRequired());
 		proxyLoginTxt.setText(preferencesService.getProxyLogin());
 		proxyPasswordTxt.setText(preferencesService.getProxyPassword());
+
+		lafCombo.setSelectedItem(new SkinWrapper("", preferencesService
+				.getLookAndFeel()));
 	}
 
 	private void close() {
@@ -236,6 +267,36 @@ public class SettingsDialog extends JDialog {
 				&& proxyAuthRequiredCheckbox.isSelected();
 		proxyLoginTxt.setEnabled(authRequired);
 		proxyPasswordTxt.setEnabled(authRequired);
+
+	}
+
+	private class SkinWrapper {
+
+		private SkinInfo info;
+
+		public SkinWrapper(SkinInfo info) {
+			this.info = info;
+		}
+
+		public SkinWrapper(String name, String className) {
+			this.info = new SkinInfo(name, className);
+		}
+
+		@Override
+		public String toString() {
+			return info.getDisplayName();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			SkinWrapper w = (SkinWrapper) obj;
+			return StringUtils.equals(w.getInfo().getClassName(), getInfo()
+					.getClassName());
+		}
+
+		public SkinInfo getInfo() {
+			return info;
+		}
 
 	}
 
