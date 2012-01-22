@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -42,13 +43,14 @@ public class SearchPanel extends JPanel {
 	public SearchPanel() {
 		setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 
+		add(new JLabel("Search:"), "cell 0 0");
 		searchField = new JTextField();
 		add(searchField, "cell 0 0,growx");
 		searchField.setColumns(10);
 		searchField.setCaretColor(getBackground().darker());
 		searchField.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyTyped(KeyEvent e) {
+			public void keyReleased(KeyEvent e) {
 				refreshList();
 			}
 		});
