@@ -62,7 +62,12 @@ public class Player {
 			}
 		} else if (type == Type.PLAY) {
 			if (state == State.PAUSE) {
-				unpause();
+				SongModel song = e.getSong();
+				if (song != null && !song.equals(currentSong)) {
+					play(song);
+				} else {
+					unpause();
+				}
 			} else {
 				play(e.getSong());
 			}

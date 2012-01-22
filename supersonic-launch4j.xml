@@ -1,7 +1,7 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>supersonic.jar</jar>
+  <jar>lib\supersonic.jar</jar>
   <outfile>supersonic.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>

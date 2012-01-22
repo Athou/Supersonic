@@ -140,8 +140,12 @@ public class SongsPanel extends JPanel {
 		return tableModel.get(row);
 	}
 
-	public SongModel getNextSong() {
+	public SongModel getNextSong(SongModel currentSong) {
 		int row = table.getSelectedRow();
+		if (currentSong != null) {
+			row = tableModel.indexOf(currentSong);
+			row = table.convertRowIndexToView(row);
+		}
 		row++;
 		if (tableModel.getRowCount() == row) {
 			row = 0;
@@ -154,4 +158,5 @@ public class SongsPanel extends JPanel {
 		int row = new Random().nextInt(tableModel.getRowCount());
 		return tableModel.get(row);
 	}
+
 }
