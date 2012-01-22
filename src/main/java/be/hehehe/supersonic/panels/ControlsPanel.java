@@ -1,5 +1,6 @@
 package be.hehehe.supersonic.panels;
 
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -52,6 +53,8 @@ public class ControlsPanel extends JPanel {
 	private JLabel progressText;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
+
+	private JLabel currentSongLabel;
 
 	@PostConstruct
 	public void init() {
@@ -153,12 +156,18 @@ public class ControlsPanel extends JPanel {
 		progressText = new JLabel(SwingUtils.formatDuration(0));
 		add(progressText, "cell 6 1,alignx center");
 
+		JPanel currentSongPanel = new JPanel();
+		currentSongPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		currentSongLabel = new JLabel();
+		currentSongPanel.add(currentSongLabel);
+		add(currentSongPanel, "cell 0 2 7 1,grow");
+
 	}
 
 	private void nextSong() {
 		SongEvent songEvent = new SongEvent(Type.PLAY);
 
-		SongModel nextSong = songsPanel.getNextSong();
+		SongModel nextSong = songsPanel.getNextSong(currentSong);
 		if (chckbxRepeat.isSelected()) {
 			nextSong = currentSong;
 		} else if (chckbxShuffle.isSelected()) {
@@ -184,6 +193,9 @@ public class ControlsPanel extends JPanel {
 							.getCurrentPosition())
 							+ "/"
 							+ SwingUtils.formatDuration(e.getTotal()));
+					currentSongLabel.setText(currentSong.getArtist() + " - "
+							+ currentSong.getAlbum() + " - "
+							+ currentSong.getTitle());
 				} else if (e.getType() == Type.FINISHED) {
 					nextSong();
 				}
