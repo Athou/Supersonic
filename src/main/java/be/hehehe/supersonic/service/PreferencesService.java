@@ -10,7 +10,6 @@ import javax.inject.Singleton;
 
 import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.skin.GraphiteSkin;
-import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 @Singleton
 public class PreferencesService {
@@ -26,6 +25,8 @@ public class PreferencesService {
 	private static final String PROXY_AUTHREQUIRED = "proxy-authrequired";
 	private static final String PROXY_LOGIN = "proxy-login";
 	private static final String PROXY_PASSWORD = "proxy-password";
+
+	private static final String VOLUME = "volume";
 
 	private Preferences prefs;
 
@@ -124,6 +125,14 @@ public class PreferencesService {
 
 	public void setLookAndFeel(String className) {
 		prefs.put(LOOKANDFEEL, className);
+	}
+
+	public int getVolume() {
+		return prefs.getInt(VOLUME, 50);
+	}
+
+	public void setVolume(int volume) {
+		prefs.putInt(VOLUME, volume);
 	}
 
 	public void flush() {

@@ -176,6 +176,7 @@ public class SettingsDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				resetLookAndFeel();
 				close();
 			}
 		});
@@ -246,6 +247,10 @@ public class SettingsDialog extends JDialog {
 
 	private void close() {
 		dispose();
+	}
+
+	private void resetLookAndFeel() {
+		SubstanceLookAndFeel.setSkin(preferencesService.getLookAndFeel());
 	}
 
 	private class DisableControlsListener implements ActionListener {

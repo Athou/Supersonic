@@ -23,6 +23,7 @@ import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.IconService;
+import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -34,6 +35,9 @@ public class ControlsPanel extends JPanel {
 
 	@Inject
 	IconService iconService;
+
+	@Inject
+	PreferencesService preferencesService;
 
 	@Inject
 	Event<SongEvent> event;
@@ -104,15 +108,18 @@ public class ControlsPanel extends JPanel {
 		volumeSlider.setFocusable(false);
 		volumeSlider.setMinimum(0);
 		volumeSlider.setMaximum(100);
-		volumeSlider.setValue(50);
+		volumeSlider.setValue(preferencesService.getVolume());
 		add(volumeSlider, "cell 4 0,growx");
 		volumeSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider) e.getSource();
 				if (!source.getValueIsAdjusting()) {
-					float volume = source.getValue() / 100f;
-					volumeEvent.fire(new VolumeChangedEvent(volume));
+					int volume = source.getValue();
+					preferencesService.setVolume(volume);
+					preferencesService.flush();
+					float volumePercentage = volume / 100f;
+					volumeEvent.fire(new VolumeChangedEvent(volumePercentage));
 				}
 			}
 		});

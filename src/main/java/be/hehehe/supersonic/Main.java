@@ -2,14 +2,11 @@ package be.hehehe.supersonic;
 
 import javax.enterprise.inject.Instance;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.GraphiteSkin;
-import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 import be.hehehe.supersonic.service.PreferencesService;
 

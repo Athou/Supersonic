@@ -80,11 +80,9 @@ public class Supersonic extends JFrame {
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
-		mainSplitPane.setResizeWeight(0.25);
 		getContentPane().add(mainSplitPane, "cell 0 0,grow");
 
 		JSplitPane leftSplitPane = new JSplitPane();
-		leftSplitPane.setResizeWeight(0.6);
 		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setLeftComponent(leftSplitPane);
 
@@ -107,6 +105,9 @@ public class Supersonic extends JFrame {
 				}
 			});
 		}
+
+		mainSplitPane.setResizeWeight(0.5);
+		leftSplitPane.setResizeWeight(0.5);
 
 		if (StringUtils.isBlank(preferencesService.getSubsonicHostname())) {
 			settingsDialog.setVisible(true);

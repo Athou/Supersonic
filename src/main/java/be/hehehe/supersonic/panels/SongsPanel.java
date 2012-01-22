@@ -88,8 +88,8 @@ public class SongsPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(scrollPane, "cell 0 0,grow");
-		
-		if(tableModel.getRowCount() == 0) {
+
+		if (tableModel.getRowCount() == 0) {
 			SongModel song = new SongModel();
 			song.setArtist("Library empty");
 			song.setTitle("Refresh through the File menu");
@@ -117,7 +117,8 @@ public class SongsPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (e.getType() == Type.PLAY) {
+				if (e.getType() == Type.PLAY
+						|| e.getType() == Type.CHANGE_SELECTION) {
 					if (e.getSong() != null
 							&& (table.getSelectedRow() == -1 || !e.getSong()
 									.equals(getSelectedSong()))) {
