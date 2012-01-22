@@ -114,7 +114,6 @@ public class ControlsPanel extends JPanel {
 		volumeSlider.setFocusable(false);
 		volumeSlider.setMinimum(0);
 		volumeSlider.setMaximum(100);
-		volumeSlider.setValue(preferencesService.getVolume());
 		add(volumeSlider, "cell 4 0,growx");
 		volumeSlider.addChangeListener(new ChangeListener() {
 			@Override
@@ -129,6 +128,7 @@ public class ControlsPanel extends JPanel {
 				}
 			}
 		});
+		volumeSlider.setValue(preferencesService.getVolume());
 
 		chckbxShuffle = new JCheckBox("Shuffle");
 		add(chckbxShuffle, "cell 5 0");
