@@ -1,8 +1,11 @@
 package be.hehehe.supersonic.panels;
 
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -160,7 +163,17 @@ public class ControlsPanel extends JPanel {
 		currentSongPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		currentSongLabel = new JLabel();
 		currentSongPanel.add(currentSongLabel);
+		currentSongLabel.setCursor(Cursor
+				.getPredefinedCursor(Cursor.HAND_CURSOR));
 		add(currentSongPanel, "cell 0 2 7 1,grow");
+		currentSongLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				SongEvent songEvent = new SongEvent(Type.CHANGE_SELECTION);
+				songEvent.setSong(currentSong);
+				event.fire(songEvent);
+			}
+		});
 
 	}
 
