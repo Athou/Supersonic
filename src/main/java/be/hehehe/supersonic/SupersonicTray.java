@@ -65,7 +65,7 @@ public class SupersonicTray {
 					} else {
 						supersonic.showSupersonic();
 					}
-				} else if (e.getClickCount() == 1) {
+				} else if (e.getClickCount() == 1 && e.isPopupTrigger()) {
 					if (e.isPopupTrigger() || true) {
 						popup.setLocation(e.getX(), e.getY());
 						popup.setInvoker(popup);
