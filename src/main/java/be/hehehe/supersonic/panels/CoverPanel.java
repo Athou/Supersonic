@@ -33,7 +33,6 @@ public class CoverPanel extends JPanel {
 					SongModel song = e.getSong();
 					image = ImageIO.read(coverArtService.getCover(song
 							.getCoverId()));
-					// repaint();
 					setVisible(false);
 					setVisible(true);
 					return null;
