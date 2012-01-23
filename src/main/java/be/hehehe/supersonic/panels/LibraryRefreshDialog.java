@@ -73,6 +73,5 @@ public class LibraryRefreshDialog extends JDialog {
 				}
 			}
 		});
-
 	}
 }

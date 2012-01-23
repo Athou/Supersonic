@@ -157,6 +157,11 @@
 			<version>1.9.5</version>
 		</dependency>
 		<dependency>
+			<groupId>net.sourceforge.jaadec</groupId>
+			<artifactId>jaad</artifactId>
+			<version>0.8.3</version>
+		</dependency>
+		<dependency>
 			<groupId>de.huxhorn.sulky</groupId>
 			<artifactId>de.huxhorn.sulky.3rdparty.jlayer</artifactId>
 			<version>1.0</version>
