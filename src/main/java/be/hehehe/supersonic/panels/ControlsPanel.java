@@ -161,7 +161,7 @@ public class ControlsPanel extends JPanel {
 
 		JPanel currentSongPanel = new JPanel();
 		currentSongPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		currentSongLabel = new JLabel();
+		currentSongLabel = new JLabel(" ");
 		currentSongPanel.add(currentSongLabel);
 		currentSongLabel.setCursor(Cursor
 				.getPredefinedCursor(Cursor.HAND_CURSOR));
