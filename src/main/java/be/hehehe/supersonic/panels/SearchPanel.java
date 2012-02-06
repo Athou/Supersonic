@@ -100,6 +100,7 @@ public class SearchPanel extends JPanel {
 		String text = searchField.getText();
 		if (StringUtils.isNotBlank(text)) {
 			text = text.toUpperCase();
+			//TODO implement better search
 			for (SongModel song : library.getSongs()) {
 				String[] keywords = text.split(" ");
 				boolean show = StringUtils.startsWithAny(song.getArtist()
