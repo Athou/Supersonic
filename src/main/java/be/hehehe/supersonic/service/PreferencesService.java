@@ -1,5 +1,7 @@
 package be.hehehe.supersonic.service;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.Proxy.Type;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -9,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.log4j.Logger;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.GraphiteSkin;
 
 @Singleton
@@ -143,4 +146,47 @@ public class PreferencesService {
 		}
 	}
 
+	public void applySettings() {
+		String plafClassName = getLookAndFeel();
+		try {
+			SubstanceLookAndFeel.setSkin(plafClassName);
+		} catch (Exception e) {
+			log.info("Could not set the look and feel " + plafClassName + ".");
+		}
+
+		if (getProxyType() == Type.HTTP) {
+			System.setProperty("http.proxyHost", getProxyHostname());
+			System.setProperty("http.proxyPort", getProxyPort());
+			System.setProperty("https.proxyHost", getProxyHostname());
+			System.setProperty("https.proxyPort", getProxyPort());
+			if (isProxyAuthRequired()) {
+				Authenticator.setDefault(new ProxyAuth(getProxyLogin(),
+						getProxyPassword()));
+
+			}
+		} else {
+			System.setProperty("socksProxyHost", getProxyHostname());
+			System.setProperty("socksProxyPort", getProxyPort());
+			if (isProxyAuthRequired()) {
+				System.setProperty("java.net.socks.username", getProxyLogin());
+				System.setProperty("java.net.socks.password",
+						getProxyPassword());
+				Authenticator.setDefault(new ProxyAuth(getProxyLogin(),
+						getProxyPassword()));
+			}
+		}
+	}
+
+	public class ProxyAuth extends Authenticator {
+		private PasswordAuthentication auth;
+
+		private ProxyAuth(String user, String password) {
+			auth = new PasswordAuthentication(user,
+					password == null ? new char[] {} : password.toCharArray());
+		}
+
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return auth;
+		}
+	}
 }

@@ -1,7 +1,6 @@
 package be.hehehe.supersonic;
 
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -119,7 +118,6 @@ public class Supersonic extends JFrame {
 	}
 
 	public void showSupersonic() {
-		setState(Frame.NORMAL);
 		setVisible(true);
 		toFront();
 		repaint();

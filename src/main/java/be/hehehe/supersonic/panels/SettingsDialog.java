@@ -238,12 +238,7 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void save() {
-		String hostname = addressTxt.getText();
-		if (StringUtils.isNotBlank(hostname) && hostname.endsWith(".view")) {
-			hostname = hostname.substring(hostname.lastIndexOf("/"));
-		}
-
-		preferencesService.setSubsonicHostname(hostname);
+		preferencesService.setSubsonicHostname(addressTxt.getText());
 		preferencesService.setSubsonicLogin(loginTxt.getText());
 		preferencesService.setSubsonicPassword(new String(passwordTxt
 				.getPassword()));
@@ -261,6 +256,7 @@ public class SettingsDialog extends JDialog {
 				.getSelectedItem()).getInfo().getClassName());
 
 		preferencesService.flush();
+		preferencesService.applySettings();
 	}
 
 	private void loadPrefs() {
