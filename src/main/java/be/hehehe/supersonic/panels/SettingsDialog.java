@@ -15,6 +15,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -24,9 +25,12 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
+import org.subsonic.restapi.Response;
 
 import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.PreferencesService;
+import be.hehehe.supersonic.service.SubsonicService;
+import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -37,11 +41,16 @@ public class SettingsDialog extends JDialog {
 	private PreferencesService preferencesService;
 
 	@Inject
+	SubsonicService subsonicService;
+
+	@Inject
 	IconService iconService;
 
 	private JTextField addressTxt;
 	private JTextField loginTxt;
 	private JPasswordField passwordTxt;
+	private JButton testButton;
+
 	private JButton okButton;
 	private JButton cancelButton;
 	private JTextField proxyHostTxt;
@@ -63,8 +72,6 @@ public class SettingsDialog extends JDialog {
 		setModal(true);
 		buildFrame();
 		attachBehavior();
-		loadPrefs();
-		setControlStates();
 		pack();
 		setSize(400, getHeight());
 		SwingUtils.centerContainer(this);
@@ -78,7 +85,7 @@ public class SettingsDialog extends JDialog {
 		subsonicInfosPanel.setBorder(BorderFactory
 				.createTitledBorder("Subsonic"));
 		getContentPane().add(subsonicInfosPanel, "cell 0 0,grow");
-		subsonicInfosPanel.setLayout(new MigLayout("", "[][grow]", "[][][]"));
+		subsonicInfosPanel.setLayout(new MigLayout("", "[][grow]", "[][][][]"));
 
 		JLabel addressLabel = new JLabel("Address");
 		subsonicInfosPanel.add(addressLabel, "cell 0 0,alignx left");
@@ -99,6 +106,14 @@ public class SettingsDialog extends JDialog {
 
 		passwordTxt = new JPasswordField();
 		subsonicInfosPanel.add(passwordTxt, "cell 1 2,growx");
+
+		JPanel testPanel = new JPanel();
+		testPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		subsonicInfosPanel.add(testPanel, "cell 0 3 2 1, grow");
+
+		testButton = new JButton("Test");
+		testButton.setFocusable(false);
+		testPanel.add(testButton);
 
 		JPanel proxyPanel = new JPanel();
 		proxyPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
@@ -180,6 +195,28 @@ public class SettingsDialog extends JDialog {
 			}
 		});
 
+		final SettingsDialog that = this;
+		testButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String userName = loginTxt.getText();
+				String password = new String(passwordTxt.getPassword());
+				try {
+					Response response = subsonicService.invoke("ping",
+							userName, password);
+					if (response.getError() != null) {
+						throw new SupersonicException(response.getError()
+								.getMessage());
+					}
+					JOptionPane.showMessageDialog(that,
+							"Connection successfull");
+				} catch (SupersonicException ex) {
+					SwingUtils.handleError(ex);
+				}
+
+			}
+		});
+
 		proxyTypeComboBox.setModel(new DefaultComboBoxModel(new Type[] {
 				Type.HTTP, Type.SOCKS }));
 
@@ -242,6 +279,15 @@ public class SettingsDialog extends JDialog {
 
 		lafCombo.setSelectedItem(new SkinWrapper("", preferencesService
 				.getLookAndFeel()));
+	}
+
+	@Override
+	public void setVisible(boolean b) {
+		if (b) {
+			loadPrefs();
+			setControlStates();
+		}
+		super.setVisible(b);
 	}
 
 	private void close() {
