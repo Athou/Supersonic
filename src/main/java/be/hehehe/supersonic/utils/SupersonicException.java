@@ -1,5 +1,7 @@
 package be.hehehe.supersonic.utils;
 
+import org.apache.log4j.Logger;
+
 @SuppressWarnings("serial")
 public class SupersonicException extends Exception {
 
@@ -17,6 +19,7 @@ public class SupersonicException extends Exception {
 	public SupersonicException(String message, Throwable t) {
 		this.message = message;
 		this.t = t;
+		Logger.getLogger(SupersonicException.class).error(message, t);
 	}
 
 	public String getMessage() {
