@@ -27,6 +27,7 @@ import be.hehehe.supersonic.model.AlbumModel;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService.Param;
 import be.hehehe.supersonic.utils.SupersonicException;
+import be.hehehe.supersonic.utils.SwingUtils;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -125,15 +126,13 @@ public class Library {
 					total = list.size();
 					List<AlbumModel> albums = Lists.newArrayList();
 					for (Future<AlbumModel> future : threads) {
-						// TODO handle exceptions correctly
 						try {
 							AlbumModel albumModel = future.get();
 							albums.add(albumModel);
 							publish(albums.size());
 						} catch (Exception e) {
-							e.printStackTrace();
+							SwingUtils.handleError(e);
 						}
-
 					}
 					Collections.sort(albums);
 					getAlbums().clear();
