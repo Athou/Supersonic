@@ -31,13 +31,20 @@ public class SubsonicService {
 	@Inject
 	Logger log;
 
-	@SuppressWarnings("unchecked")
 	public Response invoke(String method, Param... params)
 			throws SupersonicException {
+		String userName = preferencesService.getSubsonicLogin();
+		String password = preferencesService.getSubsonicPassword();
+		return invoke(method, userName, password, params);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Response invoke(String method, String userName, String password,
+			Param... params) throws SupersonicException {
 		Response response = null;
 		try {
 			String responseString = IOUtils.toString(invokeBinary(method,
-					params));
+					userName, password, params));
 			log.debug("Response: " + responseString);
 			JAXBContext context = JAXBContext.newInstance(Response.class
 					.getPackage().getName());
@@ -53,6 +60,13 @@ public class SubsonicService {
 
 	public InputStream invokeBinary(String method, Param... params)
 			throws SupersonicException {
+		String userName = preferencesService.getSubsonicLogin();
+		String password = preferencesService.getSubsonicPassword();
+		return invokeBinary(method, userName, password, params);
+	}
+
+	public InputStream invokeBinary(String method, String userName,
+			String password, Param... params) throws SupersonicException {
 		InputStream is = null;
 		if (log.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder();
@@ -75,8 +89,8 @@ public class SubsonicService {
 			}
 			URLBuilder builder = new URLBuilder(subsonicHost + "rest/" + method
 					+ ".view");
-			builder.addParam("u", preferencesService.getSubsonicLogin());
-			builder.addParam("p", preferencesService.getSubsonicPassword());
+			builder.addParam("u", userName);
+			builder.addParam("p", password);
 			builder.addParam("v", "1.7.0");
 			builder.addParam("c", "supersonic");
 			for (Param param : params) {
