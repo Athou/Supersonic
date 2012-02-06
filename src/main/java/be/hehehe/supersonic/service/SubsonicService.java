@@ -27,8 +27,9 @@ public class SubsonicService {
 
 	@Inject
 	PreferencesService preferencesService;
-	
-	@Inject Logger log;
+
+	@Inject
+	Logger log;
 
 	@SuppressWarnings("unchecked")
 	public Response invoke(String method, Param... params)
@@ -54,9 +55,12 @@ public class SubsonicService {
 		InputStream is = null;
 		log.debug("Invoking: " + method);
 		try {
-			URLBuilder builder = new URLBuilder(
-					preferencesService.getSubsonicHostname() + "/rest/"
-							+ method + ".view");
+			String subsonicHost = preferencesService.getSubsonicHostname();
+			if (!subsonicHost.endsWith("/")) {
+				subsonicHost += "/";
+			}
+			URLBuilder builder = new URLBuilder(subsonicHost + "rest/" + method
+					+ ".view");
 			builder.addParam("u", preferencesService.getSubsonicLogin());
 			builder.addParam("p", preferencesService.getSubsonicPassword());
 			builder.addParam("v", "1.7.0");
