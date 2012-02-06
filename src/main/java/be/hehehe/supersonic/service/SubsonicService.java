@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.net.Proxy.Type;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,6 +21,8 @@ import org.subsonic.restapi.Response;
 
 import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.URLBuilder;
+
+import com.google.common.collect.Lists;
 
 @Singleton
 public class SubsonicService {
@@ -69,15 +72,18 @@ public class SubsonicService {
 		InputStream is = null;
 		if (log.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Invoking: ");
+			sb.append("Invoking ");
 			sb.append(method);
-			sb.append(" with params ");
+			sb.append(" with ");
+			sb.append(params.length);
+			sb.append(" params [");
+
+			List<String> paramsString = Lists.newArrayList();
 			for (Param param : params) {
-				sb.append(param.name);
-				sb.append("=");
-				sb.append(param.value);
-				sb.append(" ");
+				paramsString.add(param.name + "=" + param.value);
 			}
+			sb.append(StringUtils.join(paramsString, ","));
+			sb.append("]");
 			log.debug(sb.toString());
 		}
 
