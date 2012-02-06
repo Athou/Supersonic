@@ -125,9 +125,15 @@ public class Library {
 					total = list.size();
 					List<AlbumModel> albums = Lists.newArrayList();
 					for (Future<AlbumModel> future : threads) {
-						AlbumModel albumModel = future.get();
-						albums.add(albumModel);
-						publish(albums.size());
+						// TODO handle exceptions correctly
+						try {
+							AlbumModel albumModel = future.get();
+							albums.add(albumModel);
+							publish(albums.size());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
 					}
 					Collections.sort(albums);
 					getAlbums().clear();
