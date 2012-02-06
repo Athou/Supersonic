@@ -38,6 +38,7 @@ public class SubsonicService {
 		try {
 			String responseString = IOUtils.toString(invokeBinary(method,
 					params));
+			log.debug("Response: " + responseString);
 			JAXBContext context = JAXBContext.newInstance(Response.class
 					.getPackage().getName());
 			Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -53,7 +54,20 @@ public class SubsonicService {
 	public InputStream invokeBinary(String method, Param... params)
 			throws SupersonicException {
 		InputStream is = null;
-		log.debug("Invoking: " + method);
+		if (log.isDebugEnabled()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Invoking: ");
+			sb.append(method);
+			sb.append(" with params ");
+			for (Param param : params) {
+				sb.append(param.name);
+				sb.append("=");
+				sb.append(param.value);
+				sb.append(" ");
+			}
+			log.debug(sb.toString());
+		}
+
 		try {
 			String subsonicHost = preferencesService.getSubsonicHostname();
 			if (!subsonicHost.endsWith("/")) {
