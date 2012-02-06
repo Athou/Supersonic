@@ -17,6 +17,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
@@ -33,6 +34,9 @@ public class Player {
 
 	@Inject
 	Event<SongEvent> event;
+
+	@Inject
+	Logger log;
 
 	private enum State {
 		PLAY, PAUSE, STOP, SKIP;
@@ -164,7 +168,11 @@ public class Player {
 					baseFormat.getSampleRate(), 16, baseFormat.getChannels(),
 					baseFormat.getChannels() * 2, baseFormat.getSampleRate(),
 					false);
-			din = AudioSystem.getAudioInputStream(decodedFormat, in);
+			AudioInputStream tempDin = AudioSystem.getAudioInputStream(
+					decodedFormat, in);
+			din = new AudioInputStream(new BufferedInputStream(tempDin),
+					tempDin.getFormat(), tempDin.getFrameLength());
+
 			rawplay(decodedFormat, din);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -194,6 +202,7 @@ public class Player {
 					Thread.sleep(300);
 				} else if (state == State.SKIP) {
 					din.reset();
+					//TODO handle seekbar progress when skipping through
 					din.skip((currentSong.getSize() / 100) * skipToPercentage);
 					state = State.PLAY;
 				}
