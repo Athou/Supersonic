@@ -32,4 +32,12 @@ public class SwingUtils {
 				null, null);
 		JXErrorPane.showDialog(null, info);
 	}
+
+	public static void sleep(long milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			// do nothing
+		}
+	}
 }

@@ -139,8 +139,9 @@ public class Library {
 					getAlbums().addAll(albums);
 					saveToFile();
 				} catch (Exception e) {
-					throw new SupersonicException("Could not refresh library.",
-							e);
+					Exception se = new SupersonicException(
+							"Could not refresh library.", e);
+					SwingUtils.handleError(se);
 				}
 
 				return null;

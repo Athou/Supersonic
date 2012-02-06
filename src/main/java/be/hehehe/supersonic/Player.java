@@ -25,6 +25,7 @@ import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.service.SubsonicService.Param;
+import be.hehehe.supersonic.utils.DownloadingStream;
 
 @Singleton
 public class Player {
@@ -87,19 +88,25 @@ public class Player {
 
 	private void setGain() {
 		if (line != null) {
-			FloatControl gainControl = (FloatControl) line
-					.getControl(FloatControl.Type.MASTER_GAIN);
-			double minGainDB = gainControl.getMinimum();
-			double maxGainDB = gainControl.getMaximum();
-			double ampGainDB = 0.5f * maxGainDB - minGainDB;
-			double cste = Math.log(10.0) / 20;
-			double valueDB = minGainDB + (1 / cste)
-					* Math.log(1 + (Math.exp(cste * ampGainDB) - 1) * volume);
+			try {
+				FloatControl gainControl = (FloatControl) line
+						.getControl(FloatControl.Type.MASTER_GAIN);
+				double minGainDB = gainControl.getMinimum();
+				double maxGainDB = gainControl.getMaximum();
+				double ampGainDB = 0.5f * maxGainDB - minGainDB;
+				double cste = Math.log(10.0) / 20;
+				double valueDB = minGainDB
+						+ (1 / cste)
+						* Math.log(1 + (Math.exp(cste * ampGainDB) - 1)
+								* volume);
 
-			valueDB = Math.min(valueDB, maxGainDB);
-			valueDB = Math.max(valueDB, minGainDB);
+				valueDB = Math.min(valueDB, maxGainDB);
+				valueDB = Math.max(valueDB, minGainDB);
 
-			gainControl.setValue((float) valueDB);
+				gainControl.setValue((float) valueDB);
+			} catch (Exception e) {
+				log.info("Could not change volume: " + e.getMessage());
+			}
 		}
 	}
 
@@ -160,7 +167,7 @@ public class Player {
 		AudioInputStream in = null;
 		state = State.PLAY;
 		try {
-			in = AudioSystem.getAudioInputStream(new BufferedInputStream(
+			in = AudioSystem.getAudioInputStream(new DownloadingStream(
 					inputStream));
 			AudioFormat baseFormat = in.getFormat();
 			AudioFormat decodedFormat = new AudioFormat(
@@ -202,7 +209,7 @@ public class Player {
 					Thread.sleep(300);
 				} else if (state == State.SKIP) {
 					din.reset();
-					//TODO handle seekbar progress when skipping through
+					// TODO handle seekbar progress when skipping through
 					din.skip((currentSong.getSize() / 100) * skipToPercentage);
 					state = State.PLAY;
 				}

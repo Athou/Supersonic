@@ -156,7 +156,7 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
-		progressText = new JLabel(SwingUtils.formatDuration(0));
+		progressText = new JLabel(SwingUtils.formatDuration(0L));
 		add(progressText, "cell 6 1,alignx center");
 
 		JPanel currentSongPanel = new JPanel();

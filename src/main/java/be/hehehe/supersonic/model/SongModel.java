@@ -7,8 +7,8 @@ public class SongModel {
 	private String album;
 	private String coverId;
 	private Integer track;
-	private Long size;
-	private Integer duration;
+	private long size;
+	private int duration;
 
 	@Override
 	public int hashCode() {
@@ -67,22 +67,6 @@ public class SongModel {
 		this.track = track;
 	}
 
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public Integer getDuration() {
-		return duration;
-	}
-
-	public void setDuration(Integer duration) {
-		this.duration = duration;
-	}
-
 	public String getAlbum() {
 		return album;
 	}
@@ -97,6 +81,22 @@ public class SongModel {
 
 	public void setCoverId(String coverId) {
 		this.coverId = coverId;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 }
