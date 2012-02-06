@@ -19,6 +19,7 @@ import javax.swing.event.ListSelectionListener;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 
 import be.hehehe.supersonic.events.SongEvent;
@@ -36,6 +37,9 @@ public class SearchPanel extends JPanel {
 
 	@Inject
 	Library library;
+
+	@Inject
+	Logger log;
 
 	@Inject
 	Event<SongEvent> event;
@@ -100,15 +104,19 @@ public class SearchPanel extends JPanel {
 		String text = searchField.getText();
 		if (StringUtils.isNotBlank(text)) {
 			text = text.toUpperCase();
-			//TODO implement better search
+			String[] keywords = text.split(" ");
 			for (SongModel song : library.getSongs()) {
-				String[] keywords = text.split(" ");
-				boolean show = StringUtils.startsWithAny(song.getArtist()
-						.toUpperCase(), keywords);
-				show |= StringUtils.startsWithAny(
-						song.getAlbum().toUpperCase(), keywords);
-				show |= StringUtils.startsWithAny(
-						song.getTitle().toUpperCase(), keywords);
+				String songText = song.getArtist() + " " + song.getAlbum()
+						+ " " + song.getTitle();
+				songText = songText.toUpperCase();
+				
+				boolean show = true;
+				for (String keyword : keywords) {
+					if (songText.indexOf(keyword) == -1) {
+						show = false;
+						break;
+					}
+				}
 				if (show) {
 					tableModel.add(song);
 				}
