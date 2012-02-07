@@ -131,9 +131,11 @@ public class ControlsPanel extends JPanel {
 		volumeSlider.setValue(preferencesService.getVolume());
 
 		chckbxShuffle = new JCheckBox("Shuffle");
+		chckbxShuffle.setFocusable(false);
 		add(chckbxShuffle, "cell 5 0");
 
 		chckbxRepeat = new JCheckBox("Repeat");
+		chckbxRepeat.setFocusable(false);
 		add(chckbxRepeat, "cell 6 0");
 
 		seekBar = new JSlider();
@@ -151,7 +153,7 @@ public class ControlsPanel extends JPanel {
 						&& percentage != seekbarProgress) {
 					SongEvent songEvent = new SongEvent(Type.SKIP_TO);
 					songEvent.setSkipToPercentage(percentage);
-					event.fire(songEvent);
+					// event.fire(songEvent);
 				}
 			}
 		});

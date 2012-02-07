@@ -2,6 +2,7 @@ package be.hehehe.supersonic.service;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.Proxy.Type;
 import java.net.URL;
 import java.net.URLConnection;
@@ -118,17 +119,26 @@ public class SubsonicService {
 			}
 
 			URL url = new URL(builder.build());
-			URLConnection connection = url.openConnection();
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
 
 			if (preferencesService.isProxyEnabled()) {
 				setProxy(connection);
-
 			}
 
 			connection.setConnectTimeout(10000);
 			connection.setReadTimeout(10000);
 
-			is = url.openStream();
+			connection.connect();
+			int code = connection.getResponseCode();
+
+			if (code != 200) {
+				throw new SupersonicException("HTTP Error code: " + code);
+			}
+
+			is = connection.getInputStream();
+		} catch (SupersonicException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new SupersonicException(e);
 		}

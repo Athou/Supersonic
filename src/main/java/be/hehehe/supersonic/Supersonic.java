@@ -106,7 +106,7 @@ public class Supersonic extends JFrame {
 		}
 
 		mainSplitPane.setResizeWeight(0.5);
-		leftSplitPane.setResizeWeight(0.5);
+		leftSplitPane.setResizeWeight(0);
 
 		if (StringUtils.isBlank(preferencesService.getSubsonicHostname())) {
 			settingsDialog.setVisible(true);
