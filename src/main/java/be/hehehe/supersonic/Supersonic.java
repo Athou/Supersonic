@@ -23,6 +23,7 @@ import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.PreferencesService;
+import be.hehehe.supersonic.service.VersionService;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -36,6 +37,9 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	PreferencesService preferencesService;
+
+	@Inject
+	VersionService versionService;
 
 	@Inject
 	IconService iconService;
@@ -67,7 +71,7 @@ public class Supersonic extends JFrame {
 	@PostConstruct
 	public void init() {
 
-		setTitle(TITLE);
+		setTitle(TITLE + " " + versionService.getVersion());
 		setIconImage(iconService.getIcon("supersonic-big").getImage());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));

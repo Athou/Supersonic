@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.hehehe</groupId>
 	<artifactId>Supersonic</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>Supersonic</name>
 	<description>Subsonic Java client</description>
 
@@ -103,6 +103,12 @@
 			</plugin>
 		</plugins>
 		<finalName>supersonic</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 
 	<dependencies>

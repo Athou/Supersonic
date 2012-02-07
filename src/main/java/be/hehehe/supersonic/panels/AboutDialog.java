@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 
 import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.service.IconService;
+import be.hehehe.supersonic.service.VersionService;
 import be.hehehe.supersonic.utils.SwingUtils;
 
 @SuppressWarnings("serial")
@@ -21,6 +22,9 @@ public class AboutDialog extends JDialog {
 
 	@Inject
 	IconService iconService;
+
+	@Inject
+	VersionService versionService;
 
 	@PostConstruct
 	public void init() {
@@ -32,7 +36,9 @@ public class AboutDialog extends JDialog {
 		Container panel = getContentPane();
 
 		panel.setLayout(new MigLayout("", "[]", "[]"));
-		panel.add(new JLabel("Supersonic version 1.0.0"), "cell 0 0");
+		panel.add(
+				new JLabel("Supersonic version " + versionService.getVersion()),
+				"cell 0 0");
 		panel.add(new JLabel("by Athou"), "cell 0 1");
 
 		JButton okButton = new JButton("OK");
@@ -43,7 +49,7 @@ public class AboutDialog extends JDialog {
 			}
 		});
 		panel.add(okButton, "cell 0 3, center");
-		
+
 		pack();
 	}
 }
