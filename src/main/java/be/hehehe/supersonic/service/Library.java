@@ -80,10 +80,7 @@ public class Library {
 			@Override
 			protected Object doInBackground() throws Exception {
 				try {
-					Response response = subsonicService.invoke("getAlbumList",
-							new Param("type", "newest"), new Param("size",
-									"500"));
-					List<Child> list = response.getAlbumList().getAlbum();
+					List<Child> list = fetchAlbumList();
 					Collections.sort(list, new ChildComparator());
 
 					ExecutorService service = Executors.newFixedThreadPool(5);
@@ -159,6 +156,24 @@ public class Library {
 			};
 		}.execute();
 
+	}
+
+	private List<Child> fetchAlbumList() throws SupersonicException {
+		int step = 500;
+		int count = -1;
+		int offset = 0;
+		List<Child> albumList = Lists.newArrayList();
+		while (count != 0) {
+			Response response = subsonicService.invoke("getAlbumList",
+					new Param("type", "newest"), new Param("size", step),
+					new Param("offset", offset));
+			List<Child> list = response.getAlbumList().getAlbum();
+			count = list.size();
+			albumList.addAll(list);
+			offset += step;
+		}
+
+		return albumList;
 	}
 
 	public List<AlbumModel> getAlbums() {
