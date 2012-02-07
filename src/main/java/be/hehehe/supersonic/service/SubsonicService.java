@@ -35,18 +35,19 @@ public class SubsonicService {
 
 	public Response invoke(String method, Param... params)
 			throws SupersonicException {
+		String subsonicHost = preferencesService.getSubsonicHostname();
 		String userName = preferencesService.getSubsonicLogin();
 		String password = preferencesService.getSubsonicPassword();
-		return invoke(method, userName, password, params);
+		return invoke(method, subsonicHost, userName, password, params);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Response invoke(String method, String userName, String password,
-			Param... params) throws SupersonicException {
+	public Response invoke(String method, String subsonicHost, String userName,
+			String password, Param... params) throws SupersonicException {
 		Response response = null;
 		try {
 			String responseString = IOUtils.toString(invokeBinary(method,
-					userName, password, params));
+					subsonicHost, userName, password, params));
 			log.debug("Response: " + responseString);
 			JAXBContext context = JAXBContext.newInstance(Response.class
 					.getPackage().getName());
@@ -62,13 +63,15 @@ public class SubsonicService {
 
 	public InputStream invokeBinary(String method, Param... params)
 			throws SupersonicException {
+		String subsonicHost = preferencesService.getSubsonicHostname();
 		String userName = preferencesService.getSubsonicLogin();
 		String password = preferencesService.getSubsonicPassword();
-		return invokeBinary(method, userName, password, params);
+		return invokeBinary(method, subsonicHost, userName, password, params);
 	}
 
-	public InputStream invokeBinary(String method, String userName,
-			String password, Param... params) throws SupersonicException {
+	public InputStream invokeBinary(String method, String subsonicHost,
+			String userName, String password, Param... params)
+			throws SupersonicException {
 		InputStream is = null;
 		if (log.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder();
@@ -88,7 +91,7 @@ public class SubsonicService {
 		}
 
 		try {
-			String subsonicHost = preferencesService.getSubsonicHostname();
+
 			if (StringUtils.isNotBlank(subsonicHost)
 					&& subsonicHost.endsWith(".view")) {
 				subsonicHost = subsonicHost.substring(subsonicHost

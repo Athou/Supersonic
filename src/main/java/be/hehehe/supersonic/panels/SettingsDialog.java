@@ -19,10 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 import org.subsonic.restapi.Response;
@@ -46,6 +48,9 @@ public class SettingsDialog extends JDialog {
 	@Inject
 	IconService iconService;
 
+	@Inject
+	Logger log;
+	
 	private JTextField addressTxt;
 	private JTextField loginTxt;
 	private JPasswordField passwordTxt;
@@ -199,21 +204,27 @@ public class SettingsDialog extends JDialog {
 		testButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String userName = loginTxt.getText();
-				String password = new String(passwordTxt.getPassword());
-				try {
-					Response response = subsonicService.invoke("ping",
-							userName, password);
-					if (response.getError() != null) {
-						throw new SupersonicException(response.getError()
-								.getMessage());
+				final String host = addressTxt.getText();
+				final String userName = loginTxt.getText();
+				final String password = new String(passwordTxt.getPassword());
+				new SwingWorker<Object, Void>() {
+					@Override
+					protected Object doInBackground() throws Exception {
+						try {
+							Response response = subsonicService.invoke("ping",
+									host, userName, password);
+							if (response.getError() != null) {
+								throw new SupersonicException(response
+										.getError().getMessage());
+							}
+							JOptionPane.showMessageDialog(that,
+									"Connection successfull");
+						} catch (Exception ex) {
+							SwingUtils.handleError(ex);
+						}
+						return null;
 					}
-					JOptionPane.showMessageDialog(that,
-							"Connection successfull");
-				} catch (SupersonicException ex) {
-					SwingUtils.handleError(ex);
-				}
-
+				}.execute();
 			}
 		});
 
