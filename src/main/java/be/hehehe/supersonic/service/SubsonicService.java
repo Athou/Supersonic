@@ -126,8 +126,8 @@ public class SubsonicService {
 				setProxy(connection);
 			}
 
-			connection.setConnectTimeout(10000);
-			connection.setReadTimeout(10000);
+			connection.setConnectTimeout(60000);
+			connection.setReadTimeout(60000);
 
 			connection.connect();
 			int code = connection.getResponseCode();
@@ -170,6 +170,11 @@ public class SubsonicService {
 		public Param(String name, String value) {
 			this.name = name;
 			this.value = value;
+		}
+
+		public Param(String name, int value) {
+			this.name = name;
+			this.value = "" + value;
 		}
 
 		public String getName() {
