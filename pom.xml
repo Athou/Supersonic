@@ -4,7 +4,7 @@
 	<groupId>be.hehehe</groupId>
 	<artifactId>Supersonic</artifactId>
 	<version>1.0.1</version>
-	<name>Supersonic</name>
+	<name>supersonic</name>
 	<description>Subsonic Java client</description>
 
 	<properties>
@@ -84,6 +84,7 @@
 				</configuration>
 			</plugin>
 
+<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -98,6 +99,25 @@
 						<configuration>
 							<outputDirectory>${project.build.directory}/</outputDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<descriptors>
+						<descriptor>pom-assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
