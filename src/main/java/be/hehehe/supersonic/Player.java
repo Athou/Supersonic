@@ -25,7 +25,6 @@ import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.service.SubsonicService.Param;
-import be.hehehe.supersonic.utils.DownloadingStream;
 
 @Singleton
 public class Player {
@@ -167,8 +166,7 @@ public class Player {
 		AudioInputStream in = null;
 		state = State.PLAY;
 		try {
-			in = AudioSystem.getAudioInputStream(new DownloadingStream(
-					inputStream));
+			in = AudioSystem.getAudioInputStream(inputStream);
 			AudioFormat baseFormat = in.getFormat();
 			AudioFormat decodedFormat = new AudioFormat(
 					AudioFormat.Encoding.PCM_SIGNED,
@@ -208,10 +206,15 @@ public class Player {
 				if (state == State.PAUSE) {
 					Thread.sleep(300);
 				} else if (state == State.SKIP) {
+					long newPosition = (currentSong.getSize() / 100)
+							* skipToPercentage;
+					log.debug("Skipping to " + newPosition + "("
+							+ skipToPercentage + "%)");
 					din.reset();
 					// TODO handle seekbar progress when skipping through
-					din.skip((currentSong.getSize() / 100) * skipToPercentage);
+					din.skip(newPosition);
 					state = State.PLAY;
+
 				}
 
 				long lastEvent = 0;
