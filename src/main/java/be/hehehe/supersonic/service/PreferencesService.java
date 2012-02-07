@@ -18,6 +18,7 @@ import org.pushingpixels.substance.api.skin.GraphiteSkin;
 public class PreferencesService {
 
 	private static final String LOOKANDFEEL = "lookandfeel";
+	private static final String MINIMIZE_TO_TRAY = "minimize-to-tray";
 	private static final String SUBSONIC_ADDRESS = "subsonic-address";
 	private static final String SUBSONIC_LOGIN = "subsonic-login";
 	private static final String SUBSONIC_PASSWORD = "subsonic-password";
@@ -136,6 +137,14 @@ public class PreferencesService {
 
 	public void setVolume(int volume) {
 		prefs.putInt(VOLUME, volume);
+	}
+
+	public boolean isMinimizeToTray() {
+		return prefs.getBoolean(MINIMIZE_TO_TRAY, false);
+	}
+
+	public void setMinimizeToTray(boolean minimize) {
+		prefs.putBoolean(MINIMIZE_TO_TRAY, minimize);
 	}
 
 	public void flush() {

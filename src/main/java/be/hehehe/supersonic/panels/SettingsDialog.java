@@ -71,6 +71,8 @@ public class SettingsDialog extends JDialog {
 
 	private JComboBox lafCombo;
 
+	private JCheckBox systrayCheckbox;
+
 	@PostConstruct
 	public void init() {
 		setTitle("Supersonic Settings");
@@ -167,9 +169,12 @@ public class SettingsDialog extends JDialog {
 		JPanel lafPanel = new JPanel();
 		lafPanel.setBorder(BorderFactory.createTitledBorder("Look And Feel"));
 		getContentPane().add(lafPanel, "cell 0 2,growx");
-		lafPanel.setLayout(new MigLayout("", "[grow]", "[]"));
+		lafPanel.setLayout(new MigLayout("", "[grow]", "[][]"));
 		lafCombo = new JComboBox();
 		lafPanel.add(lafCombo, "cell 0 0, grow");
+
+		systrayCheckbox = new JCheckBox("Minimize to system tray");
+		lafPanel.add(systrayCheckbox, "cell 0 1");
 
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, "cell 0 3,growx");
@@ -274,6 +279,7 @@ public class SettingsDialog extends JDialog {
 				.getPassword()));
 		preferencesService.setLookAndFeel(((SkinWrapper) lafCombo
 				.getSelectedItem()).getInfo().getClassName());
+		preferencesService.setMinimizeToTray(systrayCheckbox.isSelected());
 
 		preferencesService.flush();
 		preferencesService.applySettings();
@@ -295,6 +301,7 @@ public class SettingsDialog extends JDialog {
 
 		lafCombo.setSelectedItem(new SkinWrapper("", preferencesService
 				.getLookAndFeel()));
+		systrayCheckbox.setSelected(preferencesService.isMinimizeToTray());
 	}
 
 	@Override

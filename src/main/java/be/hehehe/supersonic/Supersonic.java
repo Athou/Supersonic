@@ -104,7 +104,9 @@ public class Supersonic extends JFrame {
 			addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowIconified(WindowEvent e) {
-					hideSupersonic();
+					if (preferencesService.isMinimizeToTray()) {
+						hideSupersonic();
+					}
 				}
 			});
 		}
