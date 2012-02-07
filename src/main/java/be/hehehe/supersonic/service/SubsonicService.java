@@ -48,13 +48,21 @@ public class SubsonicService {
 		try {
 			String responseString = IOUtils.toString(invokeBinary(method,
 					subsonicHost, userName, password, params));
+			if (StringUtils.isBlank(responseString)
+					|| !responseString.startsWith("<?xml")) {
+				throw new SupersonicException(
+						"Response is not valid xml. Wrong address?");
+			}
 			log.debug("Response: " + responseString);
 			JAXBContext context = JAXBContext.newInstance(Response.class
 					.getPackage().getName());
 			Unmarshaller unmarshaller = context.createUnmarshaller();
+			unmarshaller.setSchema(null);
 			JAXBElement<Response> jaxbResponse = (JAXBElement<Response>) unmarshaller
 					.unmarshal(new StringReader(responseString));
 			response = jaxbResponse.getValue();
+		} catch (SupersonicException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new SupersonicException(e);
 		}
