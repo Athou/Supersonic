@@ -57,7 +57,6 @@ public class SubsonicService {
 			JAXBContext context = JAXBContext.newInstance(Response.class
 					.getPackage().getName());
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			unmarshaller.setSchema(null);
 			JAXBElement<Response> jaxbResponse = (JAXBElement<Response>) unmarshaller
 					.unmarshal(new StringReader(responseString));
 			response = jaxbResponse.getValue();
