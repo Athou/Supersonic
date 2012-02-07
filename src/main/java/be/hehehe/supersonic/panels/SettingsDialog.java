@@ -50,7 +50,7 @@ public class SettingsDialog extends JDialog {
 
 	@Inject
 	Logger log;
-	
+
 	private JTextField addressTxt;
 	private JTextField loginTxt;
 	private JPasswordField passwordTxt;
@@ -208,22 +208,31 @@ public class SettingsDialog extends JDialog {
 				final String userName = loginTxt.getText();
 				final String password = new String(passwordTxt.getPassword());
 				new SwingWorker<Object, Void>() {
+					private Exception exception;
+
 					@Override
 					protected Object doInBackground() throws Exception {
 						try {
 							Response response = subsonicService.invoke("ping",
 									host, userName, password);
 							if (response.getError() != null) {
-								throw new SupersonicException(response
+								exception = new SupersonicException(response
 										.getError().getMessage());
 							}
-							JOptionPane.showMessageDialog(that,
-									"Connection successfull");
 						} catch (Exception ex) {
-							SwingUtils.handleError(ex);
+							exception = ex;
 						}
 						return null;
 					}
+
+					protected void done() {
+						if (exception == null) {
+							JOptionPane.showMessageDialog(that,
+									"Connection successfull");
+						} else {
+							SwingUtils.handleError(exception);
+						}
+					};
 				}.execute();
 			}
 		});
