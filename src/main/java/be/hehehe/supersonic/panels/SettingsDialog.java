@@ -228,7 +228,7 @@ public class SettingsDialog extends JDialog {
 					protected void done() {
 						if (exception == null) {
 							JOptionPane.showMessageDialog(that,
-									"Connection successfull");
+									"Connection successful.");
 						} else {
 							SwingUtils.handleError(exception);
 						}
