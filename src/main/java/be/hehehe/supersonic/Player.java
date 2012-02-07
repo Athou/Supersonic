@@ -141,7 +141,6 @@ public class Player {
 	public void pause() {
 		if (line != null) {
 			line.stop();
-			line.flush();
 		}
 		state = State.PAUSE;
 	}
@@ -154,6 +153,7 @@ public class Player {
 	}
 
 	private void requestNextSong() {
+		line.drain();
 		event.fire(new SongEvent(Type.FINISHED));
 	}
 
@@ -163,24 +163,19 @@ public class Player {
 	}
 
 	private void start(InputStream inputStream) {
-		AudioInputStream in = null;
 		state = State.PLAY;
 		try {
-			in = AudioSystem.getAudioInputStream(inputStream);
+			AudioInputStream in = AudioSystem.getAudioInputStream(inputStream);
 			AudioFormat baseFormat = in.getFormat();
 			AudioFormat decodedFormat = new AudioFormat(
 					AudioFormat.Encoding.PCM_SIGNED,
 					baseFormat.getSampleRate(), 16, baseFormat.getChannels(),
 					baseFormat.getChannels() * 2, baseFormat.getSampleRate(),
 					false);
-			AudioInputStream tempDin = AudioSystem.getAudioInputStream(
-					decodedFormat, in);
-			din = new AudioInputStream(new BufferedInputStream(tempDin),
-					tempDin.getFormat(), tempDin.getFrameLength());
-
+			din = AudioSystem.getAudioInputStream(decodedFormat, in);
 			rawplay(decodedFormat, din);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
 		} finally {
 			if (state == State.STOP) {
 				stop();
@@ -199,8 +194,6 @@ public class Player {
 		if (line != null) {
 			line.start();
 			int read = 0;
-
-			din.mark(Integer.MAX_VALUE);
 			while (read != -1 && state != State.STOP) {
 
 				if (state == State.PAUSE) {
