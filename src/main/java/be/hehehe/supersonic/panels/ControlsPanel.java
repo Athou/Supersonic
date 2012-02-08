@@ -72,7 +72,7 @@ public class ControlsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				btnPlay.setIcon(iconService.getIcon("play"));
 				SongEvent songEvent = new SongEvent(Type.PLAY);
-				songEvent.setSong(songsPanel.getSelectedSong());
+				songEvent.setSong(getSelectedSong());
 				event.fire(songEvent);
 			}
 		});
@@ -183,6 +183,10 @@ public class ControlsPanel extends JPanel {
 		SongEvent songEvent = new SongEvent(Type.PLAY);
 		songEvent.setSong(getNextSong());
 		event.fire(songEvent);
+	}
+
+	public SongModel getSelectedSong() {
+		return songsPanel.getSelectedSong();
 	}
 
 	public SongModel getNextSong() {

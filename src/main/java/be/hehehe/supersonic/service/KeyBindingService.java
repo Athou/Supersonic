@@ -71,6 +71,8 @@ public class KeyBindingService implements HotKeyListener {
 					SongEvent songEvent = new SongEvent(model.getType());
 					if (model.getType() == Type.FINISHED) {
 						songEvent.setSong(controlsPanel.getNextSong());
+					} else if (model.getType() == Type.PLAY) {
+						songEvent.setSong(controlsPanel.getSelectedSong());
 					}
 					event.fire(songEvent);
 				}
