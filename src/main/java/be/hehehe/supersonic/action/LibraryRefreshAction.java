@@ -1,4 +1,4 @@
-package be.hehehe.supersonic.panels;
+package be.hehehe.supersonic.action;
 
 import java.awt.event.ActionEvent;
 
@@ -8,6 +8,7 @@ import javax.swing.AbstractAction;
 
 import org.jdesktop.swingx.JXErrorPane;
 
+import be.hehehe.supersonic.panels.LibraryRefreshDialog;
 import be.hehehe.supersonic.service.Library;
 import be.hehehe.supersonic.utils.SupersonicException;
 

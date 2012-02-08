@@ -16,12 +16,14 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import be.hehehe.supersonic.action.ExitAction;
 import be.hehehe.supersonic.panels.ControlsPanel;
 import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SearchPanel;
 import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.service.IconService;
+import be.hehehe.supersonic.service.KeyBindingService;
 import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.service.VersionService;
 import be.hehehe.supersonic.utils.SwingUtils;
@@ -34,6 +36,12 @@ public class Supersonic extends JFrame {
 	private static final int HEIGHT = 600;
 
 	private static final String TITLE = "Supersonic";
+
+	@Inject
+	ExitAction exitAction;
+
+	@Inject
+	KeyBindingService keyBindingService;
 
 	@Inject
 	PreferencesService preferencesService;
@@ -73,7 +81,13 @@ public class Supersonic extends JFrame {
 
 		setTitle(TITLE + " " + versionService.getVersion());
 		setIconImage(iconService.getIcon("supersonic-big").getImage());
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				exitAction.actionPerformed(null);
+			}
+		});
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		SwingUtils.centerContainer(this);
 		pack();

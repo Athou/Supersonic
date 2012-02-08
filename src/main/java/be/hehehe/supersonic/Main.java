@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
+import be.hehehe.supersonic.service.KeyBindingService;
 import be.hehehe.supersonic.service.PreferencesService;
 
 public class Main {

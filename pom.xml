@@ -25,6 +25,10 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>tulskiy/jkeymaster</id>
+			<url>http://tulskiy.github.com/jkeymaster/maven/</url>
+		</repository>
 	</repositories>
 	<build>
 		<!-- Fix to ignore Eclipse error: maven-dependency-plugin (goals "copy-dependencies", 
@@ -196,6 +200,11 @@
 			<groupId>net.sf.flexjson</groupId>
 			<artifactId>flexjson</artifactId>
 			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tulskiy</groupId>
+			<artifactId>jkeymaster</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 </project>

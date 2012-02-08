@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
@@ -38,6 +39,9 @@ import be.hehehe.supersonic.utils.SwingUtils;
 @SuppressWarnings("serial")
 @Singleton
 public class SettingsDialog extends JDialog {
+
+	@Inject
+	KeyBindingPanel keyBindingPanel;
 
 	@Inject
 	private PreferencesService preferencesService;
@@ -86,12 +90,20 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void buildFrame() {
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[][][][]"));
+		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][]"));
+
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		getContentPane().add(tabbedPane, "cell 0 0,grow");
+
+		JPanel generalTab = new JPanel();
+		generalTab.setLayout(new MigLayout("", "[grow]", "[][][]"));
+		tabbedPane.add(generalTab, "General");
+		tabbedPane.add(keyBindingPanel, "Key Bindings");
 
 		JPanel subsonicInfosPanel = new JPanel();
 		subsonicInfosPanel.setBorder(BorderFactory
 				.createTitledBorder("Subsonic"));
-		getContentPane().add(subsonicInfosPanel, "cell 0 0,grow");
+		generalTab.add(subsonicInfosPanel, "cell 0 0,grow");
 		subsonicInfosPanel.setLayout(new MigLayout("", "[][grow]", "[][][][]"));
 
 		JLabel addressLabel = new JLabel("Address");
@@ -125,7 +137,7 @@ public class SettingsDialog extends JDialog {
 		JPanel proxyPanel = new JPanel();
 		proxyPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
 		proxyPanel.setBorder(BorderFactory.createTitledBorder("Proxy"));
-		getContentPane().add(proxyPanel, "cell 0 1,grow");
+		generalTab.add(proxyPanel, "cell 0 1,grow");
 
 		proxyEnabledCheckBox = new JCheckBox("Enable proxy");
 		proxyPanel.add(proxyEnabledCheckBox, "cell 0 0");
@@ -168,7 +180,7 @@ public class SettingsDialog extends JDialog {
 
 		JPanel lafPanel = new JPanel();
 		lafPanel.setBorder(BorderFactory.createTitledBorder("Look And Feel"));
-		getContentPane().add(lafPanel, "cell 0 2,growx");
+		generalTab.add(lafPanel, "cell 0 2,growx");
 		lafPanel.setLayout(new MigLayout("", "[grow]", "[][]"));
 		lafCombo = new JComboBox();
 		lafPanel.add(lafCombo, "cell 0 0, grow");
@@ -177,7 +189,7 @@ public class SettingsDialog extends JDialog {
 		lafPanel.add(systrayCheckbox, "cell 0 1");
 
 		JPanel panel = new JPanel();
-		getContentPane().add(panel, "cell 0 3,growx");
+		getContentPane().add(panel, "cell 0 1,growx");
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		okButton = new JButton("OK");

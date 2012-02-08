@@ -12,8 +12,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import be.hehehe.supersonic.action.ExitAction;
+import be.hehehe.supersonic.action.LibraryRefreshAction;
 import be.hehehe.supersonic.panels.AboutDialog;
-import be.hehehe.supersonic.panels.LibraryRefreshAction;
 import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.service.IconService;
 import be.hehehe.supersonic.service.Library;
@@ -36,6 +37,9 @@ public class SupersonicMenu extends JMenuBar {
 
 	@Inject
 	LibraryRefreshAction refreshAction;
+
+	@Inject
+	ExitAction exitAction;
 
 	@PostConstruct
 	public void init() {
@@ -70,12 +74,7 @@ public class SupersonicMenu extends JMenuBar {
 		JMenuItem quitMenu = new JMenuItem("Quit");
 		quitMenu.setMnemonic(KeyEvent.VK_Q);
 		fileMenu.add(quitMenu);
-		quitMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+		quitMenu.addActionListener(exitAction);
 
 		JMenuItem aboutMenu = new JMenuItem("About...");
 		aboutMenu.setMnemonic(KeyEvent.VK_A);
