@@ -181,16 +181,18 @@ public class ControlsPanel extends JPanel {
 
 	private void nextSong() {
 		SongEvent songEvent = new SongEvent(Type.PLAY);
+		songEvent.setSong(getNextSong());
+		event.fire(songEvent);
+	}
 
+	public SongModel getNextSong() {
 		SongModel nextSong = songsPanel.getNextSong(currentSong);
 		if (chckbxRepeat.isSelected()) {
 			nextSong = currentSong;
 		} else if (chckbxShuffle.isSelected()) {
 			nextSong = songsPanel.getNextRandomSong();
 		}
-
-		songEvent.setSong(nextSong);
-		event.fire(songEvent);
+		return nextSong;
 	}
 
 	public void onProgress(@Observes final SongEvent e) {

@@ -23,7 +23,6 @@ import be.hehehe.supersonic.panels.SearchPanel;
 import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.panels.SongsPanel;
 import be.hehehe.supersonic.service.IconService;
-import be.hehehe.supersonic.service.KeyBindingService;
 import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.service.VersionService;
 import be.hehehe.supersonic.utils.SwingUtils;
@@ -39,9 +38,6 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	ExitAction exitAction;
-
-	@Inject
-	KeyBindingService keyBindingService;
 
 	@Inject
 	PreferencesService preferencesService;

@@ -31,6 +31,7 @@ import org.pushingpixels.substance.api.skin.SkinInfo;
 import org.subsonic.restapi.Response;
 
 import be.hehehe.supersonic.service.IconService;
+import be.hehehe.supersonic.service.KeyBindingService;
 import be.hehehe.supersonic.service.PreferencesService;
 import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.utils.SupersonicException;
@@ -45,6 +46,9 @@ public class SettingsDialog extends JDialog {
 
 	@Inject
 	private PreferencesService preferencesService;
+
+	@Inject
+	KeyBindingService keyBindingService;
 
 	@Inject
 	SubsonicService subsonicService;
@@ -292,9 +296,11 @@ public class SettingsDialog extends JDialog {
 		preferencesService.setLookAndFeel(((SkinWrapper) lafCombo
 				.getSelectedItem()).getInfo().getClassName());
 		preferencesService.setMinimizeToTray(systrayCheckbox.isSelected());
+		preferencesService.setKeyBindings(keyBindingPanel.getBindings());
 
 		preferencesService.flush();
 		preferencesService.applySettings();
+		keyBindingService.applyBindings();
 	}
 
 	private void loadPrefs() {
@@ -314,6 +320,7 @@ public class SettingsDialog extends JDialog {
 		lafCombo.setSelectedItem(new SkinWrapper("", preferencesService
 				.getLookAndFeel()));
 		systrayCheckbox.setSelected(preferencesService.isMinimizeToTray());
+		keyBindingPanel.setBindings(preferencesService.getKeyBindings());
 	}
 
 	@Override

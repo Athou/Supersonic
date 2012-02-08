@@ -1,6 +1,5 @@
 package be.hehehe.supersonic;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 
 import javax.enterprise.event.Event;

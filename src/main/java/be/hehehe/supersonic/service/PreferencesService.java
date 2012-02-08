@@ -3,6 +3,7 @@ package be.hehehe.supersonic.service;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy.Type;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -13,6 +14,13 @@ import javax.inject.Singleton;
 import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.GraphiteSkin;
+
+import com.google.common.collect.Lists;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+
+import be.hehehe.supersonic.model.KeyBindingModel;
 
 @Singleton
 public class PreferencesService {
@@ -29,18 +37,19 @@ public class PreferencesService {
 	private static final String PROXY_AUTHREQUIRED = "proxy-authrequired";
 	private static final String PROXY_LOGIN = "proxy-login";
 	private static final String PROXY_PASSWORD = "proxy-password";
+	private static final String KEYBINDINGS = "keybindings";
 
 	private static final String VOLUME = "volume";
 
 	private Preferences prefs;
 
+	@Inject
+	Logger log;
+
 	@PostConstruct
 	public void init() {
 		prefs = Preferences.userNodeForPackage(PreferencesService.class);
 	}
-
-	@Inject
-	Logger log;
 
 	public String getSubsonicHostname() {
 		return prefs.get(SUBSONIC_ADDRESS, "");
@@ -145,6 +154,20 @@ public class PreferencesService {
 
 	public void setMinimizeToTray(boolean minimize) {
 		prefs.putBoolean(MINIMIZE_TO_TRAY, minimize);
+	}
+
+	public List<KeyBindingModel> getKeyBindings() {
+		List<KeyBindingModel> list = Lists.newArrayList();
+		String json = prefs.get(KEYBINDINGS, null);
+		if (json != null) {
+			list = new JSONDeserializer<List<KeyBindingModel>>()
+					.deserialize(json);
+		}
+		return list;
+	}
+
+	public void setKeyBindings(List<KeyBindingModel> keyBindings) {
+		prefs.put(KEYBINDINGS, new JSONSerializer().deepSerialize(keyBindings));
 	}
 
 	public void flush() {
