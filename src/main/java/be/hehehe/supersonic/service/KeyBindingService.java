@@ -56,6 +56,7 @@ public class KeyBindingService implements HotKeyListener {
 		}
 		for (MediaKey key : MediaKey.values()) {
 			provider.register(key, this);
+			log.info("Registering Media Hotkey " + key);
 		}
 	}
 
