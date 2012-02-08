@@ -36,7 +36,7 @@ public class KeyBindingPanel extends JPanel {
 		setLayout(new MigLayout("", "[][grow]", "[][][][]"));
 
 		add(new JLabel("Play"), "cell 0 0");
-		add(new JLabel("Pause"), "cell 0 1");
+		add(new JLabel("Pause / unpause"), "cell 0 1");
 		add(new JLabel("Stop"), "cell 0 2");
 		add(new JLabel("Next song"), "cell 0 3");
 
