@@ -17,6 +17,7 @@ import be.hehehe.supersonic.panels.ControlsPanel;
 
 import com.tulskiy.keymaster.common.HotKey;
 import com.tulskiy.keymaster.common.HotKeyListener;
+import com.tulskiy.keymaster.common.MediaKey;
 import com.tulskiy.keymaster.common.Provider;
 
 @Singleton
@@ -53,6 +54,9 @@ public class KeyBindingService implements HotKeyListener {
 							model.getModifiers()), this);
 			log.info("Registering Hotkey " + model.toString());
 		}
+		for (MediaKey key : MediaKey.values()) {
+			provider.register(key, this);
+		}
 	}
 
 	public void stop() {
@@ -77,6 +81,24 @@ public class KeyBindingService implements HotKeyListener {
 					event.fire(songEvent);
 				}
 			}
+		} else if (hotKey.mediaKey != null) {
+			MediaKey key = hotKey.mediaKey;
+			SongEvent songEvent = new SongEvent();
+			switch (key) {
+			case MEDIA_NEXT_TRACK:
+				songEvent.setType(Type.FINISHED);
+				songEvent.setSong(controlsPanel.getNextSong());
+				break;
+			case MEDIA_PLAY_PAUSE:
+				songEvent.setType(Type.PAUSE);
+				break;
+			case MEDIA_STOP:
+				songEvent.setType(Type.STOP);
+				break;
+			default:
+				break;
+			}
+			event.fire(songEvent);
 		}
 	}
 

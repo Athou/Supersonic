@@ -14,6 +14,9 @@ public class SongEvent {
 	private long total;
 	private int skipToPercentage;
 
+	public SongEvent() {
+	}
+
 	public SongEvent(Type type) {
 		this.type = type;
 	}
