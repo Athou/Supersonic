@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,6 +18,7 @@ import javax.swing.KeyStroke;
 import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.KeyBindingModel;
+import be.hehehe.supersonic.service.IconService;
 
 import com.google.common.collect.Lists;
 
@@ -24,14 +26,21 @@ import com.google.common.collect.Lists;
 @Singleton
 public class KeyBindingPanel extends JPanel {
 
-	private BindingComponent play = new BindingComponent(Type.PLAY);
-	private BindingComponent pause = new BindingComponent(Type.PAUSE);
-	private BindingComponent stop = new BindingComponent(Type.STOP);
-	private BindingComponent next = new BindingComponent(Type.FINISHED);
+	@Inject
+	IconService iconService;
+
+	private BindingComponent play;
+	private BindingComponent pause;
+	private BindingComponent stop;
+	private BindingComponent next;
 	private BindingComponent[] components;
 
 	@PostConstruct
 	public void init() {
+		play = new BindingComponent(Type.PLAY);
+		pause = new BindingComponent(Type.PAUSE);
+		stop = new BindingComponent(Type.STOP);
+		next = new BindingComponent(Type.FINISHED);
 		components = new BindingComponent[] { play, pause, stop, next };
 		setLayout(new MigLayout("", "[][grow]", "[][][][]"));
 
@@ -74,14 +83,16 @@ public class KeyBindingPanel extends JPanel {
 
 		private Type type;
 
-		private JTextField field = new JTextField();
-		private JButton clear = new JButton("Clear");
+		private JTextField field;
+		private JButton clear;
 
 		private KeyStroke keyStroke;
 
 		public BindingComponent(Type type) {
 			this.type = type;
-			setLayout(new MigLayout("", "[grow][]", "[]"));
+			clear = new JButton(iconService.getIcon("cross"));
+			field = new JTextField();
+			setLayout(new MigLayout("insets 0", "[grow][]", "[]"));
 			add(field, "cell 0 0,grow");
 			add(clear, "cell 1 0");
 

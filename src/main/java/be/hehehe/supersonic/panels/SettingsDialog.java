@@ -94,13 +94,13 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void buildFrame() {
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][]"));
+		getContentPane().setLayout(new MigLayout("insets 0", "[grow]", "[grow][]"));
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, "cell 0 0,grow");
 
 		JPanel generalTab = new JPanel();
-		generalTab.setLayout(new MigLayout("", "[grow]", "[][][]"));
+		generalTab.setLayout(new MigLayout("insets 0", "[grow]", "[][][]"));
 		tabbedPane.add(generalTab, "General");
 		tabbedPane.add(keyBindingPanel, "Key Bindings");
 
@@ -108,7 +108,7 @@ public class SettingsDialog extends JDialog {
 		subsonicInfosPanel.setBorder(BorderFactory
 				.createTitledBorder("Subsonic"));
 		generalTab.add(subsonicInfosPanel, "cell 0 0,grow");
-		subsonicInfosPanel.setLayout(new MigLayout("", "[][grow]", "[][][][]"));
+		subsonicInfosPanel.setLayout(new MigLayout("insets 0", "[][grow]", "[][][][]"));
 
 		JLabel addressLabel = new JLabel("Address");
 		subsonicInfosPanel.add(addressLabel, "cell 0 0,alignx left");
@@ -139,7 +139,7 @@ public class SettingsDialog extends JDialog {
 		testPanel.add(testButton);
 
 		JPanel proxyPanel = new JPanel();
-		proxyPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
+		proxyPanel.setLayout(new MigLayout("insets 0", "[][grow]", "[][][][][][][]"));
 		proxyPanel.setBorder(BorderFactory.createTitledBorder("Proxy"));
 		generalTab.add(proxyPanel, "cell 0 1,grow");
 
@@ -185,7 +185,7 @@ public class SettingsDialog extends JDialog {
 		JPanel lafPanel = new JPanel();
 		lafPanel.setBorder(BorderFactory.createTitledBorder("Look And Feel"));
 		generalTab.add(lafPanel, "cell 0 2,growx");
-		lafPanel.setLayout(new MigLayout("", "[grow]", "[][]"));
+		lafPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
 		lafCombo = new JComboBox();
 		lafPanel.add(lafCombo, "cell 0 0, grow");
 
