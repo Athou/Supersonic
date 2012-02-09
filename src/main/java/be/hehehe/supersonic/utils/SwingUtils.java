@@ -5,6 +5,8 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.error.ErrorInfo;
@@ -25,10 +27,15 @@ public class SwingUtils {
 		return minutes + ":" + StringUtils.leftPad("" + seconds, 2, "0");
 	}
 
-	public static void handleError(Throwable e) {
-		ErrorInfo info = new ErrorInfo(null, e.getMessage(), null, null, e,
-				null, null);
-		JXErrorPane.showDialog(null, info);
+	public static void handleError(final Throwable e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				ErrorInfo info = new ErrorInfo(null, e.getMessage(), null,
+						null, e, null, null);
+				JXErrorPane.showDialog(null, info);
+			}
+		});
 	}
 
 	public static void sleep(long milliseconds) {
