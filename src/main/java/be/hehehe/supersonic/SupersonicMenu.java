@@ -17,7 +17,6 @@ import be.hehehe.supersonic.action.LibraryRefreshAction;
 import be.hehehe.supersonic.panels.AboutDialog;
 import be.hehehe.supersonic.panels.SettingsDialog;
 import be.hehehe.supersonic.service.IconService;
-import be.hehehe.supersonic.service.Library;
 
 @SuppressWarnings("serial")
 @Singleton
@@ -31,9 +30,6 @@ public class SupersonicMenu extends JMenuBar {
 
 	@Inject
 	IconService iconService;
-
-	@Inject
-	Library library;
 
 	@Inject
 	LibraryRefreshAction refreshAction;
