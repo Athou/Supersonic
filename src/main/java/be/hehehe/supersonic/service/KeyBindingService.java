@@ -41,7 +41,7 @@ public class KeyBindingService implements HotKeyListener {
 
 	@PostConstruct
 	public void init() {
-		provider = Provider.getCurrentProvider(true);
+		provider = Provider.getCurrentProvider(false);
 		applyBindings();
 	}
 
@@ -82,7 +82,8 @@ public class KeyBindingService implements HotKeyListener {
 					event.fire(songEvent);
 				}
 			}
-		} else if (hotKey.mediaKey != null) {
+		}
+		if (hotKey.mediaKey != null) {
 			MediaKey key = hotKey.mediaKey;
 			SongEvent songEvent = new SongEvent();
 			switch (key) {
