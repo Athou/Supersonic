@@ -22,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+import be.hehehe.supersonic.events.ControlsEvent;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
@@ -35,9 +36,6 @@ import be.hehehe.supersonic.utils.SwingUtils;
 public class ControlsPanel extends JPanel {
 
 	@Inject
-	SongsPanel songsPanel;
-
-	@Inject
 	IconService iconService;
 
 	@Inject
@@ -49,6 +47,9 @@ public class ControlsPanel extends JPanel {
 	@Inject
 	Event<VolumeChangedEvent> volumeEvent;
 
+	@Inject
+	Event<ControlsEvent> controlsEvent;
+
 	private int seekbarProgress = 0;
 	private SongModel currentSong;
 
@@ -58,6 +59,7 @@ public class ControlsPanel extends JPanel {
 	private JCheckBox chckbxShuffle;
 
 	private JLabel currentSongLabel;
+	private SongModel selectedSong;
 
 	@PostConstruct
 	public void init() {
@@ -72,7 +74,7 @@ public class ControlsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				btnPlay.setIcon(iconService.getIcon("play"));
 				SongEvent songEvent = new SongEvent(Type.PLAY);
-				songEvent.setSong(getSelectedSong());
+				songEvent.setSong(selectedSong);
 				event.fire(songEvent);
 			}
 		});
@@ -106,7 +108,7 @@ public class ControlsPanel extends JPanel {
 		btnNext.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				nextSong();
+				event.fire(new SongEvent(Type.FINISHED));
 			}
 		});
 
@@ -130,13 +132,23 @@ public class ControlsPanel extends JPanel {
 		});
 		volumeSlider.setValue(preferencesService.getVolume());
 
+		ChangeListener changeListener = new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				controlsEvent.fire(new ControlsEvent(
+						chckbxShuffle.isSelected(), chckbxRepeat.isSelected()));
+			}
+		};
+
 		chckbxShuffle = new JCheckBox("Shuffle");
 		chckbxShuffle.setFocusable(false);
 		add(chckbxShuffle, "cell 5 0");
+		chckbxShuffle.addChangeListener(changeListener);
 
 		chckbxRepeat = new JCheckBox("Repeat");
 		chckbxRepeat.setFocusable(false);
 		add(chckbxRepeat, "cell 6 0");
+		chckbxRepeat.addChangeListener(changeListener);
 
 		seekBar = new JSlider();
 		seekBar.setFocusable(false);
@@ -179,33 +191,10 @@ public class ControlsPanel extends JPanel {
 
 	}
 
-	private void nextSong() {
-		SongEvent songEvent = new SongEvent(Type.PLAY);
-		songEvent.setSong(getNextSong());
-		event.fire(songEvent);
-	}
-
-	public SongModel getSelectedSong() {
-		return songsPanel.getSelectedSong();
-	}
-	
-	public SongModel getCurrentSong() {
-		return currentSong;
-	}
-
-	public SongModel getNextSong() {
-		SongModel nextSong = songsPanel.getNextSong(currentSong);
-		if (chckbxRepeat.isSelected()) {
-			nextSong = currentSong;
-		} else if (chckbxShuffle.isSelected()) {
-			nextSong = songsPanel.getNextRandomSong();
-		}
-		return nextSong;
-	}
-
 	public void onProgress(@Observes final SongEvent e) {
 
 		SwingUtilities.invokeLater(new Runnable() {
+
 			@Override
 			public void run() {
 				if (e.getType() == Type.PROGRESS) {
@@ -221,8 +210,8 @@ public class ControlsPanel extends JPanel {
 					currentSongLabel.setText(currentSong.getArtist() + " - "
 							+ currentSong.getAlbum() + " - "
 							+ currentSong.getTitle());
-				} else if (e.getType() == Type.FINISHED) {
-					nextSong();
+				} else if (e.getType() == Type.SELECTION_CHANGED) {
+					selectedSong = e.getSong();
 				}
 			}
 		});

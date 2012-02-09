@@ -157,7 +157,10 @@ public class Player {
 
 	private void requestNextSong() {
 		line.drain();
-		event.fire(new SongEvent(Type.FINISHED));
+		SongModel oldSong = currentSong;
+		SongEvent songEvent = new SongEvent(Type.FINISHED);
+		songEvent.setSong(oldSong);
+		event.fire(songEvent);
 	}
 
 	public void skipTo(int skipToPercentage) {

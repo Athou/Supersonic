@@ -20,6 +20,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTable;
 
+import be.hehehe.supersonic.events.ControlsEvent;
 import be.hehehe.supersonic.events.LibraryChangedEvent;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
@@ -39,6 +40,9 @@ public class SongsPanel extends JPanel {
 
 	private JXTable table;
 	private SongsTableModel tableModel;
+	private SongModel currentSong;
+	private boolean shuffle;
+	private boolean repeat;
 
 	@PostConstruct
 	public void init() {
@@ -115,6 +119,7 @@ public class SongsPanel extends JPanel {
 	public void onSongChanged(@Observes final SongEvent e) {
 
 		SwingUtilities.invokeLater(new Runnable() {
+
 			@Override
 			public void run() {
 				if (e.getType() == Type.PLAY
@@ -126,12 +131,34 @@ public class SongsPanel extends JPanel {
 						row = table.convertRowIndexToView(row);
 						table.changeSelection(row, 0, false, false);
 					}
+					if (e.getType() == Type.PLAY) {
+						currentSong = e.getSong();
+					}
+				} else if (e.getType() == Type.FINISHED) {
+					fireNextSong();
 				}
 			}
 		});
 	}
 
-	public SongModel getSelectedSong() {
+	public void onControlsChanged(@Observes ControlsEvent e) {
+		shuffle = e.isShuffle();
+		repeat = e.isRepeat();
+	}
+
+	private void fireNextSong() {
+		SongEvent songEvent = new SongEvent(Type.PLAY);
+		SongModel nextSong = getNextSong(currentSong);
+		if (repeat) {
+			nextSong = currentSong;
+		} else if (shuffle) {
+			nextSong = getNextRandomSong();
+		}
+		songEvent.setSong(nextSong);
+		event.fire(songEvent);
+	}
+
+	private SongModel getSelectedSong() {
 		int selectedRow = table.getSelectedRow();
 		if (selectedRow == -1) {
 			selectedRow = 0;
@@ -140,7 +167,7 @@ public class SongsPanel extends JPanel {
 		return tableModel.get(row);
 	}
 
-	public SongModel getNextSong(SongModel currentSong) {
+	private SongModel getNextSong(SongModel currentSong) {
 		int row = table.getSelectedRow();
 		if (currentSong != null) {
 			row = tableModel.indexOf(currentSong);
@@ -154,7 +181,7 @@ public class SongsPanel extends JPanel {
 		return tableModel.get(row);
 	}
 
-	public SongModel getNextRandomSong() {
+	private SongModel getNextRandomSong() {
 		int row = new Random().nextInt(tableModel.getRowCount());
 		return tableModel.get(row);
 	}

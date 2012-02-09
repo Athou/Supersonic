@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.KeyBindingModel;
-import be.hehehe.supersonic.panels.ControlsPanel;
 
 import com.tulskiy.keymaster.common.HotKey;
 import com.tulskiy.keymaster.common.HotKeyListener;
@@ -28,9 +27,6 @@ public class KeyBindingService implements HotKeyListener {
 
 	@Inject
 	PreferencesService preferencesService;
-
-	@Inject
-	ControlsPanel controlsPanel;
 
 	@Inject
 	Event<SongEvent> event;
@@ -77,9 +73,8 @@ public class KeyBindingService implements HotKeyListener {
 						&& keyStroke.getModifiers() == model.getModifiers()) {
 					SongEvent songEvent = new SongEvent(model.getType());
 					if (model.getType() == Type.FINISHED) {
-						songEvent.setSong(controlsPanel.getNextSong());
 					} else if (model.getType() == Type.PLAY) {
-						songEvent.setSong(controlsPanel.getSelectedSong());
+						// TODO
 					}
 					event.fire(songEvent);
 				}
@@ -91,7 +86,6 @@ public class KeyBindingService implements HotKeyListener {
 			switch (key) {
 			case MEDIA_NEXT_TRACK:
 				songEvent.setType(Type.FINISHED);
-				songEvent.setSong(controlsPanel.getNextSong());
 				break;
 			case MEDIA_PLAY_PAUSE:
 				songEvent.setType(Type.PAUSE);
