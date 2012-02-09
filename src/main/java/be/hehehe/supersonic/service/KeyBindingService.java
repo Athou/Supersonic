@@ -54,9 +54,11 @@ public class KeyBindingService implements HotKeyListener {
 							model.getModifiers()), this);
 			log.info("Registering Hotkey " + model.toString());
 		}
-		for (MediaKey key : MediaKey.values()) {
-			provider.register(key, this);
-			log.info("Registering Media Hotkey " + key);
+		if (preferencesService.isMediaKeyBindingActive()) {
+			for (MediaKey key : MediaKey.values()) {
+				provider.register(key, this);
+				log.info("Registering Media Hotkey " + key);
+			}
 		}
 	}
 

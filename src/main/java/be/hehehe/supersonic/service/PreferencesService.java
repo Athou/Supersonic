@@ -38,6 +38,7 @@ public class PreferencesService {
 	private static final String PROXY_LOGIN = "proxy-login";
 	private static final String PROXY_PASSWORD = "proxy-password";
 	private static final String KEYBINDINGS = "keybindings";
+	private static final String KEYBINDINGS_MEDIAKEYS = "keybindings-media";
 
 	private static final String VOLUME = "volume";
 
@@ -168,6 +169,14 @@ public class PreferencesService {
 
 	public void setKeyBindings(List<KeyBindingModel> keyBindings) {
 		prefs.put(KEYBINDINGS, new JSONSerializer().deepSerialize(keyBindings));
+	}
+
+	public boolean isMediaKeyBindingActive() {
+		return prefs.getBoolean(KEYBINDINGS_MEDIAKEYS, true);
+	}
+
+	public void setMediaKeyActive(boolean active) {
+		prefs.putBoolean(KEYBINDINGS_MEDIAKEYS, active);
 	}
 
 	public void flush() {

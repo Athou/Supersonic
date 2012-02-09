@@ -81,6 +81,8 @@ public class SettingsDialog extends JDialog {
 
 	private JCheckBox systrayCheckbox;
 
+	private JTabbedPane tabbedPane;
+
 	@PostConstruct
 	public void init() {
 		setTitle("Supersonic Settings");
@@ -94,9 +96,10 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void buildFrame() {
-		getContentPane().setLayout(new MigLayout("insets 0", "[grow]", "[grow][]"));
+		getContentPane().setLayout(
+				new MigLayout("insets 0", "[grow]", "[grow][]"));
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, "cell 0 0,grow");
 
 		JPanel generalTab = new JPanel();
@@ -108,7 +111,8 @@ public class SettingsDialog extends JDialog {
 		subsonicInfosPanel.setBorder(BorderFactory
 				.createTitledBorder("Subsonic"));
 		generalTab.add(subsonicInfosPanel, "cell 0 0,grow");
-		subsonicInfosPanel.setLayout(new MigLayout("insets 0", "[][grow]", "[][][][]"));
+		subsonicInfosPanel.setLayout(new MigLayout("insets 0", "[][grow]",
+				"[][][][]"));
 
 		JLabel addressLabel = new JLabel("Address");
 		subsonicInfosPanel.add(addressLabel, "cell 0 0,alignx left");
@@ -139,7 +143,8 @@ public class SettingsDialog extends JDialog {
 		testPanel.add(testButton);
 
 		JPanel proxyPanel = new JPanel();
-		proxyPanel.setLayout(new MigLayout("insets 0", "[][grow]", "[][][][][][][]"));
+		proxyPanel.setLayout(new MigLayout("insets 0", "[][grow]",
+				"[][][][][][][]"));
 		proxyPanel.setBorder(BorderFactory.createTitledBorder("Proxy"));
 		generalTab.add(proxyPanel, "cell 0 1,grow");
 
@@ -297,6 +302,8 @@ public class SettingsDialog extends JDialog {
 				.getSelectedItem()).getInfo().getClassName());
 		preferencesService.setMinimizeToTray(systrayCheckbox.isSelected());
 		preferencesService.setKeyBindings(keyBindingPanel.getBindings());
+		preferencesService.setMediaKeyActive(keyBindingPanel
+				.isMediaKeyBindingActive());
 
 		preferencesService.flush();
 		preferencesService.applySettings();
@@ -321,6 +328,8 @@ public class SettingsDialog extends JDialog {
 				.getLookAndFeel()));
 		systrayCheckbox.setSelected(preferencesService.isMinimizeToTray());
 		keyBindingPanel.setBindings(preferencesService.getKeyBindings());
+		keyBindingPanel.setMediaKeyBindingActive(preferencesService
+				.isMediaKeyBindingActive());
 	}
 
 	@Override
@@ -328,6 +337,7 @@ public class SettingsDialog extends JDialog {
 		if (b) {
 			loadPrefs();
 			setControlStates();
+			tabbedPane.setSelectedIndex(0);
 		}
 		super.setVisible(b);
 	}
