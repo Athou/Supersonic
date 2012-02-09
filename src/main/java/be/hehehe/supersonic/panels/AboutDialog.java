@@ -31,7 +31,6 @@ public class AboutDialog extends JDialog {
 		setTitle("About");
 		setModal(true);
 		setIconImage(iconService.getIcon("supersonic-big").getImage());
-		SwingUtils.centerContainer(this);
 
 		Container panel = getContentPane();
 
@@ -51,5 +50,6 @@ public class AboutDialog extends JDialog {
 		panel.add(okButton, "cell 0 3, center");
 
 		pack();
+		SwingUtils.centerContainer(this);
 	}
 }
