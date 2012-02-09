@@ -2,12 +2,12 @@ package be.hehehe.supersonic.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.AbstractAction;
 
 import org.apache.log4j.Logger;
-import org.jboss.weld.environment.se.WeldContainer;
 
 import be.hehehe.supersonic.Supersonic;
 import be.hehehe.supersonic.model.ApplicationStateModel;
@@ -27,7 +27,7 @@ public class ExitAction extends AbstractAction {
 	PreferencesService preferencesService;
 
 	@Inject
-	WeldContainer container;
+	Instance<Object> cdi;
 
 	@Inject
 	Logger log;
@@ -35,12 +35,9 @@ public class ExitAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		Supersonic supersonic = container.instance().select(Supersonic.class)
-				.get();
-		CoverPanel coverPanel = container.instance().select(CoverPanel.class)
-				.get();
-		SearchPanel searchPanel = container.instance()
-				.select(SearchPanel.class).get();
+		Supersonic supersonic = cdi.select(Supersonic.class).get();
+		CoverPanel coverPanel = cdi.select(CoverPanel.class).get();
+		SearchPanel searchPanel = cdi.select(SearchPanel.class).get();
 
 		ApplicationStateModel model = new ApplicationStateModel();
 		model.setWindowState(supersonic.getExtendedState());

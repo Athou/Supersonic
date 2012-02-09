@@ -52,6 +52,7 @@ public class PreferencesService {
 	@PostConstruct
 	public void init() {
 		prefs = Preferences.userNodeForPackage(PreferencesService.class);
+		applySettings();
 	}
 
 	public String getSubsonicHostname() {
