@@ -212,25 +212,28 @@ public class PreferencesService {
 			log.info("Could not set the look and feel " + plafClassName + ".");
 		}
 
-		if (getProxyType() == Type.HTTP) {
-			System.setProperty("http.proxyHost", getProxyHostname());
-			System.setProperty("http.proxyPort", getProxyPort());
-			System.setProperty("https.proxyHost", getProxyHostname());
-			System.setProperty("https.proxyPort", getProxyPort());
-			if (isProxyAuthRequired()) {
-				Authenticator.setDefault(new ProxyAuth(getProxyLogin(),
-						getProxyPassword()));
+		if (isProxyEnabled()) {
+			if (getProxyType() == Type.HTTP) {
+				System.setProperty("http.proxyHost", getProxyHostname());
+				System.setProperty("http.proxyPort", getProxyPort());
+				System.setProperty("https.proxyHost", getProxyHostname());
+				System.setProperty("https.proxyPort", getProxyPort());
+				if (isProxyAuthRequired()) {
+					Authenticator.setDefault(new ProxyAuth(getProxyLogin(),
+							getProxyPassword()));
 
-			}
-		} else {
-			System.setProperty("socksProxyHost", getProxyHostname());
-			System.setProperty("socksProxyPort", getProxyPort());
-			if (isProxyAuthRequired()) {
-				System.setProperty("java.net.socks.username", getProxyLogin());
-				System.setProperty("java.net.socks.password",
-						getProxyPassword());
-				Authenticator.setDefault(new ProxyAuth(getProxyLogin(),
-						getProxyPassword()));
+				}
+			} else {
+				System.setProperty("socksProxyHost", getProxyHostname());
+				System.setProperty("socksProxyPort", getProxyPort());
+				if (isProxyAuthRequired()) {
+					System.setProperty("java.net.socks.username",
+							getProxyLogin());
+					System.setProperty("java.net.socks.password",
+							getProxyPassword());
+					Authenticator.setDefault(new ProxyAuth(getProxyLogin(),
+							getProxyPassword()));
+				}
 			}
 		}
 	}
