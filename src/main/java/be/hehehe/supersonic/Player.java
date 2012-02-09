@@ -19,8 +19,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.SwingWorker;
 
-import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
