@@ -1,6 +1,7 @@
 package be.hehehe.supersonic;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import be.hehehe.supersonic.action.ExitAction;
+import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.panels.ControlsPanel;
 import be.hehehe.supersonic.panels.CoverPanel;
 import be.hehehe.supersonic.panels.SearchPanel;
@@ -84,10 +86,8 @@ public class Supersonic extends JFrame {
 				exitAction.actionPerformed(null);
 			}
 		});
-		setPreferredSize(new Dimension(WIDTH, HEIGHT));
-		SwingUtils.centerContainer(this);
-		pack();
 		setVisible(true);
+		applyPreviousState();
 
 		setJMenuBar(supersonicMenu);
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
@@ -126,6 +126,21 @@ public class Supersonic extends JFrame {
 
 		if (StringUtils.isBlank(preferencesService.getSubsonicHostname())) {
 			settingsDialog.setVisible(true);
+		}
+	}
+
+	private void applyPreviousState() {
+		ApplicationStateModel model = preferencesService.getApplicationState();
+		if (model == null) {
+			setSize(new Dimension(WIDTH, HEIGHT));
+			SwingUtils.centerContainer(this);
+		} else {
+			log.debug("Applying previous state settings");
+			setSize(model.getWindowSize());
+			coverPanel.setSize(model.getCoverPanel());
+			searchPanel.setSize(model.getSearchPanel());
+			SwingUtils.centerContainer(this);
+			setExtendedState(model.getWindowState());
 		}
 	}
 

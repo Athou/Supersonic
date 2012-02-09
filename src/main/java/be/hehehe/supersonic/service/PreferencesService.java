@@ -15,12 +15,13 @@ import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.GraphiteSkin;
 
+import be.hehehe.supersonic.model.ApplicationStateModel;
+import be.hehehe.supersonic.model.KeyBindingModel;
+
 import com.google.common.collect.Lists;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-
-import be.hehehe.supersonic.model.KeyBindingModel;
 
 @Singleton
 public class PreferencesService {
@@ -39,6 +40,7 @@ public class PreferencesService {
 	private static final String PROXY_PASSWORD = "proxy-password";
 	private static final String KEYBINDINGS = "keybindings";
 	private static final String KEYBINDINGS_MEDIAKEYS = "keybindings-media";
+	private static final String APPLICATION_STATE = "appstate";
 
 	private static final String VOLUME = "volume";
 
@@ -177,6 +179,20 @@ public class PreferencesService {
 
 	public void setMediaKeyActive(boolean active) {
 		prefs.putBoolean(KEYBINDINGS_MEDIAKEYS, active);
+	}
+
+	public ApplicationStateModel getApplicationState() {
+		ApplicationStateModel model = null;
+		String json = prefs.get(APPLICATION_STATE, null);
+		if (json != null) {
+			model = new JSONDeserializer<ApplicationStateModel>()
+					.deserialize(json);
+		}
+		return model;
+	}
+
+	public void setApplicationState(ApplicationStateModel model) {
+		prefs.put(APPLICATION_STATE, new JSONSerializer().deepSerialize(model));
 	}
 
 	public void flush() {

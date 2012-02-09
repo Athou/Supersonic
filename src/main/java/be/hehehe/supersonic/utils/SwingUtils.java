@@ -12,10 +12,8 @@ import org.jdesktop.swingx.error.ErrorInfo;
 public class SwingUtils {
 	public static void centerContainer(Window window) {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension size = window.getPreferredSize();
-		if (size == null) {
-			size = window.getSize();
-		}
+		Dimension size = window.getSize();
+
 		int newWidth = (screen.width - size.width) / 2;
 		int newHeight = (screen.height - size.height) / 2;
 		window.setLocation(newWidth, newHeight);
