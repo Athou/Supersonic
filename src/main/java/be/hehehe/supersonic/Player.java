@@ -1,5 +1,8 @@
 package be.hehehe.supersonic;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import javax.enterprise.event.Event;
@@ -13,7 +16,10 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.SwingWorker;
+
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -164,7 +170,17 @@ public class Player {
 	private void start(InputStream inputStream) {
 		state = State.PLAY;
 		try {
-			AudioInputStream in = AudioSystem.getAudioInputStream(inputStream);
+			inputStream = new BufferedInputStream(inputStream);
+			AudioInputStream in = null;
+			try {
+				in = AudioSystem.getAudioInputStream(inputStream);
+			} catch (UnsupportedAudioFileException e) {
+				// could not stream, store locally
+				File tempFile = File.createTempFile("supersonic_", ".mp3");
+				tempFile.deleteOnExit();
+				IOUtils.copy(inputStream, new FileOutputStream(tempFile));
+				in = AudioSystem.getAudioInputStream(tempFile);
+			}
 			AudioFormat baseFormat = in.getFormat();
 			AudioFormat decodedFormat = new AudioFormat(
 					AudioFormat.Encoding.PCM_SIGNED,
