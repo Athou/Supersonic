@@ -1,9 +1,13 @@
 package be.hehehe.supersonic.panels;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -23,9 +27,27 @@ public class CoverPanel extends JPanel {
 	@Inject
 	CoverArtService coverArtService;
 
+	@Inject
+	CoverDialog coverDialog;
+
 	private BufferedImage image;
+	private SongModel songModel;
+
+	@PostConstruct
+	public void init() {
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (image != null) {
+					coverDialog.open(image, songModel);
+				}
+			}
+		});
+	}
 
 	public void loadCover(@Observes final SongEvent e) {
+		songModel = e.getSong();
+		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		if (e.getType() == Type.SELECTION_CHANGED) {
 			new SwingWorker<Object, Void>() {
 				@Override

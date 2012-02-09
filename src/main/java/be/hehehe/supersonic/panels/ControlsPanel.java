@@ -188,6 +188,10 @@ public class ControlsPanel extends JPanel {
 	public SongModel getSelectedSong() {
 		return songsPanel.getSelectedSong();
 	}
+	
+	public SongModel getCurrentSong() {
+		return currentSong;
+	}
 
 	public SongModel getNextSong() {
 		SongModel nextSong = songsPanel.getNextSong(currentSong);
