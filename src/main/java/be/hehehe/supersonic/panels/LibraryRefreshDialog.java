@@ -58,6 +58,14 @@ public class LibraryRefreshDialog extends JDialog {
 		SwingUtils.centerContainer(this);
 	}
 
+	@Override
+	public void setVisible(boolean b) {
+		if (b) {
+			progressBar.setValue(0);
+		}
+		super.setVisible(b);
+	}
+
 	public void onLibraryUpdate(@Observes final LibraryChangedEvent e) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

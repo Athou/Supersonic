@@ -121,6 +121,7 @@ public class Library {
 						threads.add(service.submit(callable));
 					}
 					total = list.size();
+					publish(0);
 					List<AlbumModel> albums = Lists.newArrayList();
 					for (Future<AlbumModel> future : threads) {
 						try {
