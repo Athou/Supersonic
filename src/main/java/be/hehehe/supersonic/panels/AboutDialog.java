@@ -42,7 +42,7 @@ public class AboutDialog extends JDialog {
 
 		Container panel = getContentPane();
 
-		panel.setLayout(new MigLayout("", "[][]", "[]"));
+		panel.setLayout(new MigLayout("", "[grow][]", "[]"));
 
 		panel.add(new JLabel("Supersonic"), "cell 0 0");
 		panel.add(new JLabel("v" + versionService.getVersion()), "cell 1 0");
@@ -54,7 +54,7 @@ public class AboutDialog extends JDialog {
 		panel.add(new Hyperlink("GitHub",
 				"https://github.com/Athou/Supersonic/downloads"), "cell 1 2");
 
-		panel.add(new JLabel("Discussion"), "cell 0 3");
+		panel.add(new JLabel("Discussions"), "cell 0 3");
 		panel.add(new Hyperlink("Subsonic Forum",
 				"http://forum.subsonic.org/forum/viewtopic.php?f=4&t=8823"),
 				"cell 1 3");
@@ -66,9 +66,12 @@ public class AboutDialog extends JDialog {
 				dispose();
 			}
 		});
+		okButton.setFocusable(false);
 		panel.add(okButton, "cell 0 4 2 1, center");
 
 		pack();
+		setSize(260, getHeight());
+		setResizable(false);
 		SwingUtils.centerContainer(this);
 	}
 
