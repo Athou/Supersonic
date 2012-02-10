@@ -44,7 +44,6 @@ public class ExitAction extends AbstractAction {
 		model.setWindowSize(supersonic.getSize());
 		model.setCoverPanel(coverPanel.getSize());
 		model.setSearchPanel(searchPanel.getSize());
-		log.debug(model.getWindowState());
 
 		preferencesService.setApplicationState(model);
 		preferencesService.flush();
