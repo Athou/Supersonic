@@ -99,20 +99,24 @@ public class Library {
 										new Param(album.getId()));
 								for (Child song : response2.getDirectory()
 										.getChild()) {
-									SongModel songModel = new SongModel();
-									songModel.setId(song.getId());
-									songModel.setArtist(song.getArtist());
-									songModel.setTitle(song.getTitle());
-									songModel.setAlbum(song.getAlbum());
-									songModel.setCoverId(albumModel
-											.getCoverId());
-									songModel.setTrack(song.getTrack());
-									songModel.setSize(song.getSize());
-									songModel.setDuration(song.getDuration());
+									//TODO handle subdirectories
+									if (!song.isIsDir() && !song.isIsVideo()) {
+										SongModel songModel = new SongModel();
+										songModel.setId(song.getId());
+										songModel.setArtist(song.getArtist());
+										songModel.setTitle(song.getTitle());
+										songModel.setAlbum(song.getAlbum());
+										songModel.setCoverId(albumModel
+												.getCoverId());
+										songModel.setTrack(song.getTrack());
+										songModel.setSize(song.getSize());
+										songModel.setDuration(song
+												.getDuration());
 
-									albumModel.getSongs().add(songModel);
-									albumModel.setName(song.getAlbum());
-									albumModel.setArtist(song.getArtist());
+										albumModel.getSongs().add(songModel);
+										albumModel.setName(song.getAlbum());
+										albumModel.setArtist(song.getArtist());
+									}
 								}
 								return albumModel;
 							}
