@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JFrame;
@@ -18,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import be.hehehe.supersonic.action.ExitAction;
+import be.hehehe.supersonic.events.SongEvent;
+import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.panels.ChatPanel;
 import be.hehehe.supersonic.panels.ControlsPanel;
@@ -82,6 +85,8 @@ public class Supersonic extends JFrame {
 	@Inject
 	Logger log;
 
+	private JTabbedPane tabs;
+
 	@PostConstruct
 	public void init() {
 
@@ -114,7 +119,7 @@ public class Supersonic extends JFrame {
 		rightPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 		mainSplitPane.setRightComponent(rightPanel);
 
-		JTabbedPane tabs = new JTabbedPane(JTabbedPane.BOTTOM);
+		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
 		tabs.add("Songs", songsPanel);
 		tabs.add("Now Playing", nowPlayingPanel);
 		tabs.add("Chat", chatPanel);
@@ -165,6 +170,12 @@ public class Supersonic extends JFrame {
 		setVisible(true);
 		toFront();
 		repaint();
+	}
+
+	public void observes(@Observes SongEvent event) {
+		if (event.getType() == Type.CHANGE_SELECTION) {
+			tabs.setSelectedIndex(0);
+		}
 	}
 
 }

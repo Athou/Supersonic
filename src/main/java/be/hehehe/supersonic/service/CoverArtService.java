@@ -1,11 +1,14 @@
 package be.hehehe.supersonic.service;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -25,6 +28,10 @@ public class CoverArtService {
 
 	@Inject
 	Logger log;
+
+	public BufferedImage getCoverImage(String coverId) throws IOException {
+		return ImageIO.read(getCover(coverId));
+	}
 
 	public InputStream getCover(String coverId) {
 		InputStream result = null;

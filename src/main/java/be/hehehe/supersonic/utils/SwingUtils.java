@@ -1,8 +1,12 @@
 package be.hehehe.supersonic.utils;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingUtilities;
@@ -43,6 +47,33 @@ public class SwingUtils {
 			Thread.sleep(milliseconds);
 		} catch (InterruptedException e) {
 			// do nothing
+		}
+	}
+
+	public static void drawImage(BufferedImage image, Graphics g,
+			Component parent) {
+		Dimension size = parent.getSize();
+		Color background = parent.getBackground();
+		if (image != null && size.width > 0) {
+			double ratio = (double) image.getHeight(null)
+					/ image.getWidth(null);
+
+			int effectiveWidth = 1;
+			int effectiveHeight = (int) ratio;
+
+			while (effectiveHeight < size.height && effectiveWidth < size.width) {
+				effectiveWidth++;
+				effectiveHeight = (int) (ratio * effectiveWidth);
+			}
+
+			g.setColor(background);
+			g.fillRect(0, 0, size.width, size.height);
+
+			int cornerx = Math.abs((size.width - effectiveWidth) / 2);
+			int cornery = Math.abs((size.height - effectiveHeight) / 2);
+			g.drawImage(image, cornerx, cornery, effectiveWidth + cornerx,
+					effectiveHeight + cornery, 0, 0, image.getWidth(null),
+					image.getHeight(null), null);
 		}
 	}
 }

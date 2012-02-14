@@ -1,6 +1,5 @@
 package be.hehehe.supersonic.panels;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -30,29 +29,7 @@ public class CoverDialog extends JFrame {
 		add(new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
-				Dimension size = getSize();
-				if (image != null && size.width > 0) {
-					double ratio = (double) image.getHeight(null)
-							/ image.getWidth(null);
-
-					int effectiveWidth = 1;
-					int effectiveHeight = (int) ratio;
-
-					while (effectiveHeight < size.height
-							&& effectiveWidth < size.width) {
-						effectiveWidth++;
-						effectiveHeight = (int) (ratio * effectiveWidth);
-					}
-
-					g.setColor(getBackground());
-					g.fillRect(0, 0, size.width, size.height);
-
-					int cornerx = Math.abs((size.width - effectiveWidth) / 2);
-					int cornery = Math.abs((size.height - effectiveHeight) / 2);
-					g.drawImage(image, cornerx, cornery, effectiveWidth
-							+ cornerx, effectiveHeight + cornery, 0, 0,
-							image.getWidth(null), image.getHeight(null), null);
-				}
+				SwingUtils.drawImage(image, g, this);
 			}
 		});
 	}

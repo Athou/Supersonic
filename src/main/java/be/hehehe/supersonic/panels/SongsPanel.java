@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 
 import be.hehehe.supersonic.events.ControlsEvent;
@@ -37,6 +38,9 @@ public class SongsPanel extends JPanel {
 
 	@Inject
 	Event<SongEvent> event;
+
+	@Inject
+	Logger log;
 
 	private JXTable table;
 	private SongsTableModel tableModel;
@@ -128,8 +132,12 @@ public class SongsPanel extends JPanel {
 							&& (table.getSelectedRow() == -1 || !e.getSong()
 									.equals(getSelectedSong()))) {
 						int row = tableModel.indexOf(e.getSong());
-						row = table.convertRowIndexToView(row);
-						table.changeSelection(row, 0, false, false);
+						if (row >= 0) {
+							row = table.convertRowIndexToView(row);
+							table.changeSelection(row, 0, false, false);
+						} else {
+							log.error("row = -1, not changing");
+						}
 					}
 					if (e.getType() == Type.PLAY) {
 						currentSong = e.getSong();
