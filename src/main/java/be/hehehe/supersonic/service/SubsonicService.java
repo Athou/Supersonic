@@ -209,14 +209,9 @@ public class SubsonicService {
 			this("id", value);
 		}
 
-		public Param(String name, String value) {
+		public Param(String name, Object value) {
 			this.name = name;
-			this.value = value;
-		}
-
-		public Param(String name, int value) {
-			this.name = name;
-			this.value = "" + value;
+			this.value = value.toString();
 		}
 
 		public String getName() {
