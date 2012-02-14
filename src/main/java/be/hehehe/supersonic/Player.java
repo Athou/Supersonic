@@ -28,6 +28,7 @@ import be.hehehe.supersonic.events.VolumeChangedEvent;
 import be.hehehe.supersonic.model.SongModel;
 import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.service.SubsonicService.Param;
+import be.hehehe.supersonic.utils.DownloadingStream;
 
 @Singleton
 public class Player {
@@ -171,12 +172,13 @@ public class Player {
 	private void start(InputStream inputStream) {
 		state = State.PLAY;
 		try {
-			inputStream = new BufferedInputStream(inputStream);
+			inputStream = new BufferedInputStream(new DownloadingStream(
+					inputStream, (int) currentSong.getSize()));
 			AudioInputStream in = null;
 			try {
 				in = AudioSystem.getAudioInputStream(inputStream);
 			} catch (UnsupportedAudioFileException e) {
-				// could not stream, store locally
+				log.debug("Could not stream, store locally.");
 				File tempFile = File.createTempFile("supersonic_", ".mp3");
 				tempFile.deleteOnExit();
 				IOUtils.copy(inputStream, new FileOutputStream(tempFile));
@@ -188,7 +190,10 @@ public class Player {
 					baseFormat.getSampleRate(), 16, baseFormat.getChannels(),
 					baseFormat.getChannels() * 2, baseFormat.getSampleRate(),
 					false);
-			din = AudioSystem.getAudioInputStream(decodedFormat, in);
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(
+					decodedFormat, in);
+			din = new AudioInputStream(new BufferedInputStream(audioStream),
+					audioStream.getFormat(), audioStream.getFrameLength());
 			rawplay(decodedFormat, din);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -207,6 +212,7 @@ public class Player {
 		byte[] data = new byte[4096];
 		line = getLine(targetFormat);
 		setGain();
+		din.mark(Integer.MAX_VALUE);
 		if (line != null) {
 			line.start();
 			int read = 0;
