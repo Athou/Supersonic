@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.Proxy.Type;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -125,7 +126,8 @@ public class SubsonicService {
 			builder.addParam("v", "1.7.0");
 			builder.addParam("c", "supersonic");
 			for (Param param : params) {
-				builder.addParam(param.getName(), param.getValue());
+				String value = URLEncoder.encode(param.getValue(), "UTF-8");
+				builder.addParam(param.getName(), value);
 			}
 
 			URL url = new URL(builder.build());
