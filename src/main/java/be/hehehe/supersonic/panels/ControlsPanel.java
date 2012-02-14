@@ -174,7 +174,7 @@ public class ControlsPanel extends JPanel {
 		add(progressText, "cell 6 1,alignx center");
 
 		JPanel currentSongPanel = new JPanel();
-		currentSongPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		currentSongPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		currentSongLabel = new JLabel(" ");
 		currentSongPanel.add(currentSongLabel);
 		currentSongLabel.setCursor(Cursor
