@@ -119,7 +119,7 @@ public class Supersonic extends JFrame {
 		rightPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 		mainSplitPane.setRightComponent(rightPanel);
 
-		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
+		tabs = new JTabbedPane(JTabbedPane.TOP);
 		tabs.add("Songs", songsPanel);
 		tabs.add("Now Playing", nowPlayingPanel);
 		tabs.add("Chat", chatPanel);
