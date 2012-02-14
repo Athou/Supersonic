@@ -212,9 +212,10 @@ public class Player {
 			int read = 0;
 			while (read != -1 && state != State.STOP) {
 
-				if (state == State.PAUSE) {
+				while (state == State.PAUSE) {
 					Thread.sleep(300);
-				} else if (state == State.SKIP) {
+				}
+				if (state == State.SKIP) {
 					long newPosition = (currentSong.getSize() / 100)
 							* skipToPercentage;
 					log.debug("Skipping to " + newPosition + "("
