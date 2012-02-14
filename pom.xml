@@ -78,6 +78,9 @@
 							<addClasspath>true</addClasspath>
 							<mainClass>be.hehehe.supersonic.Main</mainClass>
 						</manifest>
+						<manifestEntries>
+						<SplashScreen-Image>splash.png</SplashScreen-Image>							
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
