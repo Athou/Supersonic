@@ -134,7 +134,7 @@ public class SubsonicService {
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 
-			if ("https".equals(url.getProtocol())) {
+			if (connection instanceof HttpsURLConnection) {
 				SSLContext ctx = SSLContext.getInstance("TLS");
 				ctx.init(new KeyManager[0],
 						new TrustManager[] { new DefaultTrustManager() },

@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JLabel;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -22,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 
+import be.hehehe.supersonic.events.LibraryChangedEvent;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.SearchTableModel;
@@ -109,7 +112,7 @@ public class SearchPanel extends JPanel {
 				String songText = song.getArtist() + " " + song.getAlbum()
 						+ " " + song.getTitle();
 				songText = songText.toUpperCase();
-				
+
 				boolean show = true;
 				for (String keyword : keywords) {
 					if (songText.indexOf(keyword) == -1) {
@@ -131,6 +134,17 @@ public class SearchPanel extends JPanel {
 		}
 		int row = table.convertRowIndexToModel(selectedRow);
 		return tableModel.get(row);
+	}
+
+	public void onLibraryRefresh(@Observes final LibraryChangedEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (e.isDone()) {
+					refreshList();
+				}
+			}
+		});
 	}
 
 }

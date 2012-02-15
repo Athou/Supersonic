@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.subsonic.restapi.Child;
 import org.subsonic.restapi.Response;
 
@@ -37,11 +37,25 @@ import flexjson.JSONSerializer;
 
 @Singleton
 public class Library {
+	public enum RefreshMode {
+		INCREMENTAL("Incremental Refresh"), FULL("Full Refresh");
+
+		private String name;
+
+		private RefreshMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
+
 	private static final String LIBRARY_FILEPATH = "cache/library.json";
 
 	private List<AlbumModel> albums = Collections
 			.synchronizedList(new ArrayList<AlbumModel>());
-
 	@Inject
 	SubsonicService subsonicService;
 
@@ -72,7 +86,8 @@ public class Library {
 		}
 	}
 
-	public void refresh() throws SupersonicException {
+	public void refresh(final RefreshMode refreshMode)
+			throws SupersonicException {
 		new SwingWorker<Object, Integer>() {
 
 			private int total = 0;
@@ -81,7 +96,11 @@ public class Library {
 			protected Object doInBackground() throws Exception {
 				try {
 					List<Child> list = fetchAlbumList();
-					Collections.sort(list, new ChildComparator());
+					if (refreshMode == RefreshMode.FULL) {
+						albums.clear();
+					} else {
+						list = incrementalFilter(list);
+					}
 
 					ExecutorService service = Executors.newFixedThreadPool(5);
 					List<Future<AlbumModel>> threads = Lists.newArrayList();
@@ -99,7 +118,7 @@ public class Library {
 										new Param(album.getId()));
 								for (Child song : response2.getDirectory()
 										.getChild()) {
-									//TODO handle subdirectories
+									// TODO handle subdirectories
 									if (!song.isIsDir() && !song.isIsVideo()) {
 										SongModel songModel = new SongModel();
 										songModel.setId(song.getId());
@@ -136,9 +155,8 @@ public class Library {
 							SwingUtils.handleError(e);
 						}
 					}
-					Collections.sort(albums);
-					getAlbums().clear();
 					getAlbums().addAll(albums);
+					Collections.sort(getAlbums());
 					saveToFile();
 				} catch (Exception e) {
 					Exception se = new SupersonicException(
@@ -161,6 +179,39 @@ public class Library {
 			};
 		}.execute();
 
+	}
+
+	private List<Child> incrementalFilter(List<Child> list) {
+		Iterator<AlbumModel> it = albums.iterator();
+		List<Child> processList = Lists.newArrayList();
+		while (it.hasNext()) {
+			AlbumModel model = it.next();
+			boolean remove = true;
+			for (Child child : list) {
+				if (StringUtils.equals(child.getId(), model.getId())) {
+					remove = false;
+					break;
+				}
+			}
+			if (remove) {
+				it.remove();
+			}
+		}
+
+		for (Child child : list) {
+			boolean insert = true;
+			for (AlbumModel model : albums) {
+				if (StringUtils.equals(child.getId(), model.getId())) {
+					insert = false;
+					break;
+				}
+			}
+			if (insert) {
+				processList.add(child);
+			}
+		}
+
+		return processList;
 	}
 
 	private List<Child> fetchAlbumList() throws SupersonicException {
@@ -195,12 +246,4 @@ public class Library {
 		}
 		return songs;
 	}
-
-	private class ChildComparator implements Comparator<Child> {
-		@Override
-		public int compare(Child o1, Child o2) {
-			return ObjectUtils.compare(o1.getTitle(), o2.getTitle());
-		}
-	}
-
 }
