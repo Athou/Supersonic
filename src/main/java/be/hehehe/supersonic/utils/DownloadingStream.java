@@ -73,7 +73,7 @@ public class DownloadingStream extends InputStream implements Runnable {
 	}
 
 	private boolean hasData() {
-		return (pos + 1 < bytes.length && bytes[pos + 1] != -1);
+		return (bytes != null && pos + 1 < bytes.length && bytes[pos + 1] != -1);
 	}
 
 	@Override
