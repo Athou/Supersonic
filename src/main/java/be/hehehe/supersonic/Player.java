@@ -190,10 +190,7 @@ public class Player {
 					baseFormat.getSampleRate(), 16, baseFormat.getChannels(),
 					baseFormat.getChannels() * 2, baseFormat.getSampleRate(),
 					false);
-			AudioInputStream audioStream = AudioSystem.getAudioInputStream(
-					decodedFormat, in);
-			din = new AudioInputStream(new BufferedInputStream(audioStream),
-					audioStream.getFormat(), audioStream.getFrameLength());
+			din = AudioSystem.getAudioInputStream(decodedFormat, in);
 			rawplay(decodedFormat, din);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -212,7 +209,6 @@ public class Player {
 		byte[] data = new byte[4096];
 		line = getLine(targetFormat);
 		setGain();
-		din.mark(Integer.MAX_VALUE);
 		if (line != null) {
 			line.start();
 			int read = 0;
