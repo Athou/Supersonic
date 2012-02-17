@@ -24,6 +24,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -53,7 +54,6 @@ public class SubsonicService {
 		return invoke(method, subsonicHost, userName, password, params);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Response invoke(String method, String subsonicHost, String userName,
 			String password, Param... params) throws SupersonicException {
 		Response response = null;
@@ -66,11 +66,11 @@ public class SubsonicService {
 						"Response is not valid xml. Wrong address?");
 			}
 			log.debug("Response: " + responseString);
-			JAXBContext context = JAXBContext.newInstance(Response.class
-					.getPackage().getName());
+			JAXBContext context = JAXBContext.newInstance(Response.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			JAXBElement<Response> jaxbResponse = (JAXBElement<Response>) unmarshaller
-					.unmarshal(new StringReader(responseString));
+			JAXBElement<Response> jaxbResponse = unmarshaller.unmarshal(
+					new StreamSource(new StringReader(responseString)),
+					Response.class);
 			response = jaxbResponse.getValue();
 		} catch (SupersonicException e) {
 			throw e;
