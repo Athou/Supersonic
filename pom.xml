@@ -14,7 +14,7 @@
 	<scm>
 		<url>https://github.com/Athou/Supersonic</url>
 		<connection>scm:git:http://github.com/Athou/Supersonic.git</connection>
-		<developerConnection>scm:git:git://github.com/Athou/Supersonic.git</developerConnection>
+		<developerConnection>scm:git:git@github.com/Athou/Supersonic.git</developerConnection>
 	</scm>
 
 	<properties>
