@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.hehehe</groupId>
 	<artifactId>Supersonic</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>supersonic</name>
 	<description>Subsonic Java client</description>
-	
+
 	<url>https://github.com/Athou/Supersonic</url>
 	<issueManagement>
 		<url>https://github.com/Athou/Supersonic/issues</url>
@@ -88,7 +89,7 @@
 							<mainClass>be.hehehe.supersonic.Main</mainClass>
 						</manifest>
 						<manifestEntries>
-						<SplashScreen-Image>splash.png</SplashScreen-Image>							
+							<SplashScreen-Image>splash.png</SplashScreen-Image>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -108,6 +109,35 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.2</version>
+				<configuration>
+					<releaseProfiles>upload</releaseProfiles>
+					<goals>install</goals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>downloads-maven-plugin</artifactId>
+				<version>0.4</version>
+				<configuration>
+					<description>${project.version} release of ${project.name}</description>
+					<override>true</override>
+					<includeAttached>true</includeAttached>
+					<includes>
+						<include>${project.name}-*.zip</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<phase>install</phase>
 					</execution>
 				</executions>
 			</plugin>
