@@ -34,6 +34,9 @@ public class CoverArtService {
 	}
 
 	public InputStream getCover(String coverId) {
+		if (coverId == null) {
+			return getUnknownImage();
+		}
 		InputStream result = null;
 		String coverName = Base64.encodeBase64String(hexToASCII(coverId)
 				.getBytes());
