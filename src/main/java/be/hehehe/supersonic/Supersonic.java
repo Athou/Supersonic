@@ -18,6 +18,7 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import be.hehehe.supersonic.action.CheckForUpdateAction;
 import be.hehehe.supersonic.action.ExitAction;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
@@ -51,6 +52,9 @@ public class Supersonic extends JFrame {
 
 	@Inject
 	VersionService versionService;
+
+	@Inject
+	CheckForUpdateAction checkForUpdateAction;
 
 	@Inject
 	IconService iconService;
@@ -101,6 +105,7 @@ public class Supersonic extends JFrame {
 		});
 		setVisible(true);
 		applyPreviousState();
+		checkForUpdateAction.actionPerformed(null);
 
 		setJMenuBar(supersonicMenu);
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
