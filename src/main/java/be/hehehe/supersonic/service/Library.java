@@ -1,6 +1,8 @@
 package be.hehehe.supersonic.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +12,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -17,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.subsonic.restapi.Child;
 import org.subsonic.restapi.Response;
@@ -52,7 +58,7 @@ public class Library {
 		}
 	}
 
-	private static final String LIBRARY_FILEPATH = "cache/library.json";
+	private static final String LIBRARY_FILEPATH = "cache/library.zip";
 
 	private List<AlbumModel> albums = Collections
 			.synchronizedList(new ArrayList<AlbumModel>());
@@ -67,7 +73,10 @@ public class Library {
 		File libraryFile = new File(LIBRARY_FILEPATH);
 		if (libraryFile.exists()) {
 			try {
-				String content = FileUtils.readFileToString(libraryFile);
+				ZipInputStream zip = new ZipInputStream(new FileInputStream(
+						libraryFile));
+				zip.getNextEntry();
+				String content = IOUtils.toString(zip);
 				albums = new JSONDeserializer<List<AlbumModel>>()
 						.deserialize(content);
 			} catch (IOException e) {
@@ -77,12 +86,19 @@ public class Library {
 	}
 
 	private void saveToFile() throws SupersonicException {
+		ZipOutputStream zip = null;
 		File libraryFile = new File(LIBRARY_FILEPATH);
 		String json = new JSONSerializer().deepSerialize(albums);
 		try {
-			FileUtils.writeStringToFile(libraryFile, json);
+			zip = new ZipOutputStream(new FileOutputStream(libraryFile));
+			zip.setLevel(Deflater.BEST_COMPRESSION);
+			zip.putNextEntry(new ZipEntry("library.json"));
+			IOUtils.write(json, zip);
+			zip.closeEntry();
 		} catch (IOException e) {
 			throw new SupersonicException(e);
+		} finally {
+			IOUtils.closeQuietly(zip);
 		}
 	}
 
