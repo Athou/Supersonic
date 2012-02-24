@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import be.hehehe.supersonic.action.ExitAction;
 import be.hehehe.supersonic.service.IconService;
 
 @Singleton
@@ -19,6 +20,9 @@ public class SupersonicTray {
 
 	@Inject
 	IconService iconService;
+
+	@Inject
+	ExitAction exitAction;
 
 	public boolean addTray(final Supersonic supersonic) {
 		if (!SystemTray.isSupported()) {
@@ -37,12 +41,7 @@ public class SupersonicTray {
 			}
 		});
 		JMenuItem exitItem = new JMenuItem("Exit");
-		exitItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+		exitItem.addActionListener(exitAction);
 		popup.add(restoreItem);
 		popup.addSeparator();
 		popup.add(exitItem);
