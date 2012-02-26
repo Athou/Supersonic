@@ -16,6 +16,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -39,6 +40,7 @@ public class ConnectionService {
 				ctx.init(new KeyManager[0],
 						new TrustManager[] { new DefaultTrustManager() },
 						new SecureRandom());
+                final SSLSocketFactory sslSocketFactory = ctx.getSocketFactory();
 				SSLContext.setDefault(ctx);
 				HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
 				httpsConnection.setHostnameVerifier(new HostnameVerifier() {
@@ -47,6 +49,7 @@ public class ConnectionService {
 						return true;
 					}
 				});
+                ( (HttpsURLConnection) connection ).setSSLSocketFactory( sslSocketFactory );
 			}
 
 			if (preferencesService.isProxyEnabled()) {

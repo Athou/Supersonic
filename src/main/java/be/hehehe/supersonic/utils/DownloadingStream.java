@@ -81,8 +81,12 @@ public class DownloadingStream extends InputStream implements Runnable {
 			int read = -1;
 			int writePos = 0;
 			while ((read = source.read()) != -1) {
-				bytes[writePos] = read;
-				writePos++;
+ 				try {
+ 					bytes[writePos] = read;
+ 					writePos++;
+ 				} catch (NullPointerException e) {
+ 					break;
+ 				}
 			}
 			log.debug("Song downloaded.");
 		} catch (IOException e) {

@@ -58,7 +58,8 @@ public class Library {
 		}
 	}
 
-	private static final String LIBRARY_FILEPATH = "cache/library.zip";
+	private static final String LIBRARY_FILEPATH = "cache";
+	private static final String LIBRARY_FILE = LIBRARY_FILEPATH + "/library.zip";
 
 	private List<AlbumModel> albums = Collections
 			.synchronizedList(new ArrayList<AlbumModel>());
@@ -70,7 +71,7 @@ public class Library {
 
 	@PostConstruct
 	public void loadFromFile() {
-		File libraryFile = new File(LIBRARY_FILEPATH);
+		File libraryFile = new File(LIBRARY_FILE);
 		if (libraryFile.exists()) {
 			try {
 				ZipInputStream zip = new ZipInputStream(new FileInputStream(
@@ -87,7 +88,11 @@ public class Library {
 
 	private void saveToFile() throws SupersonicException {
 		ZipOutputStream zip = null;
-		File libraryFile = new File(LIBRARY_FILEPATH);
+		File lib_dir = new File(LIBRARY_FILEPATH);
+		if (! lib_dir.exists()) {
+			lib_dir.mkdir();
+		}
+		File libraryFile = new File(LIBRARY_FILE);
 		String json = new JSONSerializer().deepSerialize(albums);
 		try {
 			zip = new ZipOutputStream(new FileOutputStream(libraryFile));
