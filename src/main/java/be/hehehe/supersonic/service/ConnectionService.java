@@ -40,7 +40,8 @@ public class ConnectionService {
 				ctx.init(new KeyManager[0],
 						new TrustManager[] { new DefaultTrustManager() },
 						new SecureRandom());
-                final SSLSocketFactory sslSocketFactory = ctx.getSocketFactory();
+				final SSLSocketFactory sslSocketFactory = ctx
+						.getSocketFactory();
 				SSLContext.setDefault(ctx);
 				HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
 				httpsConnection.setHostnameVerifier(new HostnameVerifier() {
@@ -49,7 +50,7 @@ public class ConnectionService {
 						return true;
 					}
 				});
-                ( (HttpsURLConnection) connection ).setSSLSocketFactory( sslSocketFactory );
+				httpsConnection.setSSLSocketFactory(sslSocketFactory);
 			}
 
 			if (preferencesService.isProxyEnabled()) {
