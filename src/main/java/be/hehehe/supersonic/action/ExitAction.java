@@ -48,6 +48,7 @@ public class ExitAction extends AbstractAction {
 		preferencesService.setApplicationState(model);
 		preferencesService.flush();
 
+		supersonic.setVisible(false);
 		keyBindingService.stop();
 		System.exit(0);
 	}
