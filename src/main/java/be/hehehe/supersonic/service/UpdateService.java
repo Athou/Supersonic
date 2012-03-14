@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import be.hehehe.supersonic.utils.SupersonicException;
 import flexjson.JSONDeserializer;
@@ -26,6 +27,9 @@ public class UpdateService {
 	@Inject
 	ConnectionService connectionService;
 
+	@Inject
+	Logger log;
+
 	public boolean checkForUpdate() throws SupersonicException {
 		boolean update = false;
 
@@ -37,11 +41,18 @@ public class UpdateService {
 					.deserialize(json);
 			Map<String, String> info = list.get(0);
 			String name = info.get("name");
-			String newVersion = name.substring("supersonic-".length())
-					.substring(0, ".zip".length());
+			String newVersion = name.substring("supersonic-".length());
+			newVersion = newVersion.substring(0,
+					newVersion.length() - ".zip".length());
+
 			String oldVersion = versionService.getVersion();
 
+			log.info("Old version: " + oldVersion);
+			log.info("New version: " + newVersion);
+
 			update = parseVersion(newVersion) > parseVersion(oldVersion);
+
+			log.info("Update needed: " + update);
 
 		} catch (Exception e) {
 			throw new SupersonicException(e.getMessage(), e);
