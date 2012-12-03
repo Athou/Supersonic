@@ -48,9 +48,9 @@ public class Player {
 
 	private State state = State.STOP;
 	private SongModel currentSong;
-	private int skipToPercentage = -1;
 
 	private SourceDataLine line;
+	private InputStream ein;
 	private AudioInputStream din;
 
 	private Object mutex = new Object();
@@ -117,11 +117,14 @@ public class Player {
 		stop();
 		currentSong = song;
 		new SwingWorker<Object, Void>() {
+
 			@Override
 			protected Object doInBackground() throws Exception {
-				InputStream stream = subsonicService.invokeBinary("stream",
+				ein = subsonicService.invokeBinary("stream",
 						new Param(song.getId()));
-				start(stream);
+				ein = new BufferedInputStream(new DownloadingStream(
+						ein, (int) currentSong.getSize()));
+				start(ein);
 				return null;
 			}
 		}.execute();
@@ -164,16 +167,28 @@ public class Player {
 		event.fire(songEvent);
 	}
 
-	public void skipTo(int skipToPercentage) {
-		state = State.SKIP;
-		this.skipToPercentage = skipToPercentage;
+	public void skipTo(final int skipToPercentage) {
+		stop();
+		new SwingWorker<Object, Void>() {
+
+			@Override
+			protected Object doInBackground() throws Exception {
+				long newPosition = (currentSong.getSize() / 100)
+						* skipToPercentage;
+				log.debug("Skipping to " + newPosition + "("
+						+ skipToPercentage + "%)");
+				ein.reset();
+				ein.skip(newPosition);
+				state = State.PLAY;
+				start(ein);
+				return null;
+			}
+		}.execute();
 	}
 
 	private void start(InputStream inputStream) {
 		state = State.PLAY;
 		try {
-			inputStream = new BufferedInputStream(new DownloadingStream(
-					inputStream, (int) currentSong.getSize()));
 			AudioInputStream in = null;
 			try {
 				in = AudioSystem.getAudioInputStream(inputStream);
@@ -216,17 +231,6 @@ public class Player {
 
 				while (state == State.PAUSE) {
 					Thread.sleep(300);
-				}
-				if (state == State.SKIP) {
-					long newPosition = (currentSong.getSize() / 100)
-							* skipToPercentage;
-					log.debug("Skipping to " + newPosition + "("
-							+ skipToPercentage + "%)");
-					din.reset();
-					// TODO handle seekbar progress when skipping through
-					din.skip(newPosition);
-					state = State.PLAY;
-
 				}
 
 				long lastEvent = 0;
