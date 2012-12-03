@@ -61,6 +61,8 @@ public class ControlsPanel extends JPanel {
 	private JLabel currentSongLabel;
 	private SongModel selectedSong;
 
+	private boolean mouseClicked = false;
+
 	@PostConstruct
 	public void init() {
 		setLayout(new MigLayout("insets 0", "[][][][][grow][][]", "[][]"));
@@ -156,16 +158,23 @@ public class ControlsPanel extends JPanel {
 		seekBar.setMaximum(100);
 		seekBar.setValue(0);
 		add(seekBar, "cell 0 1 6 1,growx");
-		seekBar.addChangeListener(new ChangeListener() {
+		seekBar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void stateChanged(ChangeEvent e) {
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				mouseClicked = true;
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				super.mouseReleased(e);
+				mouseClicked = false;
 				JSlider source = (JSlider) e.getSource();
 				int percentage = source.getValue();
-				if (!source.getValueIsAdjusting()
-						&& percentage != seekbarProgress) {
+				if (percentage != seekbarProgress) {
 					SongEvent songEvent = new SongEvent(Type.SKIP_TO);
 					songEvent.setSkipToPercentage(percentage);
-					// event.fire(songEvent);
+					event.fire(songEvent);
 				}
 			}
 		});
@@ -202,7 +211,9 @@ public class ControlsPanel extends JPanel {
 
 					int percentage = e.getPercentage();
 					seekbarProgress = percentage;
-					seekBar.setValue(percentage);
+					if (!mouseClicked) {
+						seekBar.setValue(percentage);
+					}
 					progressText.setText(SwingUtils.formatDuration(e
 							.getCurrentPosition())
 							+ "/"
