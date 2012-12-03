@@ -173,6 +173,7 @@ public class Supersonic extends JFrame {
 
 	public void showSupersonic() {
 		setVisible(true);
+		setExtendedState(JFrame.NORMAL);
 		toFront();
 		repaint();
 	}
