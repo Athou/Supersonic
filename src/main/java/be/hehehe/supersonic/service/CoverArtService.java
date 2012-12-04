@@ -30,10 +30,19 @@ public class CoverArtService {
 	Logger log;
 
 	public BufferedImage getCoverImage(String coverId) throws IOException {
-		return ImageIO.read(getCover(coverId));
+		BufferedImage image = null;
+		InputStream is = null;
+		try {
+			is = getCover(coverId);
+			image = ImageIO.read(is);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+		return image;
 	}
 
-	public InputStream getCover(String coverId) {
+	@SuppressWarnings("resource")
+	private InputStream getCover(String coverId) {
 		if (coverId == null) {
 			return getUnknownImage();
 		}
