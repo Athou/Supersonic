@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import be.hehehe.supersonic.events.ControlsEvent;
+import be.hehehe.supersonic.events.DownloadingEvent;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
@@ -54,6 +55,7 @@ public class ControlsPanel extends JPanel {
 	private SongModel currentSong;
 
 	private JSlider seekBar;
+	private JLabel downloadProgressText;
 	private JLabel progressText;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
@@ -152,12 +154,15 @@ public class ControlsPanel extends JPanel {
 		add(chckbxRepeat, "cell 6 0");
 		chckbxRepeat.addChangeListener(changeListener);
 
+		downloadProgressText = new JLabel();
+		add(downloadProgressText, "cell 0 1, alignx center");
+
 		seekBar = new JSlider();
 		seekBar.setFocusable(false);
 		seekBar.setMinimum(0);
 		seekBar.setMaximum(100);
 		seekBar.setValue(0);
-		add(seekBar, "cell 0 1 6 1,growx");
+		add(seekBar, "cell 1 1 5 1,growx");
 		seekBar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -201,9 +206,7 @@ public class ControlsPanel extends JPanel {
 	}
 
 	public void onProgress(@Observes final SongEvent e) {
-
 		SwingUtilities.invokeLater(new Runnable() {
-
 			@Override
 			public void run() {
 				if (e.getType() == Type.PROGRESS) {
@@ -224,6 +227,16 @@ public class ControlsPanel extends JPanel {
 				} else if (e.getType() == Type.SELECTION_CHANGED) {
 					selectedSong = e.getSong();
 				}
+			}
+		});
+	}
+
+	public void onDownloadProgress(@Observes final DownloadingEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				int perc = Math.min(e.getPercentage(), 100);
+				downloadProgressText.setText(perc + "%");
 			}
 		});
 

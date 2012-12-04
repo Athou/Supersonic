@@ -22,6 +22,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import be.hehehe.supersonic.events.DownloadingEvent;
 import be.hehehe.supersonic.events.SongEvent;
 import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.events.VolumeChangedEvent;
@@ -38,6 +39,9 @@ public class Player {
 
 	@Inject
 	Event<SongEvent> event;
+	
+	@Inject
+	Event<DownloadingEvent> downloadingEvent;
 
 	@Inject
 	Logger log;
@@ -123,7 +127,7 @@ public class Player {
 				ein = subsonicService.invokeBinary("stream",
 						new Param(song.getId()));
 				ein = new BufferedInputStream(new DownloadingStream(
-						ein, (int) currentSong.getSize()));
+						ein, (int) currentSong.getSize(), downloadingEvent));
 				start(ein);
 				return null;
 			}

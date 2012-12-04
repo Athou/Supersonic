@@ -6,12 +6,18 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 
+import javax.enterprise.event.Event;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+
+import be.hehehe.supersonic.events.DownloadingEvent;
 
 public class DownloadingStream extends InputStream implements Runnable {
 
 	private Logger log = Logger.getLogger(DownloadingStream.class);
+
+	private Event<DownloadingEvent> event;
 
 	private BufferedInputStream source;
 	private boolean closed;
@@ -20,7 +26,9 @@ public class DownloadingStream extends InputStream implements Runnable {
 
 	private int[] bytes;
 
-	public DownloadingStream(InputStream source, int size) {
+	public DownloadingStream(InputStream source, int size,
+			Event<DownloadingEvent> event) {
+		this.event = event;
 		this.source = new BufferedInputStream(source);
 		bytes = new int[size];
 		Arrays.fill(bytes, -1);
@@ -81,12 +89,16 @@ public class DownloadingStream extends InputStream implements Runnable {
 			int read = -1;
 			int writePos = 0;
 			while ((read = source.read()) != -1) {
- 				try {
- 					bytes[writePos] = read;
- 					writePos++;
- 				} catch (NullPointerException e) {
- 					break;
- 				}
+				try {
+					bytes[writePos] = read;
+					writePos++;
+					if (writePos % (bytes.length / 100) == 0) {
+						int perc = 1 + (writePos * 100 / bytes.length);
+						event.fire(new DownloadingEvent(perc));
+					}
+				} catch (NullPointerException e) {
+					break;
+				}
 			}
 			log.debug("Song downloaded.");
 		} catch (IOException e) {
@@ -96,5 +108,4 @@ public class DownloadingStream extends InputStream implements Runnable {
 			closed = true;
 		}
 	}
-
 }
