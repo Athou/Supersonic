@@ -1,6 +1,9 @@
 package be.hehehe.supersonic.panels;
 
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.annotation.PostConstruct;
@@ -26,12 +29,22 @@ public class CoverDialog extends JFrame {
 	public void init() {
 		setTitle("Cover");
 		setIconImage(iconService.getIcon("supersonic-big").getImage());
-		add(new JPanel() {
+
+		JPanel coverPanel = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
 				SwingUtils.drawImage(image, g, this);
 			}
+		};
+		coverPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				CoverDialog.this.dispose();
+			}
 		});
+		coverPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		add(coverPanel);
 	}
 
 	public void open(BufferedImage image, SongModel songModel) {
