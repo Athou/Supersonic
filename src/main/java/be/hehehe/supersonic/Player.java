@@ -1,9 +1,9 @@
 package be.hehehe.supersonic;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -39,7 +39,7 @@ public class Player {
 
 	@Inject
 	Event<SongEvent> event;
-	
+
 	@Inject
 	Event<DownloadingEvent> downloadingEvent;
 
@@ -54,8 +54,10 @@ public class Player {
 	private SongModel currentSong;
 
 	private SourceDataLine line;
-	private InputStream ein;
+	private DownloadingStream ein;
 	private AudioInputStream din;
+	private AudioFormat decodedFormat;
+	private long playedTimeOffset = 0;
 
 	private Object mutex = new Object();
 
@@ -124,10 +126,11 @@ public class Player {
 
 			@Override
 			protected Object doInBackground() throws Exception {
-				ein = subsonicService.invokeBinary("stream",
+				InputStream is = subsonicService.invokeBinary("stream",
 						new Param(song.getId()));
-				ein = new BufferedInputStream(new DownloadingStream(
-						ein, (int) currentSong.getSize(), downloadingEvent));
+				ein = new DownloadingStream(is, (int) currentSong.getSize(),
+						downloadingEvent);
+				ein.mark(Integer.MAX_VALUE);
 				start(ein);
 				return null;
 			}
@@ -140,6 +143,7 @@ public class Player {
 		synchronized (mutex) {
 			if (line != null) {
 				line.stop();
+				line.flush();
 				line.drain();
 				line.close();
 			}
@@ -172,26 +176,34 @@ public class Player {
 	}
 
 	public void skipTo(final int skipToPercentage) {
-		stop();
-		new SwingWorker<Object, Void>() {
 
-			@Override
-			protected Object doInBackground() throws Exception {
-				long newPosition = (currentSong.getSize() / 100)
-						* skipToPercentage;
-				log.debug("Skipping to " + newPosition + "("
-						+ skipToPercentage + "%)");
+		long newPosition = (currentSong.getSize() / 100) * skipToPercentage;
+		log.debug("Skipping to " + skipToPercentage + "%");
+
+		synchronized (mutex) {
+			InputStream oldDin = din;
+			try {
+				line.flush();
 				ein.reset();
 				ein.skip(newPosition);
-				state = State.PLAY;
-				start(ein);
-				return null;
+				din = AudioSystem.getAudioInputStream(decodedFormat,
+						AudioSystem.getAudioInputStream(ein));
+				playedTimeOffset = (TimeUnit.SECONDS.toMicros(currentSong
+						.getDuration()) / 100) * skipToPercentage;
+				playedTimeOffset -= line.getMicrosecondPosition();
+
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			} finally {
+				IOUtils.closeQuietly(oldDin);
 			}
-		}.execute();
+		}
+
 	}
 
 	private void start(InputStream inputStream) {
 		state = State.PLAY;
+		playedTimeOffset = 0;
 		try {
 			AudioInputStream in = null;
 			try {
@@ -204,13 +216,12 @@ public class Player {
 				in = AudioSystem.getAudioInputStream(tempFile);
 			}
 			AudioFormat baseFormat = in.getFormat();
-			AudioFormat decodedFormat = new AudioFormat(
-					AudioFormat.Encoding.PCM_SIGNED,
+			decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 					baseFormat.getSampleRate(), 16, baseFormat.getChannels(),
 					baseFormat.getChannels() * 2, baseFormat.getSampleRate(),
 					false);
 			din = AudioSystem.getAudioInputStream(decodedFormat, in);
-			rawplay(decodedFormat, din);
+			rawplay();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
@@ -223,10 +234,9 @@ public class Player {
 
 	}
 
-	private void rawplay(AudioFormat targetFormat, AudioInputStream din)
-			throws Exception {
+	private void rawplay() throws Exception {
 		byte[] data = new byte[4096];
-		line = getLine(targetFormat);
+		line = getLine(decodedFormat);
 		setGain();
 		if (line != null) {
 			line.start();
@@ -243,17 +253,18 @@ public class Player {
 					synchronized (mutex) {
 						if (line != null) {
 							line.write(data, 0, read);
-							long currentPosition = line
-									.getMicrosecondPosition();
-							if (currentPosition - lastEvent > 500000) {
+							long now = System.currentTimeMillis();
+							if (now - lastEvent > 500) {
 								SongEvent songEvent = new SongEvent(
 										Type.PROGRESS);
 								songEvent
-										.setCurrentPosition(currentPosition / 1000000);
+										.setCurrentPosition(TimeUnit.MICROSECONDS.toSeconds(line
+												.getMicrosecondPosition()
+												+ playedTimeOffset));
 								songEvent.setTotal(currentSong.getDuration());
 								songEvent.setSong(currentSong);
 								event.fire(songEvent);
-								lastEvent = currentPosition;
+								lastEvent = now;
 							}
 						}
 					}

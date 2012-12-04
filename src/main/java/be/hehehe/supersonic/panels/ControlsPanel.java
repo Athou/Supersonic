@@ -51,7 +51,6 @@ public class ControlsPanel extends JPanel {
 	@Inject
 	Event<ControlsEvent> controlsEvent;
 
-	private int seekbarProgress = 0;
 	private SongModel currentSong;
 
 	private JSlider seekBar;
@@ -163,9 +162,21 @@ public class ControlsPanel extends JPanel {
 		seekBar.setMaximum(100);
 		seekBar.setValue(0);
 		add(seekBar, "cell 1 1 5 1,growx");
+		seekBar.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				if (mouseClicked && !source.getValueIsAdjusting()) {
+					int percentage = source.getValue();
+					SongEvent songEvent = new SongEvent(Type.SKIP_TO);
+					songEvent.setSkipToPercentage(percentage);
+					event.fire(songEvent);
+				}
+			}
+		});
 		seekBar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				super.mouseClicked(e);
 				mouseClicked = true;
 			}
@@ -174,13 +185,6 @@ public class ControlsPanel extends JPanel {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				mouseClicked = false;
-				JSlider source = (JSlider) e.getSource();
-				int percentage = source.getValue();
-				if (percentage != seekbarProgress) {
-					SongEvent songEvent = new SongEvent(Type.SKIP_TO);
-					songEvent.setSkipToPercentage(percentage);
-					event.fire(songEvent);
-				}
 			}
 		});
 
@@ -213,7 +217,6 @@ public class ControlsPanel extends JPanel {
 					currentSong = e.getSong();
 
 					int percentage = e.getPercentage();
-					seekbarProgress = percentage;
 					if (!mouseClicked) {
 						seekBar.setValue(percentage);
 					}

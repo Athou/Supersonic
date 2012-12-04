@@ -54,7 +54,7 @@ public class SubsonicService {
 				throw new SupersonicException(
 						"Response is not valid xml. Wrong address?");
 			}
-			log.debug("Response: " + responseString);
+			log.trace("Response: " + responseString);
 			JAXBContext context = JAXBContext.newInstance(Response.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			JAXBElement<Response> jaxbResponse = unmarshaller.unmarshal(

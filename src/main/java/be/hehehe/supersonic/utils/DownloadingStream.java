@@ -53,11 +53,12 @@ public class DownloadingStream extends InputStream implements Runnable {
 
 	@Override
 	public synchronized void mark(int readlimit) {
-		mark = pos;
+		mark = 0;
 	}
 
 	@Override
 	public synchronized void reset() throws IOException {
+		log.debug("reset stream to " + mark);
 		pos = mark;
 	}
 
@@ -68,7 +69,7 @@ public class DownloadingStream extends InputStream implements Runnable {
 
 	@Override
 	public void close() throws IOException {
-		bytes = null;
+		// do nothing
 	}
 
 	@Override
