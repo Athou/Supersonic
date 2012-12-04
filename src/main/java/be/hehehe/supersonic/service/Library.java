@@ -153,6 +153,9 @@ public class Library {
 										songModel.setSize(song.getSize());
 										songModel.setDuration(song
 												.getDuration());
+										songModel
+												.setYear(song.getYear() == null ? 0
+														: song.getYear());
 
 										albumModel.getSongs().add(songModel);
 										albumModel.setName(song.getAlbum());

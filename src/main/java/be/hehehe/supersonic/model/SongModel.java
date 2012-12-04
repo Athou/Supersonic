@@ -9,6 +9,7 @@ public class SongModel {
 	private Integer track;
 	private long size;
 	private int duration;
+	private int year;
 
 	@Override
 	public int hashCode() {
@@ -88,5 +89,15 @@ public class SongModel {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+	
+	
 
 }

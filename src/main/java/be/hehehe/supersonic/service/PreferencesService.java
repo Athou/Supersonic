@@ -28,6 +28,7 @@ public class PreferencesService {
 
 	private static final String LOOKANDFEEL = "lookandfeel";
 	private static final String MINIMIZE_TO_TRAY = "minimize-to-tray";
+	private static final String DISPLAY_NOTIFICATIONS = "display-notifications";
 	private static final String SUBSONIC_ADDRESS = "subsonic-address";
 	private static final String SUBSONIC_LOGIN = "subsonic-login";
 	private static final String SUBSONIC_PASSWORD = "subsonic-password";
@@ -158,6 +159,14 @@ public class PreferencesService {
 
 	public void setMinimizeToTray(boolean minimize) {
 		prefs.putBoolean(MINIMIZE_TO_TRAY, minimize);
+	}
+	
+	public boolean isDisplayNotifications() {
+		return prefs.getBoolean(DISPLAY_NOTIFICATIONS, true);
+	}
+
+	public void setDisplayNotifications(boolean display) {
+		prefs.putBoolean(DISPLAY_NOTIFICATIONS, display);
 	}
 
 	public List<KeyBindingModel> getKeyBindings() {
