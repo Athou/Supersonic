@@ -73,12 +73,9 @@ public class SupersonicTray {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					if (supersonic.isVisible()) {
-						supersonic.hideSupersonic();
-					} else {
-						supersonic.showSupersonic();
-					}
-				} else if (e.getClickCount() == 1) {
+					supersonic.showSupersonic();
+				} else if (e.getClickCount() == 1
+						&& e.getButton() == MouseEvent.BUTTON2) {
 					popup.setLocation(e.getX(), e.getY());
 					popup.setInvoker(popup);
 					popup.setVisible(true);
