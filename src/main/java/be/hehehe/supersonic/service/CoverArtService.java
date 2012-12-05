@@ -47,7 +47,7 @@ public class CoverArtService {
 		}
 		InputStream result = null;
 
-		File imageFile = new File(COVER_PATH + coverId);
+		File imageFile = new File(COVER_PATH + coverId + ".jpg");
 		if (imageFile.exists()) {
 			try {
 				result = new FileInputStream(imageFile);
