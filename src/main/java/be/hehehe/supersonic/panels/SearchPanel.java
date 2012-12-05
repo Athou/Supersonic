@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -47,7 +48,8 @@ public class SearchPanel extends JPanel {
 	@Inject
 	Event<SongEvent> event;
 
-	public SearchPanel() {
+	@PostConstruct
+	public void init() {
 		setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
 
 		add(new JLabel("Search:"), "cell 0 0");
