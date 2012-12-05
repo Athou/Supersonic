@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -47,10 +46,8 @@ public class CoverArtService {
 			return getUnknownImage();
 		}
 		InputStream result = null;
-		String coverName = Base64.encodeBase64String(hexToASCII(coverId)
-				.getBytes());
 
-		File imageFile = new File(COVER_PATH + coverName);
+		File imageFile = new File(COVER_PATH + coverId);
 		if (imageFile.exists()) {
 			try {
 				result = new FileInputStream(imageFile);
@@ -73,15 +70,5 @@ public class CoverArtService {
 
 	private InputStream getUnknownImage() {
 		return getClass().getResourceAsStream("/icons/question-mark.jpg");
-	}
-
-	private String hexToASCII(String hex) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < hex.length() - 1; i += 2) {
-			String output = hex.substring(i, (i + 2));
-			int decimal = Integer.parseInt(output, 16);
-			sb.append((char) decimal);
-		}
-		return sb.toString();
 	}
 }
