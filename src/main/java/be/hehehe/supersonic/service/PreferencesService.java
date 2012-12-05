@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 
 import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.GraphiteSkin;
+import org.pushingpixels.substance.api.skin.TwilightSkin;
 
 import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.model.KeyBindingModel;
@@ -138,7 +138,7 @@ public class PreferencesService {
 	}
 
 	public String getLookAndFeel() {
-		return prefs.get(LOOKANDFEEL, GraphiteSkin.class.getName());
+		return prefs.get(LOOKANDFEEL, TwilightSkin.class.getName());
 	}
 
 	public void setLookAndFeel(String className) {
