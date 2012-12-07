@@ -3,7 +3,7 @@ package be.hehehe.supersonic.panels;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.Proxy.Type;
+import java.net.Proxy;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -267,8 +267,8 @@ public class SettingsDialog extends JDialog {
 			}
 		});
 
-		proxyTypeComboBox.setModel(new DefaultComboBoxModel(new Type[] {
-				Type.HTTP, Type.SOCKS }));
+		proxyTypeComboBox.setModel(new DefaultComboBoxModel(new Proxy.Type[] {
+				Proxy.Type.HTTP, Proxy.Type.SOCKS }));
 
 		DisableControlsListener controlListener = new DisableControlsListener();
 		proxyEnabledCheckBox.addActionListener(controlListener);
@@ -295,7 +295,7 @@ public class SettingsDialog extends JDialog {
 		preferencesService.setProxyEnabled(proxyEnabledCheckBox.isSelected());
 		preferencesService.setProxyHostname(proxyHostTxt.getText());
 		preferencesService.setProxyPort(proxyPortTxt.getText());
-		preferencesService.setProxyType((Type) proxyTypeComboBox
+		preferencesService.setProxyType((Proxy.Type) proxyTypeComboBox
 				.getSelectedItem());
 		preferencesService.setProxyAuthRequired(proxyAuthRequiredCheckbox
 				.isSelected());

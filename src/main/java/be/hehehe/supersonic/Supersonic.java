@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 import be.hehehe.supersonic.action.CheckForUpdateAction;
 import be.hehehe.supersonic.action.ExitAction;
 import be.hehehe.supersonic.events.SongEvent;
-import be.hehehe.supersonic.events.SongEvent.Type;
 import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.panels.ChatPanel;
 import be.hehehe.supersonic.panels.ControlsPanel;
@@ -179,7 +178,7 @@ public class Supersonic extends JFrame {
 	}
 
 	public void observes(@Observes SongEvent event) {
-		if (event.getType() == Type.CHANGE_SELECTION) {
+		if (event.getType() == SongEvent.Type.CHANGE_SELECTION) {
 			tabs.setSelectedIndex(0);
 		}
 	}
