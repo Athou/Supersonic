@@ -359,6 +359,12 @@ public class SettingsDialog extends JDialog {
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof SkinWrapper)) {
+				return false;
+			}
 			SkinWrapper w = (SkinWrapper) obj;
 			return StringUtils.equals(w.getInfo().getClassName(), getInfo()
 					.getClassName());
