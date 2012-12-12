@@ -1,7 +1,6 @@
 package be.hehehe.supersonic.panels;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -10,7 +9,6 @@ import javax.inject.Singleton;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
@@ -30,7 +28,7 @@ public class LibraryRefreshDialog extends JDialog {
 
 	@PostConstruct
 	public void init() {
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[][][]"));
+		getContentPane().setLayout(new MigLayout("fillx"));
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setModal(true);
 
@@ -38,20 +36,17 @@ public class LibraryRefreshDialog extends JDialog {
 		setIconImage(iconService.getIcon("arrow_rotate_clockwise").getImage());
 
 		JLabel lblRefreshingLibrary = new JLabel("Refreshing Library ...");
-		getContentPane().add(lblRefreshingLibrary, "cell 0 0");
+		getContentPane().add(lblRefreshingLibrary, "growx, wrap");
 
 		progressBar = new JProgressBar();
-		getContentPane().add(progressBar, "cell 0 1,growx");
+		getContentPane().add(progressBar, "growx, wrap");
 		progressBar.setIndeterminate(true);
 		progressBar.setStringPainted(true);
 		progressBar.setString("");
 
-		JPanel panel = new JPanel();
-		getContentPane().add(panel, "cell 0 2,growx");
-		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
 		JButton btnCancel = new JButton("Cancel");
-		panel.add(btnCancel);
+		// TODO cancel refresh on click
+		getContentPane().add(btnCancel, "span, right");
 
 		pack();
 		setPreferredSize(new Dimension(300, getHeight()));

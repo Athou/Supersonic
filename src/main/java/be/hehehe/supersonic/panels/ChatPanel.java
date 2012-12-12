@@ -57,12 +57,10 @@ public class ChatPanel extends JPanel {
 	}
 
 	private void buildFrame() {
-		setLayout(new MigLayout("", "[][grow][]", "[][grow]"));
-		add(new JLabel("Message: "), "cell 0 0");
-		messageText = new JTextField();
-		add(messageText, "cell 1 0, grow");
-		sendButton = new JButton("Send");
-		add(sendButton, "cell 2 0");
+		setLayout(new MigLayout("fill"));
+		add(new JLabel("Message: "));
+		add(messageText = new JTextField(), "growx, push");
+		add(sendButton = new JButton("Send"), "wrap");
 
 		table = new JXTable();
 		tableModel = new ChatMessageTableModel();
@@ -74,7 +72,7 @@ public class ChatPanel extends JPanel {
 		table.setColumnControlVisible(true);
 		table.setFillsViewportHeight(true);
 		table.setFocusable(false);
-		add(new JScrollPane(table), "cell 0 1 3 1,grow");
+		add(new JScrollPane(table), "span, grow");
 
 	}
 

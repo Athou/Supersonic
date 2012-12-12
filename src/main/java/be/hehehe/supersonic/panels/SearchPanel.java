@@ -10,7 +10,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -24,6 +23,8 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.prompt.PromptSupport;
+import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 
 import be.hehehe.supersonic.events.LibraryChangedEvent;
 import be.hehehe.supersonic.events.SongEvent;
@@ -50,12 +51,11 @@ public class SearchPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
-		setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
-
-		add(new JLabel("Search:"), "cell 0 0");
-		searchField = new JTextField();
-		add(searchField, "cell 0 0,growx");
-		searchField.setColumns(10);
+		setLayout(new MigLayout("insets 0, fill"));
+	
+		add(searchField = new JTextField(), "growx, wrap");
+		PromptSupport.setPrompt("Search", searchField);
+		PromptSupport.setFocusBehavior(FocusBehavior.SHOW_PROMPT, searchField);
 		searchField.setCaretColor(getBackground().darker());
 		searchField.addKeyListener(new KeyAdapter() {
 			@Override
@@ -66,7 +66,7 @@ public class SearchPanel extends JPanel {
 
 		table = new JXTable();
 		JScrollPane scrollPane = new JScrollPane(table);
-		add(scrollPane, "cell 0 1,grow");
+		add(scrollPane, "grow");
 
 		table.setCellSelectionEnabled(false);
 		table.setRowSelectionAllowed(true);

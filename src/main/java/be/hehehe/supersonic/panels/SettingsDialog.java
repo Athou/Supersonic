@@ -1,6 +1,5 @@
 package be.hehehe.supersonic.panels;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.Proxy;
@@ -74,7 +73,6 @@ public class SettingsDialog extends JDialog {
 	private JCheckBox proxyEnabledCheckBox;
 
 	private JCheckBox proxyAuthRequiredCheckbox;
-	private JLabel lblProxyType;
 	private JComboBox proxyTypeComboBox;
 
 	private JComboBox lafCombo;
@@ -97,119 +95,83 @@ public class SettingsDialog extends JDialog {
 	}
 
 	private void buildFrame() {
-		getContentPane().setLayout(
-				new MigLayout("insets 0", "[grow]", "[grow][]"));
+		getContentPane().setLayout(new MigLayout("fillx"));
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		getContentPane().add(tabbedPane, "cell 0 0,grow");
+		getContentPane().add(tabbedPane, "grow, wrap");
 
 		JPanel generalTab = new JPanel();
-		generalTab.setLayout(new MigLayout("insets 0", "[grow]", "[][][]"));
+		generalTab.setLayout(new MigLayout("insets 0, fill"));
 		tabbedPane.add(generalTab, "General");
 		tabbedPane.add(keyBindingPanel, "Key Bindings");
 
 		JPanel subsonicInfosPanel = new JPanel();
 		subsonicInfosPanel.setBorder(BorderFactory
 				.createTitledBorder("Subsonic"));
-		generalTab.add(subsonicInfosPanel, "cell 0 0,grow");
-		subsonicInfosPanel.setLayout(new MigLayout("insets 0", "[][grow]",
-				"[][][][]"));
+		generalTab.add(subsonicInfosPanel, "growx, push, wrap");
+		subsonicInfosPanel.setLayout(new MigLayout("insets 0, fillx"));
 
-		JLabel addressLabel = new JLabel("Address");
-		subsonicInfosPanel.add(addressLabel, "cell 0 0,alignx left");
+		subsonicInfosPanel.add(new JLabel("Address"));
+		subsonicInfosPanel.add(addressTxt = new JTextField(),
+				"growx, push,  wrap");
 
-		addressTxt = new JTextField();
-		subsonicInfosPanel.add(addressTxt, "cell 1 0,growx");
-		addressTxt.setColumns(10);
+		subsonicInfosPanel.add(new JLabel("Login"));
+		subsonicInfosPanel
+				.add(loginTxt = new JTextField(), "growx, push, wrap");
 
-		JLabel loginLabel = new JLabel("Login");
-		subsonicInfosPanel.add(loginLabel, "cell 0 1,alignx left");
+		subsonicInfosPanel.add(new JLabel("Password"));
+		subsonicInfosPanel.add(passwordTxt = new JPasswordField(),
+				"growx, wrap");
 
-		loginTxt = new JTextField();
-		subsonicInfosPanel.add(loginTxt, "cell 1 1,growx");
-		loginTxt.setColumns(10);
-
-		JLabel passwordLabel = new JLabel("Password");
-		subsonicInfosPanel.add(passwordLabel, "cell 0 2,alignx left");
-
-		passwordTxt = new JPasswordField();
-		subsonicInfosPanel.add(passwordTxt, "cell 1 2,growx");
-
-		JPanel testPanel = new JPanel();
-		testPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		subsonicInfosPanel.add(testPanel, "cell 0 3 2 1, grow");
-
-		testButton = new JButton("Test");
-		testButton.setFocusable(false);
-		testPanel.add(testButton);
+		subsonicInfosPanel
+				.add(testButton = new JButton("Test"), "span, center");
+		testButton.setFocusPainted(false);
 
 		JPanel proxyPanel = new JPanel();
-		proxyPanel.setLayout(new MigLayout("insets 0", "[][grow]",
-				"[][][][][][][]"));
+		proxyPanel.setLayout(new MigLayout("insets 0, fillx"));
 		proxyPanel.setBorder(BorderFactory.createTitledBorder("Proxy"));
-		generalTab.add(proxyPanel, "cell 0 1,grow");
+		generalTab.add(proxyPanel, "growx, wrap");
 
-		proxyEnabledCheckBox = new JCheckBox("Enable proxy");
-		proxyPanel.add(proxyEnabledCheckBox, "cell 0 0");
+		proxyPanel.add(proxyEnabledCheckBox = new JCheckBox("Enable proxy"),
+				"wrap");
 
-		JLabel lblNewLabel = new JLabel("Proxy Host");
-		proxyPanel.add(lblNewLabel, "cell 0 1,alignx left");
+		proxyPanel.add(new JLabel("Proxy Host"));
+		proxyPanel.add(proxyHostTxt = new JTextField(), "growx, push, wrap");
 
-		proxyHostTxt = new JTextField();
-		proxyPanel.add(proxyHostTxt, "cell 1 1,growx");
-		proxyHostTxt.setColumns(10);
+		proxyPanel.add(new JLabel("Proxy Port"));
+		proxyPanel.add(proxyPortTxt = new JTextField(), "growx, push, wrap");
 
-		JLabel lblProxyPort = new JLabel("Proxy Port");
-		proxyPanel.add(lblProxyPort, "cell 0 2,alignx left");
+		proxyPanel.add(new JLabel("Proxy Type"));
+		proxyPanel
+				.add(proxyTypeComboBox = new JComboBox(), "growx, push, wrap");
 
-		proxyPortTxt = new JTextField();
-		proxyPanel.add(proxyPortTxt, "cell 1 2,growx");
-		proxyPortTxt.setColumns(10);
+		proxyPanel.add(proxyAuthRequiredCheckbox = new JCheckBox(
+				"Proxy uses authentication"), "wrap");
 
-		lblProxyType = new JLabel("Proxy Type");
-		proxyPanel.add(lblProxyType, "cell 0 3,alignx left");
+		proxyPanel.add(new JLabel("Login"));
+		proxyPanel.add(proxyLoginTxt = new JTextField(), "growx, push, wrap");
 
-		proxyTypeComboBox = new JComboBox();
-		proxyPanel.add(proxyTypeComboBox, "cell 1 3,growx");
-
-		proxyAuthRequiredCheckbox = new JCheckBox("Proxy uses authentication");
-		proxyPanel.add(proxyAuthRequiredCheckbox, "cell 0 4");
-
-		JLabel lblLogin = new JLabel("Login");
-		proxyPanel.add(lblLogin, "cell 0 5,alignx left");
-
-		proxyLoginTxt = new JTextField();
-		proxyPanel.add(proxyLoginTxt, "cell 1 5,growx");
-		proxyLoginTxt.setColumns(10);
-
-		JLabel lblPassword = new JLabel("Password");
-		proxyPanel.add(lblPassword, "cell 0 6,alignx left");
-
-		proxyPasswordTxt = new JPasswordField();
-		proxyPanel.add(proxyPasswordTxt, "cell 1 6,growx");
+		proxyPanel.add(new JLabel("Password"));
+		proxyPanel.add(proxyPasswordTxt = new JPasswordField(),
+				"growx, push, wrap");
 
 		JPanel lafPanel = new JPanel();
+		lafPanel.setLayout(new MigLayout("insets 0, fillx"));
 		lafPanel.setBorder(BorderFactory.createTitledBorder("Look And Feel"));
-		generalTab.add(lafPanel, "cell 0 2,growx");
-		lafPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][][]"));
-		lafCombo = new JComboBox();
-		lafPanel.add(lafCombo, "cell 0 0, grow");
+		generalTab.add(lafPanel, "growx, wrap");
 
-		systrayCheckbox = new JCheckBox("Minimize to system tray");
-		lafPanel.add(systrayCheckbox, "cell 0 1");
+		lafPanel.add(lafCombo = new JComboBox(), "grow, wrap");
 
-		notifCheckbox = new JCheckBox("Display notifications when song changes");
-		lafPanel.add(notifCheckbox, "cell 0 2");
+		lafPanel.add(
+				systrayCheckbox = new JCheckBox("Minimize to system tray"),
+				"wrap");
 
-		JPanel panel = new JPanel();
-		getContentPane().add(panel, "cell 0 1,growx");
-		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		lafPanel.add(notifCheckbox = new JCheckBox(
+				"Display notifications when song changes"), "wrap");
 
-		okButton = new JButton("OK");
-		panel.add(okButton);
-
-		cancelButton = new JButton("Cancel");
-		panel.add(cancelButton);
+		getContentPane().add(okButton = new JButton("OK"),
+				"span, split 2, right");
+		getContentPane().add(cancelButton = new JButton("Cancel"));
 	}
 
 	private void attachBehavior() {

@@ -107,10 +107,10 @@ public class Supersonic extends JFrame {
 		checkForUpdateAction.actionPerformed(null);
 
 		setJMenuBar(supersonicMenu);
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
+		getContentPane().setLayout(new MigLayout("fill"));
 
 		JSplitPane mainSplitPane = new JSplitPane();
-		getContentPane().add(mainSplitPane, "cell 0 0,grow");
+		getContentPane().add(mainSplitPane, "grow");
 
 		JSplitPane leftSplitPane = new JSplitPane();
 		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -120,7 +120,7 @@ public class Supersonic extends JFrame {
 		leftSplitPane.setTopComponent(searchPanel);
 
 		JPanel rightPanel = new JPanel();
-		rightPanel.setLayout(new MigLayout("insets 0", "[grow]", "[][grow]"));
+		rightPanel.setLayout(new MigLayout("insets 0, fill"));
 		mainSplitPane.setRightComponent(rightPanel);
 
 		tabs = new JTabbedPane(JTabbedPane.TOP);
@@ -128,8 +128,8 @@ public class Supersonic extends JFrame {
 		tabs.add("Now Playing", nowPlayingPanel);
 		tabs.add("Chat", chatPanel);
 
-		rightPanel.add(controlsPanel, "cell 0 0,grow");
-		rightPanel.add(tabs, "cell 0 1,grow");
+		rightPanel.add(controlsPanel, "growx, wrap");
+		rightPanel.add(tabs, "grow, push");
 
 		boolean trayAdded = supersonicTray.addTray(this);
 		if (trayAdded) {

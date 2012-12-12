@@ -55,7 +55,7 @@ public class SongsPanel extends JPanel {
 
 	private void buildFrame() {
 
-		setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
+		setLayout(new MigLayout("insets 0, fill"));
 
 		table = new JXTable();
 		table.setCellSelectionEnabled(false);
@@ -95,7 +95,7 @@ public class SongsPanel extends JPanel {
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-		add(scrollPane, "cell 0 0,grow");
+		add(scrollPane, "grow");
 
 		if (tableModel.getRowCount() == 0) {
 			SongModel song = new SongModel();

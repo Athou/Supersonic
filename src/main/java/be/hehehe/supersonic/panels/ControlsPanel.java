@@ -1,7 +1,6 @@
 package be.hehehe.supersonic.panels;
 
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -66,11 +65,11 @@ public class ControlsPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
-		setLayout(new MigLayout("insets 0", "[][][][][grow][][]", "[][]"));
+		setLayout(new MigLayout("insets 0"));
 
 		final JButton btnPlay = new JButton();
 		btnPlay.setIcon(iconService.getIcon("play"));
-		add(btnPlay, "cell 0 0");
+		add(btnPlay);
 		btnPlay.setFocusable(false);
 		btnPlay.addActionListener(new ActionListener() {
 			@Override
@@ -85,7 +84,7 @@ public class ControlsPanel extends JPanel {
 		JButton btnPause = new JButton();
 		btnPause.setIcon(iconService.getIcon("pause"));
 		btnPause.setFocusable(false);
-		add(btnPause, "cell 1 0");
+		add(btnPause);
 		btnPause.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -96,7 +95,7 @@ public class ControlsPanel extends JPanel {
 		JButton btnStop = new JButton();
 		btnStop.setIcon(iconService.getIcon("stop"));
 		btnStop.setFocusable(false);
-		add(btnStop, "cell 2 0");
+		add(btnStop);
 		btnStop.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -105,7 +104,7 @@ public class ControlsPanel extends JPanel {
 		});
 
 		JButton btnNext = new JButton();
-		add(btnNext, "cell 3 0");
+		add(btnNext);
 		btnNext.setIcon(iconService.getIcon("next"));
 		btnNext.setFocusable(false);
 		btnNext.addActionListener(new ActionListener() {
@@ -119,7 +118,7 @@ public class ControlsPanel extends JPanel {
 		volumeSlider.setFocusable(false);
 		volumeSlider.setMinimum(0);
 		volumeSlider.setMaximum(100);
-		add(volumeSlider, "cell 4 0,growx");
+		add(volumeSlider, "grow, push");
 		volumeSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -145,23 +144,23 @@ public class ControlsPanel extends JPanel {
 
 		chckbxShuffle = new JCheckBox("Shuffle");
 		chckbxShuffle.setFocusable(false);
-		add(chckbxShuffle, "cell 5 0");
+		add(chckbxShuffle);
 		chckbxShuffle.addChangeListener(changeListener);
 
 		chckbxRepeat = new JCheckBox("Repeat");
 		chckbxRepeat.setFocusable(false);
-		add(chckbxRepeat, "cell 6 0");
+		add(chckbxRepeat, "wrap");
 		chckbxRepeat.addChangeListener(changeListener);
 
 		downloadProgressText = new JLabel();
-		add(downloadProgressText, "cell 0 1, alignx center");
+		add(downloadProgressText, "alignx center");
 
 		seekBar = new JSlider();
 		seekBar.setFocusable(false);
 		seekBar.setMinimum(0);
 		seekBar.setMaximum(100);
 		seekBar.setValue(0);
-		add(seekBar, "cell 1 1 5 1,growx");
+		add(seekBar, "span 5, growx");
 		seekBar.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -189,15 +188,12 @@ public class ControlsPanel extends JPanel {
 		});
 
 		progressText = new JLabel(SwingUtils.formatDuration(0L));
-		add(progressText, "cell 6 1,alignx center");
+		add(progressText, "alignx center, wrap");
 
-		JPanel currentSongPanel = new JPanel();
-		currentSongPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		currentSongLabel = new JLabel(" ");
-		currentSongPanel.add(currentSongLabel);
+		currentSongLabel = new JLabel(" ", JLabel.CENTER);
 		currentSongLabel.setCursor(Cursor
 				.getPredefinedCursor(Cursor.HAND_CURSOR));
-		add(currentSongPanel, "cell 0 2 7 1,grow");
+		add(currentSongLabel, "dock south");
 		currentSongLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

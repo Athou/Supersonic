@@ -42,12 +42,12 @@ public class KeyBindingPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
-		setLayout(new MigLayout("insets 0", "[grow]", "[][]"));
+		setLayout(new MigLayout("insets 0, fillx"));
 
 		JPanel bindings = new JPanel();
-		bindings.setLayout(new MigLayout("", "[][grow]", "[][][][]"));
+		bindings.setLayout(new MigLayout("fillx"));
 		bindings.setBorder(BorderFactory.createTitledBorder("Key Bindings"));
-		add(bindings, "cell 0 0,growx");
+		add(bindings, "growx, wrap");
 
 		play = new BindingComponent(Type.PLAY);
 		pause = new BindingComponent(Type.PAUSE);
@@ -55,22 +55,25 @@ public class KeyBindingPanel extends JPanel {
 		next = new BindingComponent(Type.FINISHED);
 		components = new BindingComponent[] { play, pause, stop, next };
 
-		bindings.add(new JLabel("Play"), "cell 0 0");
-		bindings.add(new JLabel("Pause / unpause"), "cell 0 1");
-		bindings.add(new JLabel("Stop"), "cell 0 2");
-		bindings.add(new JLabel("Next song"), "cell 0 3");
+		bindings.add(new JLabel("Play"));
+		bindings.add(play, "growx, push, wrap");
 
-		bindings.add(play, "cell 1 0,grow");
-		bindings.add(pause, "cell 1 1,grow");
-		bindings.add(stop, "cell 1 2,grow");
-		bindings.add(next, "cell 1 3,grow");
+		bindings.add(new JLabel("Pause / unpause"));
+		bindings.add(pause, "growx, push, wrap");
+
+		bindings.add(new JLabel("Stop"), "cell 0 2");
+		bindings.add(stop, "growx, push, wrap");
+
+		bindings.add(new JLabel("Next song"));
+		bindings.add(next, "growx, push, wrap");
 
 		mediaKeys = new JCheckBox("Bind media keys");
 		JPanel mediaKeysPanel = new JPanel();
 		mediaKeysPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		mediaKeysPanel.setBorder(BorderFactory.createTitledBorder("Media Keys"));
+		mediaKeysPanel
+				.setBorder(BorderFactory.createTitledBorder("Media Keys"));
 		mediaKeysPanel.add(mediaKeys);
-		add(mediaKeysPanel, "cell 0 1,growx");
+		add(mediaKeysPanel, "growx");
 
 	}
 
