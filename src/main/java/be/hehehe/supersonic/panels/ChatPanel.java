@@ -57,9 +57,10 @@ public class ChatPanel extends JPanel {
 	}
 
 	private void buildFrame() {
-		setLayout(new MigLayout("fill"));
+		setLayout(new MigLayout("insets 0, debug, fill"));
+
 		add(new JLabel("Message: "));
-		add(messageText = new JTextField(), "growx, push");
+		add(messageText = new JTextField(), "growx, pushx");
 		add(sendButton = new JButton("Send"), "wrap");
 
 		table = new JXTable();
@@ -72,7 +73,7 @@ public class ChatPanel extends JPanel {
 		table.setColumnControlVisible(true);
 		table.setFillsViewportHeight(true);
 		table.setFocusable(false);
-		add(new JScrollPane(table), "span, grow");
+		add(new JScrollPane(table), "south, grow, push");
 
 	}
 
@@ -95,25 +96,25 @@ public class ChatPanel extends JPanel {
 	}
 
 	private void sendMessage() {
+		sendButton.setEnabled(false);
 		new SwingWorker<Object, Void>() {
-
 			@Override
 			protected Object doInBackground() throws Exception {
 				String message = messageText.getText();
-				sendButton.setEnabled(false);
 				if (StringUtils.isNotBlank(message)) {
-					try {
-						subsonicService.invoke("addChatMessage", new Param(
-								"message", message));
-					} catch (SupersonicException e) {
-						JXErrorPane.showDialog(e);
-					}
+					subsonicService.invoke("addChatMessage", new Param(
+							"message", message));
 				}
 				return null;
 			}
 
 			@Override
 			protected void done() {
+				try {
+					get();
+				} catch (Exception e) {
+					JXErrorPane.showDialog(e);
+				}
 				sendButton.setEnabled(true);
 				messageText.setText(null);
 				refreshMessages();
@@ -122,9 +123,15 @@ public class ChatPanel extends JPanel {
 	}
 
 	private void startRefreshThread() {
-		Runnable thread = new Runnable() {
+		SwingWorker<Object, Void> thread = new SwingWorker<Object, Void>() {
+
 			@Override
-			public void run() {
+			protected Object doInBackground() throws Exception {
+				return null;
+			}
+
+			@Override
+			public void done() {
 				refreshMessages();
 			}
 		};

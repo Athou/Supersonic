@@ -53,10 +53,14 @@ public class CoverPanel extends JPanel {
 				protected Object doInBackground() throws Exception {
 					SongModel song = e.getSong();
 					image = coverArtService.getCoverImage(song.getCoverId());
-					setVisible(false);
-					setVisible(true);
 					return null;
 				}
+
+				@Override
+				protected void done() {
+					setVisible(false);
+					setVisible(true);
+				};
 			}.execute();
 		}
 	}
