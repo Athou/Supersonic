@@ -57,7 +57,7 @@ public class ChatPanel extends JPanel {
 	}
 
 	private void buildFrame() {
-		setLayout(new MigLayout("insets 0, debug, fill"));
+		setLayout(new MigLayout("insets 0, fill"));
 
 		add(new JLabel("Message: "));
 		add(messageText = new JTextField(), "growx, pushx");
