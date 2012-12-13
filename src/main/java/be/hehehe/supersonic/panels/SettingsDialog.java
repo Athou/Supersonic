@@ -19,7 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -187,7 +190,8 @@ public class SettingsDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				resetLookAndFeel();
+				preferencesService.applySkin(preferencesService
+						.getLookAndFeel());
 				close();
 			}
 		});
@@ -236,6 +240,10 @@ public class SettingsDialog extends JDialog {
 		proxyEnabledCheckBox.addActionListener(controlListener);
 		proxyAuthRequiredCheckbox.addActionListener(controlListener);
 
+		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			lafCombo.addItem(new SkinWrapper(info));
+		}
+
 		for (SkinInfo info : SubstanceLookAndFeel.getAllSkins().values()) {
 			lafCombo.addItem(new SkinWrapper(info));
 		}
@@ -244,7 +252,9 @@ public class SettingsDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SkinWrapper wrap = (SkinWrapper) lafCombo.getSelectedItem();
-				SubstanceLookAndFeel.setSkin(wrap.getInfo().getClassName());
+				preferencesService.applySkin(wrap.getClassName());
+				SwingUtilities.updateComponentTreeUI(SettingsDialog.this);
+				SettingsDialog.this.pack();
 			}
 		});
 	}
@@ -265,7 +275,7 @@ public class SettingsDialog extends JDialog {
 		preferencesService.setProxyPassword(new String(proxyPasswordTxt
 				.getPassword()));
 		preferencesService.setLookAndFeel(((SkinWrapper) lafCombo
-				.getSelectedItem()).getInfo().getClassName());
+				.getSelectedItem()).getClassName());
 		preferencesService.setMinimizeToTray(systrayCheckbox.isSelected());
 		preferencesService.setDisplayNotifications(notifCheckbox.isSelected());
 		preferencesService.setKeyBindings(keyBindingPanel.getBindings());
@@ -314,10 +324,6 @@ public class SettingsDialog extends JDialog {
 		dispose();
 	}
 
-	private void resetLookAndFeel() {
-		SubstanceLookAndFeel.setSkin(preferencesService.getLookAndFeel());
-	}
-
 	private class DisableControlsListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -342,19 +348,27 @@ public class SettingsDialog extends JDialog {
 
 	private class SkinWrapper {
 
-		private SkinInfo info;
-
-		public SkinWrapper(SkinInfo info) {
-			this.info = info;
-		}
+		private String name;
+		private String className;
 
 		public SkinWrapper(String name, String className) {
-			this.info = new SkinInfo(name, className);
+			this.name = name;
+			this.className = className;
+		}
+
+		public SkinWrapper(LookAndFeelInfo info) {
+			this.name = "Java - " + info.getName();
+			this.className = info.getClassName();
+		}
+
+		public SkinWrapper(SkinInfo info) {
+			this.name = "Substance - " + info.getDisplayName();
+			this.className = info.getClassName();
 		}
 
 		@Override
 		public String toString() {
-			return info.getDisplayName();
+			return name;
 		}
 
 		@Override
@@ -366,12 +380,11 @@ public class SettingsDialog extends JDialog {
 				return false;
 			}
 			SkinWrapper w = (SkinWrapper) obj;
-			return StringUtils.equals(w.getInfo().getClassName(), getInfo()
-					.getClassName());
+			return StringUtils.equals(w.className, className);
 		}
 
-		public SkinInfo getInfo() {
-			return info;
+		public String getClassName() {
+			return className;
 		}
 
 	}

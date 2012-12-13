@@ -1,5 +1,6 @@
 package be.hehehe.supersonic.service;
 
+import java.awt.Window;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy.Type;
@@ -10,10 +11,12 @@ import java.util.prefs.Preferences;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.TwilightSkin;
+import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.model.KeyBindingModel;
@@ -138,7 +141,8 @@ public class PreferencesService {
 	}
 
 	public String getLookAndFeel() {
-		return prefs.get(LOOKANDFEEL, TwilightSkin.class.getName());
+		return prefs.get(LOOKANDFEEL,
+				SubstanceTwilightLookAndFeel.class.getName());
 	}
 
 	public void setLookAndFeel(String className) {
@@ -160,7 +164,7 @@ public class PreferencesService {
 	public void setMinimizeToTray(boolean minimize) {
 		prefs.putBoolean(MINIMIZE_TO_TRAY, minimize);
 	}
-	
+
 	public boolean isDisplayNotifications() {
 		return prefs.getBoolean(DISPLAY_NOTIFICATIONS, true);
 	}
@@ -214,12 +218,8 @@ public class PreferencesService {
 	}
 
 	public void applySettings() {
-		String plafClassName = getLookAndFeel();
-		try {
-			SubstanceLookAndFeel.setSkin(plafClassName);
-		} catch (Exception e) {
-			log.info("Could not set the look and feel " + plafClassName + ".");
-		}
+		String lafClassName = getLookAndFeel();
+		applySkin(lafClassName);
 
 		if (isProxyEnabled()) {
 			if (getProxyType() == Type.HTTP) {
@@ -244,6 +244,22 @@ public class PreferencesService {
 							getProxyPassword()));
 				}
 			}
+		}
+	}
+
+	public void applySkin(String lafClassName) {
+		try {
+			if (lafClassName.startsWith(SubstanceLookAndFeel.class.getPackage()
+					.getName())) {
+				SubstanceLookAndFeel.setSkin(lafClassName);
+			} else {
+				UIManager.setLookAndFeel(lafClassName);
+				for (Window w : Window.getWindows()) {
+					SwingUtilities.updateComponentTreeUI(w);
+				}
+			}
+		} catch (Exception e) {
+			log.info("Could not set the look and feel " + lafClassName + ".", e);
 		}
 	}
 
