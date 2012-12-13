@@ -16,11 +16,11 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.model.KeyBindingModel;
 
+import com.alee.laf.WebLookAndFeel;
 import com.google.common.collect.Lists;
 
 import flexjson.JSONDeserializer;
@@ -141,8 +141,7 @@ public class PreferencesService {
 	}
 
 	public String getLookAndFeel() {
-		return prefs.get(LOOKANDFEEL,
-				SubstanceTwilightLookAndFeel.class.getName());
+		return prefs.get(LOOKANDFEEL, WebLookAndFeel.class.getName());
 	}
 
 	public void setLookAndFeel(String className) {

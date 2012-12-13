@@ -42,7 +42,7 @@ public class KeyBindingPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
-		setLayout(new MigLayout("insets 0, fillx"));
+		setLayout(new MigLayout("fillx"));
 
 		JPanel bindings = new JPanel();
 		bindings.setLayout(new MigLayout("fillx"));

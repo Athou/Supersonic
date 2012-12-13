@@ -122,7 +122,7 @@ public class SettingsDialog extends JDialog {
 		getContentPane().add(tabbedPane, "grow, wrap");
 
 		JPanel generalTab = new JPanel();
-		generalTab.setLayout(new MigLayout("insets 0, fill"));
+		generalTab.setLayout(new MigLayout("fill"));
 		tabbedPane.add(generalTab, "General");
 		tabbedPane.add(keyBindingPanel, "Key Bindings");
 
