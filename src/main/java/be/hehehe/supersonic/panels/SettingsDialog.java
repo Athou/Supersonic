@@ -39,6 +39,8 @@ import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.SwingUtils;
 
+import com.jgoodies.looks.Options;
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
 import com.jtattoo.plaf.acryl.AcrylLookAndFeel;
 import com.jtattoo.plaf.aero.AeroLookAndFeel;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
@@ -261,6 +263,13 @@ public class SettingsDialog extends JDialog {
 		for (SkinInfo info : SubstanceLookAndFeel.getAllSkins().values()) {
 			lafCombo.addItem(new SkinWrapper(info));
 		}
+
+		lafCombo.addItem(new SkinWrapper("JGoodies - Plastic 3D",
+				Options.PLASTIC3D_NAME));
+		lafCombo.addItem(new SkinWrapper("JGoodies - Plastic XP",
+				Options.PLASTICXP_NAME));
+		lafCombo.addItem(new SkinWrapper("JGoodies - Windows",
+				WindowsLookAndFeel.class.getName()));
 
 		lafCombo.addItem(new SkinWrapper("JTattoo - Acryl",
 				AcrylLookAndFeel.class.getName()));
