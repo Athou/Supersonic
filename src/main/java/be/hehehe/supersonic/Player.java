@@ -176,29 +176,29 @@ public class Player {
 	}
 
 	public void skipTo(final int skipToPercentage) {
+		if (currentSong != null) {
+			long newPosition = (currentSong.getSize() / 100) * skipToPercentage;
+			log.debug("Skipping to " + skipToPercentage + "%");
 
-		long newPosition = (currentSong.getSize() / 100) * skipToPercentage;
-		log.debug("Skipping to " + skipToPercentage + "%");
+			synchronized (mutex) {
+				InputStream oldDin = din;
+				try {
+					line.flush();
+					ein.reset();
+					ein.skip(newPosition);
+					din = AudioSystem.getAudioInputStream(decodedFormat,
+							AudioSystem.getAudioInputStream(ein));
+					playedTimeOffset = (TimeUnit.SECONDS.toMicros(currentSong
+							.getDuration()) / 100) * skipToPercentage;
+					playedTimeOffset -= line.getMicrosecondPosition();
 
-		synchronized (mutex) {
-			InputStream oldDin = din;
-			try {
-				line.flush();
-				ein.reset();
-				ein.skip(newPosition);
-				din = AudioSystem.getAudioInputStream(decodedFormat,
-						AudioSystem.getAudioInputStream(ein));
-				playedTimeOffset = (TimeUnit.SECONDS.toMicros(currentSong
-						.getDuration()) / 100) * skipToPercentage;
-				playedTimeOffset -= line.getMicrosecondPosition();
-
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
-			} finally {
-				IOUtils.closeQuietly(oldDin);
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
+				} finally {
+					IOUtils.closeQuietly(oldDin);
+				}
 			}
 		}
-
 	}
 
 	private void start(InputStream inputStream) {
