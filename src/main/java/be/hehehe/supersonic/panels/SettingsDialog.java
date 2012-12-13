@@ -54,6 +54,7 @@ import com.jtattoo.plaf.mint.MintLookAndFeel;
 import com.jtattoo.plaf.noire.NoireLookAndFeel;
 import com.jtattoo.plaf.smart.SmartLookAndFeel;
 import com.jtattoo.plaf.texture.TextureLookAndFeel;
+import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
 @SuppressWarnings("serial")
 @Singleton
@@ -270,6 +271,9 @@ public class SettingsDialog extends JDialog {
 				Options.PLASTICXP_NAME));
 		lafCombo.addItem(new SkinWrapper("JGoodies - Windows",
 				WindowsLookAndFeel.class.getName()));
+
+		lafCombo.addItem(new SkinWrapper("Sea Glass", SeaGlassLookAndFeel.class
+				.getName()));
 
 		lafCombo.addItem(new SkinWrapper("JTattoo - Acryl",
 				AcrylLookAndFeel.class.getName()));
