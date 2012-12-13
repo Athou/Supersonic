@@ -39,6 +39,7 @@ import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.SwingUtils;
 
+import com.alee.laf.WebLookAndFeel;
 import com.jgoodies.looks.Options;
 import com.jgoodies.looks.windows.WindowsLookAndFeel;
 import com.jtattoo.plaf.acryl.AcrylLookAndFeel;
@@ -274,6 +275,9 @@ public class SettingsDialog extends JDialog {
 
 		lafCombo.addItem(new SkinWrapper("Sea Glass", SeaGlassLookAndFeel.class
 				.getName()));
+
+		lafCombo.addItem(new SkinWrapper("Web Look & Feel",
+				WebLookAndFeel.class.getName()));
 
 		lafCombo.addItem(new SkinWrapper("JTattoo - Acryl",
 				AcrylLookAndFeel.class.getName()));
