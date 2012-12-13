@@ -39,6 +39,20 @@ import be.hehehe.supersonic.service.SubsonicService;
 import be.hehehe.supersonic.utils.SupersonicException;
 import be.hehehe.supersonic.utils.SwingUtils;
 
+import com.jtattoo.plaf.acryl.AcrylLookAndFeel;
+import com.jtattoo.plaf.aero.AeroLookAndFeel;
+import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
+import com.jtattoo.plaf.bernstein.BernsteinLookAndFeel;
+import com.jtattoo.plaf.fast.FastLookAndFeel;
+import com.jtattoo.plaf.graphite.GraphiteLookAndFeel;
+import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
+import com.jtattoo.plaf.luna.LunaLookAndFeel;
+import com.jtattoo.plaf.mcwin.McWinLookAndFeel;
+import com.jtattoo.plaf.mint.MintLookAndFeel;
+import com.jtattoo.plaf.noire.NoireLookAndFeel;
+import com.jtattoo.plaf.smart.SmartLookAndFeel;
+import com.jtattoo.plaf.texture.TextureLookAndFeel;
+
 @SuppressWarnings("serial")
 @Singleton
 public class SettingsDialog extends JDialog {
@@ -247,6 +261,33 @@ public class SettingsDialog extends JDialog {
 		for (SkinInfo info : SubstanceLookAndFeel.getAllSkins().values()) {
 			lafCombo.addItem(new SkinWrapper(info));
 		}
+
+		lafCombo.addItem(new SkinWrapper("JTattoo - Acryl",
+				AcrylLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Aero",
+				AeroLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Aluminium",
+				AluminiumLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Bernstein",
+				BernsteinLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Fast",
+				FastLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Graphite",
+				GraphiteLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Hifi",
+				HiFiLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Luna",
+				LunaLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - McWin",
+				McWinLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Mint",
+				MintLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Noire",
+				NoireLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Smart",
+				SmartLookAndFeel.class.getName()));
+		lafCombo.addItem(new SkinWrapper("JTattoo - Texture",
+				TextureLookAndFeel.class.getName()));
 
 		lafCombo.addActionListener(new ActionListener() {
 			@Override
