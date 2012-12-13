@@ -22,7 +22,6 @@ import be.hehehe.supersonic.model.ApplicationStateModel;
 import be.hehehe.supersonic.model.KeyBindingModel;
 
 import com.google.common.collect.Lists;
-import com.jgoodies.looks.Options;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -250,8 +249,6 @@ public class PreferencesService {
 
 	public void applySkin(String lafClassName) {
 		try {
-			UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-
 			if (lafClassName.startsWith(SubstanceLookAndFeel.class.getPackage()
 					.getName())) {
 				SubstanceLookAndFeel.setSkin(lafClassName);

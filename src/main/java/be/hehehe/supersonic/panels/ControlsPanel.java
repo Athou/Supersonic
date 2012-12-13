@@ -1,10 +1,12 @@
 package be.hehehe.supersonic.panels;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -21,6 +23,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.commons.io.IOUtils;
+
 import be.hehehe.supersonic.events.ControlsEvent;
 import be.hehehe.supersonic.events.DownloadingEvent;
 import be.hehehe.supersonic.events.SongEvent;
@@ -34,6 +39,11 @@ import be.hehehe.supersonic.utils.SwingUtils;
 @SuppressWarnings("serial")
 @Singleton
 public class ControlsPanel extends JPanel {
+
+	private static final String CHAR_PLAY = "N";
+	private static final String CHAR_PAUSE = "O";
+	private static final String CHAR_STOP = "P";
+	private static final String CHAR_NEXT = "Q";
 
 	@Inject
 	IconService iconService;
@@ -65,24 +75,27 @@ public class ControlsPanel extends JPanel {
 
 	@PostConstruct
 	public void init() {
+
+		Font fontawesome = loadFont();
 		setLayout(new MigLayout("insets 0"));
 
-		final JButton btnPlay = new JButton();
-		btnPlay.setIcon(iconService.getIcon("play"));
+		final JButton btnPlay = new JButton(CHAR_PLAY);
+		btnPlay.setFont(fontawesome);
 		add(btnPlay);
 		btnPlay.setFocusable(false);
 		btnPlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnPlay.setIcon(iconService.getIcon("play"));
-				SongEvent songEvent = new SongEvent(Type.PLAY);
-				songEvent.setSong(selectedSong);
-				event.fire(songEvent);
+				if (selectedSong != null) {
+					SongEvent songEvent = new SongEvent(Type.PLAY);
+					songEvent.setSong(selectedSong);
+					event.fire(songEvent);
+				}
 			}
 		});
 
-		JButton btnPause = new JButton();
-		btnPause.setIcon(iconService.getIcon("pause"));
+		JButton btnPause = new JButton(CHAR_PAUSE);
+		btnPause.setFont(fontawesome);
 		btnPause.setFocusable(false);
 		add(btnPause);
 		btnPause.addActionListener(new ActionListener() {
@@ -92,8 +105,8 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
-		JButton btnStop = new JButton();
-		btnStop.setIcon(iconService.getIcon("stop"));
+		JButton btnStop = new JButton(CHAR_STOP);
+		btnStop.setFont(fontawesome);
 		btnStop.setFocusable(false);
 		add(btnStop);
 		btnStop.addActionListener(new ActionListener() {
@@ -103,10 +116,10 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
-		JButton btnNext = new JButton();
-		add(btnNext);
-		btnNext.setIcon(iconService.getIcon("next"));
+		JButton btnNext = new JButton(CHAR_NEXT);
+		btnNext.setFont(fontawesome);
 		btnNext.setFocusable(false);
+		add(btnNext);
 		btnNext.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -118,7 +131,7 @@ public class ControlsPanel extends JPanel {
 		volumeSlider.setFocusable(false);
 		volumeSlider.setMinimum(0);
 		volumeSlider.setMaximum(100);
-		add(volumeSlider, "grow, push");
+		add(volumeSlider, "growx, pushx");
 		volumeSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -203,6 +216,21 @@ public class ControlsPanel extends JPanel {
 			}
 		});
 
+	}
+
+	private Font loadFont() {
+		InputStream is = null;
+		Font font = null;
+		try {
+			is = getClass().getResourceAsStream("/META-INF/resources/sosa.ttf");
+			font = Font.createFont(Font.TRUETYPE_FONT, is);
+			font = font.deriveFont(24f);
+		} catch (Exception e) {
+			SwingUtils.handleError(e);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+		return font;
 	}
 
 	public void onProgress(@Observes final SongEvent e) {

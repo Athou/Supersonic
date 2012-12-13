@@ -195,5 +195,10 @@
 			<artifactId>jkeymaster</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.tenbytwenty</groupId>
+			<artifactId>sosa</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>
