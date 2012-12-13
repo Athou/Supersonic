@@ -19,7 +19,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<github.global.server>github</github.global.server>
 	</properties>
 	<repositories>
 		<repository>
@@ -77,27 +76,6 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>downloads-maven-plugin</artifactId>
-				<version>0.5</version>
-				<configuration>
-					<description>${project.version} release of ${project.name}</description>
-					<override>true</override>
-					<includeAttached>true</includeAttached>
-					<includes>
-						<include>${project.name}-*.zip</include>
-					</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-						<phase>install</phase>
 					</execution>
 				</executions>
 			</plugin>
