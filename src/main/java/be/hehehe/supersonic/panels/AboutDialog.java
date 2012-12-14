@@ -50,9 +50,13 @@ public class AboutDialog extends JDialog {
 		panel.add(new JLabel("Author"), "growx");
 		panel.add(new JLabel("Athou"), "wrap");
 
-		panel.add(new JLabel("Download and Sources"), "growx");
+		panel.add(new JLabel("Sources"), "growx");
 		panel.add(new Hyperlink("GitHub",
-				"https://github.com/Athou/Supersonic/downloads"), "wrap");
+				"https://github.com/Athou/Supersonic/"), "wrap");
+
+		panel.add(new JLabel("Download"), "growx");
+		panel.add(new Hyperlink("Here",
+				"http://lolz.hehehe.be/supersonic/version.txt"), "wrap");
 
 		panel.add(new JLabel("Discussions"), "growx");
 		panel.add(new Hyperlink("Subsonic Forum",
