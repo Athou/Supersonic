@@ -149,10 +149,15 @@ public class Library {
 										songModel.setAlbum(song.getAlbum());
 										songModel.setCoverId(albumModel
 												.getCoverId());
-										songModel.setTrack(song.getTrack());
-										songModel.setSize(song.getSize());
+										songModel
+												.setTrack(song.getTrack() == null ? 0
+														: song.getTrack());
+										songModel
+												.setSize(song.getSize() == null ? 0
+														: song.getSize());
 										songModel.setDuration(song
-												.getDuration());
+												.getDuration() == null ? 0
+												: song.getDuration());
 										songModel
 												.setYear(song.getYear() == null ? 0
 														: song.getYear());
