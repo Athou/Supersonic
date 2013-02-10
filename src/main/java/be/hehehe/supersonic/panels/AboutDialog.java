@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -59,9 +60,15 @@ public class AboutDialog extends JDialog {
 				"http://lolz.hehehe.be/supersonic/version.txt"), "wrap");
 
 		panel.add(new JLabel("Discussions"), "growx");
-		panel.add(new Hyperlink("Subsonic Forum",
-				"http://forum.subsonic.org/forum/viewtopic.php?f=4&t=8823"),
-				"wrap");
+
+		String url = "http://forum.subsonic.org/forum/viewtopic.php?f=4&t=8823";
+		JComponent hyperlink = null;
+		try {
+			hyperlink = new Hyperlink("Subsonic Forum", url);
+		} catch (Exception e) {
+			hyperlink = new JLabel(url);
+		}
+		panel.add(hyperlink, "wrap");
 
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
