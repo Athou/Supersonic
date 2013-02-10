@@ -52,23 +52,20 @@ public class AboutDialog extends JDialog {
 		panel.add(new JLabel("Athou"), "wrap");
 
 		panel.add(new JLabel("Sources"), "growx");
-		panel.add(new Hyperlink("GitHub",
-				"https://github.com/Athou/Supersonic/"), "wrap");
+		panel.add(
+				createHyperlink("GitHub",
+						"https://github.com/Athou/Supersonic/"), "wrap");
 
 		panel.add(new JLabel("Download"), "growx");
-		panel.add(new Hyperlink("Here",
-				"http://lolz.hehehe.be/supersonic/version.txt"), "wrap");
+		panel.add(
+				createHyperlink("Here",
+						"http://lolz.hehehe.be/supersonic/version.txt"), "wrap");
 
 		panel.add(new JLabel("Discussions"), "growx");
-
-		String url = "http://forum.subsonic.org/forum/viewtopic.php?f=4&t=8823";
-		JComponent hyperlink = null;
-		try {
-			hyperlink = new Hyperlink("Subsonic Forum", url);
-		} catch (Exception e) {
-			hyperlink = new JLabel(url);
-		}
-		panel.add(hyperlink, "wrap");
+		panel.add(
+				createHyperlink("Subsonic Forum",
+						"http://forum.subsonic.org/forum/viewtopic.php?f=4&t=8823"),
+				"wrap");
 
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
@@ -84,6 +81,16 @@ public class AboutDialog extends JDialog {
 		setSize(260, getHeight());
 		setResizable(false);
 		SwingUtils.centerContainer(this);
+	}
+
+	private JComponent createHyperlink(String label, String url) {
+		JComponent hyperlink = null;
+		try {
+			hyperlink = new Hyperlink(label, url);
+		} catch (Exception e) {
+			hyperlink = new JLabel(url);
+		}
+		return hyperlink;
 	}
 
 	private class Hyperlink extends JButton {
